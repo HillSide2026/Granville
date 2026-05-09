@@ -4,6 +4,8 @@ go.work*
 node_modules
 dist
 vendor
+third_party/*
+!third_party/README.md
 worktrees
 dumps
 .env

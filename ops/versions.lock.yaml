@@ -1,0 +1,65 @@
+schema_version: 1
+generated_for: granville-mvp-milestone-1
+
+granville_workspace:
+  current_root:
+    path: /Users/matthewajlevinelaw/Repos/Granville
+    git_remote: https://github.com/HillSide2026/Granville.git
+    git_branch: main
+    git_commit: a5aa35e5fff2
+    note: Current repository root is still the Formance Ledger checkout wrapped by the Granville repo.
+
+formance:
+  ledger:
+    current_location: .
+    declared_module: github.com/formancehq/ledger
+    current_checkout_remote: https://github.com/HillSide2026/Granville.git
+    current_checkout_commit: a5aa35e5fff2
+    production_role:
+      - financial_truth
+      - immutable_postings
+      - balances
+      - accounting_history
+    run_in_production: true
+    own_upstream_fork_changes: false
+
+  payments:
+    current_location: vendor/formance-payments
+    upstream_remote: https://github.com/formancehq/payments.git
+    git_branch: main
+    git_commit: 9a6f3a8e842d
+    production_role:
+      - optional_connector_runtime
+      - webhook_translation
+      - connector_task_engine
+      - payment_provider_polling
+    run_in_production: optional
+    own_upstream_fork_changes: false
+
+  stack:
+    current_location: vendor/formance-stack
+    upstream_remote: https://github.com/formancehq/stack.git
+    git_branch: main
+    git_commit: fad799019775
+    production_role:
+      - openapi_aggregation
+      - event_schema_reference
+      - release_metadata
+    run_in_production: false
+    own_upstream_fork_changes: false
+
+granville_rules:
+  keep_formance_repos_separate: true
+  do_not_embed_business_logic_into_formance: true
+  granville_owns:
+    - orchestration
+    - routing
+    - provider_adapters
+    - ledger_posting_policy
+    - reconciliation
+    - operational_persistence
+  upgrade_policy:
+    - pin each upstream by commit or release tag
+    - upgrade one Formance repo at a time
+    - verify contract compatibility at the Granville adapter boundary
+    - upstream generic fixes quickly instead of carrying long-lived forks

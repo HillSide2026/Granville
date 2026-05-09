@@ -1,65 +1,140 @@
-<p align="center">
-  <img src="https://formance01.b-cdn.net/Github-Attachements/banners/ledger-readme-banner.webp" alt="ledger" width="100%" />
-</p>
+# Granville
 
-#  Formance Ledger
+Granville is a payments orchestration platform built on top of Formance infrastructure primitives.
 
-Formance Ledger is a programmable financial core ledger that provides a foundation for all kind of money-moving applications. It provides an atomic multi-postings transactions system, account-based modeling, and is programmable in [numscript](https://docs.formance.com/modules/numscript/introduction), a built-in DSL to model financial transactions.
+Granville is:
 
-The ledger can be used either as a standalone micro-service or as part of the [Formance Platform](https://www.formance.com/). It will shine for financial applications requiring a centralized state-keeping of the assets they orchestrate, such as:
+- an MSB orchestration layer
+- a payment monitoring plane
+- a provider abstraction layer
+- ledger-centric for accounting truth
+- EMI-led for Stage 1
+- bank-ready for Stage 2
 
-* Users balances holding apps, where the ownership of funds held in FBO accounts need to be fine-grained in a ledger
-* Digital assets platforms and exchanges, where funds in various denominations are represented
-* Payment systems, where funds are cycled through a series of steps from acquiring to payouts
-* Loan managment systems, where a sophisticated structure of amounts dues and to be disbursed are orchestrated
+Granville is not:
 
-Is uses PostgreSQL as its main transactional storage layer and comes with a built-in mechanism to ship ledger logs to replica data stores for OLAP optimized querying.
+- a bank
+- a custody platform
+- a core banking system
+- a lending platform
+- a card issuing processor
 
-## Localhost ⚡
+## Platform Roles
 
-To quickly get started using the Formance Ledger on your computer, you can use the local-optimized, all-in-one docker image:
+### Granville
 
+Granville owns:
+
+- orchestration
+- routing
+- provider adapters
+- webhook durability
+- operational persistence
+- reconciliation
+- audit trail
+
+### Formance Ledger
+
+Formance Ledger remains the accounting engine and immutable financial record.
+
+Current implementation references:
+
+- API server entrypoint: [cmd/serve.go](/Users/matthewajlevinelaw/Repos/Granville/cmd/serve.go:80)
+- Worker entrypoint: [cmd/worker.go](/Users/matthewajlevinelaw/Repos/Granville/cmd/worker.go:91)
+- Ledger API surface: [internal/api/v2/routes.go](/Users/matthewajlevinelaw/Repos/Granville/internal/api/v2/routes.go:21)
+
+Ledger is used for:
+
+- immutable postings
+- balances
+- accounting history
+- financial truth
+
+### Formance Payments
+
+Formance Payments is an optional connector runtime that Granville wraps behind its own provider adapter boundary.
+
+Current implementation references:
+
+- Server entrypoint: [vendor/formance-payments/cmd/server.go](/Users/matthewajlevinelaw/Repos/Granville/vendor/formance-payments/cmd/server.go:16)
+- Worker entrypoint: [vendor/formance-payments/cmd/worker.go](/Users/matthewajlevinelaw/Repos/Granville/vendor/formance-payments/cmd/worker.go:14)
+- API surface: [vendor/formance-payments/internal/api/v3/router.go](/Users/matthewajlevinelaw/Repos/Granville/vendor/formance-payments/internal/api/v3/router.go:12)
+
+Payments may be used for:
+
+- existing provider connectors
+- webhook translation
+- provider polling
+- connector task execution
+
+It must not become Granville's canonical orchestration domain.
+
+### EMI Adapter Role
+
+For Stage 1, Granville routes all outbound payment activity through an EMI adapter boundary.
+
+That boundary can be implemented in two ways:
+
+- a Granville wrapper over Formance Payments connectors
+- a native Granville EMI adapter for provider-specific or direct integrations
+
+The orchestration layer must not depend on provider-native models or Formance `connectorID`.
+
+## Repository Layout
+
+Current interim state:
+
+- repository root currently contains the Formance Ledger checkout
+- `vendor/formance-payments` contains the Formance Payments checkout
+- `vendor/formance-stack` contains the Formance Stack checkout
+- Granville-owned code now lives under `apps/`, `libs/`, `ops/`, `roadmap/`, and `third_party/`
+
+Granville-owned paths:
+
+- [apps/](/Users/matthewajlevinelaw/Repos/Granville/apps)
+- [libs/](/Users/matthewajlevinelaw/Repos/Granville/libs)
+- [ops/](/Users/matthewajlevinelaw/Repos/Granville/ops)
+- [roadmap/](/Users/matthewajlevinelaw/Repos/Granville/roadmap)
+- [third_party/](/Users/matthewajlevinelaw/Repos/Granville/third_party)
+
+Target long-term state:
+
+```text
+granville/
+  apps/
+  libs/
+  ops/
+  roadmap/
+  third_party/
+    formance-ledger/
+    formance-payments/
+    formance-stack/
 ```
-docker compose -f examples/standalone/docker-compose.yml up
+
+## Local Development
+
+Ledger only:
+
+```sh
+docker compose -f ops/docker-compose.local.yml up ledger-postgres ledger-worker ledger
 ```
 
-Which will start:
-* A Postgres DB
-* 1 Gateway Server process (Caddy based reverse proxy)
-* 1 Ledger server process
-* 1 Ledger worker process
-* The Console UI
+Ledger plus optional Formance Payments runtime:
 
-With the system is up and running, you can now start using the ledger:
-
-```shell
-# Create a ledger
-http POST :8080/api/ledger/v2/quickstart
-# Create a first transaction
-http POST :8080/api/ledger/v2/quickstart/transactions postings:='[{"amount":100,"asset":"USD/2","destination":"users:1234","source":"world"}]'
+```sh
+docker compose -f ops/docker-compose.local.yml --profile payments up
 ```
 
-And get a visual feedback on the Ledger Console UI started on [http://localhost:3000/formance/localhost?region=localhost](http://localhost:3000/formance/localhost?region=localhost):
+Notes:
 
-![console](https://formance01.b-cdn.net/Github-Attachements/console-screenshot.png)
+- the wrapper compose intentionally skips Formance `gateway` and `console`
+- webhook-driven connector testing requires a real public `STACK_PUBLIC_URL`
+- Granville business logic should be added under `apps/` and `libs/`, not in upstream Formance packages
 
-## Production 🛡️
+## Key Docs
 
-Production usage of the Formance Ledger is (only) supported through the official k8s [operator](https://github.com/formancehq/operator) deployment mode. Follow the [installation instructions](https://docs.formance.com/build/deployment/operator/installation) to learn more.
-
-## Artifacts 📦
-
-Standalone binary builds can be downloaded from the [releases page](https://github.com/formancehq/ledger/releases).
-Container images can be found on the [ghcr registry](https://github.com/formancehq/ledger/pkgs/container/ledger).
-
-## Docs 📚
-
-You can find the exhaustive Formance Platform documentation at [docs.formance.com](https://docs.formance.com).
-
-## Community 💬
-
-If you need help, want to show us what you built or just hang out and chat about ledgers you are more than welcome in our [GitHub Discussions](https://github.com/orgs/formancehq/discussions) - looking forward to see you there!
-
-## Contributing 🛠️
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md)
+- Architecture overview: [ARCHITECTURE.md](/Users/matthewajlevinelaw/Repos/Granville/ARCHITECTURE.md)
+- Decision log: [DECISIONS.md](/Users/matthewajlevinelaw/Repos/Granville/DECISIONS.md)
+- Ops wrapper: [ops/README.md](/Users/matthewajlevinelaw/Repos/Granville/ops/README.md)
+- Version pins: [ops/versions.lock.yaml](/Users/matthewajlevinelaw/Repos/Granville/ops/versions.lock.yaml)
+- Implementation roadmap: [roadmap/granville-repo-implementation-roadmap.md](/Users/matthewajlevinelaw/Repos/Granville/roadmap/granville-repo-implementation-roadmap.md)
