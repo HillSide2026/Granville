@@ -7,7 +7,7 @@ import type {
   ProviderCustomer,
   ProviderPaymentResult,
   ProviderTransaction,
-} from "./provider-types";
+} from "./provider-types.ts";
 
 export interface PaymentAccountProvider {
   createCustomer(input: CreateCustomerInput): Promise<ProviderCustomer>;

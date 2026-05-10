@@ -13,3 +13,7 @@ Milestone 1 scope:
 
 - Post payment authorization, execution, reversal, and fee events
 - Keep posting templates versioned and auditable
+- `src/ledger-writer.ts` consumes pending posting requests and records deterministic mock Formance transaction references for the acceptance flow.
+- Posting templates live under `libs/ledger-postings/src`.
+- Failed postings can be replayed through `LedgerWriter.replay`.
+- Account taxonomy is documented in `libs/ledger/account-taxonomy.md`.

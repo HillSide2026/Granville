@@ -1,0 +1,8 @@
+{
+  "name": "granville",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:granville": "node --test --experimental-strip-types test/granville/*.test.ts"
+  }
+}

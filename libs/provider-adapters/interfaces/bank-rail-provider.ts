@@ -6,7 +6,7 @@ import type {
   BankStatement,
   BankTransaction,
   BeneficiaryInput,
-} from "./provider-types";
+} from "./provider-types.ts";
 
 export interface BankRailProvider {
   createBeneficiary(input: BeneficiaryInput): Promise<BankBeneficiary>;

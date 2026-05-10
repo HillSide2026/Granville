@@ -10,6 +10,8 @@ Milestone 1 scope:
 
 - API-based reconciliation for the first live provider
 - Manual break queue and replay workflow
+- `src/reconciler.ts` performs transaction-level checks across payment orders, provider transaction records, and ledger postings.
+- Completed payments without provider evidence or posted ledger effects become reconciliation exceptions.
 
 Later scope:
 

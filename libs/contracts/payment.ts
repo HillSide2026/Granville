@@ -1,4 +1,4 @@
-import type { Money } from "./account";
+import type { Money } from "./account.ts";
 
 export const canonicalPaymentStatuses = [
   "created",

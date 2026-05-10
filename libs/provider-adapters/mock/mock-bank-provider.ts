@@ -1,25 +1,21 @@
 import { randomUUID } from "node:crypto";
 
-import {
-  type CreateCustomerInput,
-  type OpenAccountInput,
-  type PaymentAccountProvider,
-  type PaymentInstruction,
-  type ProviderAccount,
-  type ProviderBalance,
-  type ProviderCustomer,
-  type ProviderPaymentResult,
-  type ProviderTransaction,
+import type {
+  CreateCustomerInput,
+  OpenAccountInput,
+  PaymentAccountProvider,
+  PaymentInstruction,
+  ProviderAccount,
+  ProviderBalance,
+  ProviderCustomer,
+  ProviderPaymentResult,
+  ProviderTransaction,
 } from "../interfaces/index.ts";
 
-function now(): Date {
-  return new Date();
-}
-
-export class MockEmiProvider implements PaymentAccountProvider {
+export class MockBankProvider implements PaymentAccountProvider {
   async createCustomer(input: CreateCustomerInput): Promise<ProviderCustomer> {
     return {
-      providerCustomerId: `mock-customer-${randomUUID()}`,
+      providerCustomerId: `mock-bank-customer-${randomUUID()}`,
       granvilleCustomerId: input.granvilleCustomerId,
       status: "active",
       metadata: input.metadata ?? {},
@@ -28,7 +24,7 @@ export class MockEmiProvider implements PaymentAccountProvider {
 
   async openPaymentAccount(input: OpenAccountInput): Promise<ProviderAccount> {
     return {
-      providerAccountId: `mock-account-${randomUUID()}`,
+      providerAccountId: `mock-bank-account-${randomUUID()}`,
       granvillePaymentAccountId: input.granvillePaymentAccountId,
       status: "active",
       currencyCode: input.currencyCode,
@@ -49,8 +45,8 @@ export class MockEmiProvider implements PaymentAccountProvider {
     input: PaymentInstruction,
   ): Promise<ProviderPaymentResult> {
     return {
-      providerTransactionId: `mock-tx-${input.granvillePaymentAttemptId}`,
-      providerReference: input.granvillePaymentOrderId,
+      providerTransactionId: `mock-bank-tx-${input.granvillePaymentAttemptId}`,
+      providerReference: `bank-${input.granvillePaymentOrderId}`,
       status: "completed",
       metadata: input.metadata ?? {},
     };
@@ -61,8 +57,8 @@ export class MockEmiProvider implements PaymentAccountProvider {
       providerTransactionId: transactionId,
       status: "completed",
       amount: "100",
-      asset: "GBP/2",
-      occurredAt: now(),
+      asset: "USD/2",
+      occurredAt: new Date(),
       metadata: {},
       rawPayload: {},
     };
@@ -75,12 +71,12 @@ export class MockEmiProvider implements PaymentAccountProvider {
   ): Promise<ProviderTransaction[]> {
     return [
       {
-        providerTransactionId: `mock-list-${accountId}`,
+        providerTransactionId: `mock-bank-list-${accountId}`,
         providerReference: `${from.toISOString()}-${to.toISOString()}`,
         status: "completed",
         amount: "100",
-        asset: "GBP/2",
-        occurredAt: now(),
+        asset: "USD/2",
+        occurredAt: new Date(),
         metadata: {},
         rawPayload: {},
       },
@@ -90,9 +86,9 @@ export class MockEmiProvider implements PaymentAccountProvider {
   async getBalance(accountId: string): Promise<ProviderBalance> {
     return {
       providerAccountId: accountId,
-      amount: "100000",
-      asset: "GBP/2",
-      asOf: now(),
+      amount: "250000",
+      asset: "USD/2",
+      asOf: new Date(),
     };
   }
 }

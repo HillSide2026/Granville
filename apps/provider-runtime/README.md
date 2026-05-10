@@ -15,3 +15,16 @@ Rule:
 
 - Upstream layers consume Granville contracts from `libs/provider-adapters`
 - Upstream layers do not see Formance `connectorID`
+
+Milestone 1 implementation:
+
+- `src/provider-runtime.ts` executes routed payment attempts against the mock EMI adapter.
+- Provider-native statuses are mapped into Granville canonical payment statuses before they leave the runtime.
+- Completed provider results enqueue normalized ledger postings instead of writing directly to Formance.
+
+Milestone 3 implementation:
+
+- Provider work is queued through `provider_command_queue`.
+- `src/provider-runtime.ts` claims queued commands and records provider request attempts.
+- Adapter selection goes through `libs/provider-adapters/adapter-registry.ts` using `provider_bindings.adapter_key`.
+- Webhook payloads are normalized by `libs/provider-adapters/webhook-normalizer.ts`.

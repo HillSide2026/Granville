@@ -1,0 +1,151 @@
+openapi: 3.1.0
+info:
+  title: Granville API
+  version: 0.1.0
+  description: Milestone 1 API surface for Granville-owned payment orchestration.
+security:
+  - bearerAuth: []
+paths:
+  /customers:
+    post:
+      summary: Create a customer
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "201":
+          description: Customer created
+  /customers/{id}:
+    get:
+      summary: Get a customer
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Customer found
+    patch:
+      summary: Update customer metadata or lifecycle state
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Customer updated
+  /payment-accounts:
+    post:
+      summary: Open a payment account through the orchestrator
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "201":
+          description: Payment account created
+  /payment-accounts/{id}:
+    get:
+      summary: Get a payment account
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Payment account found
+  /payments:
+    post:
+      summary: Create a payment order
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "201":
+          description: Payment order created
+  /payments/{id}:
+    get:
+      summary: Get a payment order
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Payment order found
+  /payments/{id}/status:
+    get:
+      summary: Get canonical payment status
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Payment status found
+  /payments/{id}/submit:
+    post:
+      summary: Submit a payment through routing and provider runtime queues
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "202":
+          description: Payment submitted
+  /payments/{id}/cancel:
+    post:
+      summary: Cancel a payment before completion
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Payment cancelled
+  /payments/{id}/retry:
+    post:
+      summary: Retry a failed or returned payment
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "202":
+          description: Payment retry queued
+  /webhooks/{provider}:
+    post:
+      summary: Receive and durably store a provider webhook
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "202":
+          description: Webhook accepted for processing
+  /reconciliation/runs:
+    post:
+      summary: Start a transaction-level reconciliation run
+      responses:
+        "202":
+          description: Reconciliation queued
+  /reconciliation/runs/{id}:
+    get:
+      summary: Get a reconciliation run
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Reconciliation run found
+  /reconciliation/exceptions:
+    get:
+      summary: List reconciliation exceptions
+      responses:
+        "200":
+          description: Reconciliation exceptions
+  /admin/audit-events:
+    get:
+      summary: List audit events
+      responses:
+        "200":
+          description: Audit events
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema:
+        type: string
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string

@@ -1,3 +1,3 @@
-export * from "./bank-rail-provider";
-export * from "./payment-account-provider";
-export * from "./provider-types";
+export * from "./bank-rail-provider.ts";
+export * from "./payment-account-provider.ts";
+export * from "./provider-types.ts";
