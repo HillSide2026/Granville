@@ -1,12 +1,5 @@
-import type {
-  RoutingDecision,
-  RoutingDecisionInput,
-  RoutingRule,
-} from "../contracts/routing.ts";
-import type {
-  ProviderBinding,
-  ProviderCapability,
-} from "../contracts/provider.ts";
+import type { ProviderBinding, ProviderCapability } from "../contracts/provider.ts";
+import type { RoutingDecision, RoutingDecisionInput, RoutingRule } from "../contracts/routing.ts";
 import type { ProviderHealth } from "../persistence/src/in-memory-store.ts";
 
 export interface RoutingEngineOptions {
@@ -23,18 +16,14 @@ export class RoutingEngine {
   providerHealth: ProviderHealth[];
 
   constructor(options: RoutingEngineOptions) {
-    this.rules = [...(options.rules ?? [])].sort(
-      (left, right) => left.priority - right.priority,
-    );
+    this.rules = [...(options.rules ?? [])].sort((left, right) => left.priority - right.priority);
     this.providerBindings = options.providerBindings;
     this.providerCapabilities = options.providerCapabilities ?? [];
     this.providerHealth = options.providerHealth ?? [];
   }
 
   decide(input: RoutingDecisionInput): RoutingDecision {
-    const matchingRule = this.rules.find(
-      (rule) => rule.active && this.matches(rule, input),
-    );
+    const matchingRule = this.rules.find((rule) => rule.active && this.matches(rule, input));
     const providerBindingId = matchingRule?.outcome.providerBindingId
       ? this.ensureRoutable(matchingRule.outcome.providerBindingId, input)
       : this.defaultProviderBindingId(input);
@@ -64,9 +53,7 @@ export class RoutingEngine {
     const binding = this.providerBindings
       .filter(
         (candidate) =>
-          candidate.active &&
-          this.isHealthy(candidate.id) &&
-          this.supports(candidate, input),
+          candidate.active && this.isHealthy(candidate.id) && this.supports(candidate, input),
       )
       .sort((left, right) => this.fallbackPriority(left) - this.fallbackPriority(right))[0];
     if (!binding) {
@@ -76,10 +63,13 @@ export class RoutingEngine {
   }
 
   ensureRoutable(providerBindingId: string, input: RoutingDecisionInput): string {
-    const binding = this.providerBindings.find(
-      (candidate) => candidate.id === providerBindingId,
-    );
-    if (!binding || !binding.active || !this.isHealthy(binding.id) || !this.supports(binding, input)) {
+    const binding = this.providerBindings.find((candidate) => candidate.id === providerBindingId);
+    if (
+      !binding ||
+      !binding.active ||
+      !this.isHealthy(binding.id) ||
+      !this.supports(binding, input)
+    ) {
       return this.defaultProviderBindingId(input);
     }
     return providerBindingId;
@@ -110,9 +100,7 @@ export class RoutingEngine {
       const riskFlags = arrayConfig(capability.config.blockedRiskFlags);
       const assetOk = assets.length === 0 || assets.includes(input.asset);
       const countryOk =
-        countries.length === 0 ||
-        !input.countryCode ||
-        countries.includes(input.countryCode);
+        countries.length === 0 || !input.countryCode || countries.includes(input.countryCode);
       const riskOk = input.riskFlags.every((flag) => !riskFlags.includes(flag));
       return assetOk && countryOk && riskOk;
     });

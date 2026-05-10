@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-
-import { ProviderAdapterRegistry } from "../../libs/provider-adapters/adapter-registry.ts";
 import type { ProviderBinding } from "../../libs/contracts/provider.ts";
+import { ProviderAdapterRegistry } from "../../libs/provider-adapters/adapter-registry.ts";
 
 const registry = new ProviderAdapterRegistry();
 
@@ -36,7 +35,11 @@ for (const adapterKey of ["mock-emi", "mock-bank", "native-emi", "formance-payme
     const transaction = await provider.getTransaction(payment.providerTransactionId);
     assert.equal(transaction.providerTransactionId, payment.providerTransactionId);
 
-    const transactions = await provider.listTransactions(account.providerAccountId, new Date(0), new Date());
+    const transactions = await provider.listTransactions(
+      account.providerAccountId,
+      new Date(0),
+      new Date(),
+    );
     assert.ok(Array.isArray(transactions));
 
     const balance = await provider.getBalance(account.providerAccountId);

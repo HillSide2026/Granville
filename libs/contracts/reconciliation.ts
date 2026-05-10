@@ -19,8 +19,7 @@ export const reconciliationExceptionCategories = [
   "ledger_posting_missing",
 ] as const;
 
-export type ReconciliationExceptionCategory =
-  (typeof reconciliationExceptionCategories)[number];
+export type ReconciliationExceptionCategory = (typeof reconciliationExceptionCategories)[number];
 
 export interface ReconciliationRun {
   id: string;
@@ -40,6 +39,8 @@ export interface ReconciliationException {
   reconciliationRunId?: string;
   paymentOrderId?: string;
   paymentAttemptId?: string;
+  providerTransactionId?: string;
+  ledgerPostingId?: string;
   category: ReconciliationExceptionCategory;
   severity: "info" | "warning" | "critical";
   status: "open" | "resolved" | "ignored";
@@ -49,4 +50,16 @@ export interface ReconciliationException {
   createdAt: string;
   resolvedAt?: string;
   resolvedBy?: string;
+}
+
+export interface ReconciliationRecord {
+  id: string;
+  reconciliationRunId: string;
+  paymentOrderId?: string;
+  paymentAttemptId?: string;
+  providerTransactionId?: string;
+  ledgerPostingId?: string;
+  matchStatus: "matched" | "unmatched" | "exception";
+  evidence: Record<string, unknown>;
+  createdAt: string;
 }

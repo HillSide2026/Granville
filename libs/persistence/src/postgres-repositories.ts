@@ -1,3 +1,7 @@
+import type { PaymentAccount } from "../../contracts/account.ts";
+import type { Customer } from "../../contracts/customer.ts";
+import type { PaymentAttempt, PaymentOrder } from "../../contracts/payment.ts";
+import type { ProviderBinding, ProviderCapability } from "../../contracts/provider.ts";
 import type {
   AuditEvent,
   CreateCustomerInput,
@@ -9,17 +13,10 @@ import type {
   ProviderRequestAttempt,
   ProviderTransactionRecord,
 } from "./in-memory-store.ts";
-import type { PaymentAccount } from "../../contracts/account.ts";
-import type { Customer } from "../../contracts/customer.ts";
-import type { PaymentAttempt, PaymentOrder } from "../../contracts/payment.ts";
-import type { ProviderBinding, ProviderCapability } from "../../contracts/provider.ts";
 import type { GranvilleRepositories } from "./repository-contracts.ts";
 
 export interface SqlClient {
-  query<T = unknown>(
-    sql: string,
-    params?: readonly unknown[],
-  ): Promise<{ rows: T[] }>;
+  query<T = unknown>(sql: string, params?: readonly unknown[]): Promise<{ rows: T[] }>;
 }
 
 export class PostgresGranvilleRepositories implements GranvilleRepositories {

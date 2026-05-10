@@ -3,6 +3,21 @@ set dotenv-load
 default:
   @just --list
 
+test-granville:
+  node --test --experimental-strip-types test/granville/*.test.ts
+
+lint-granville:
+  pnpm exec biome check .
+
+lint-granville-fix:
+  pnpm exec biome check --write .
+
+dev-granville:
+  docker compose -f ops/docker-compose.local.yml --profile granville up
+
+dev-observability:
+  docker compose -f ops/docker-compose.local.yml --profile observability up
+
 pre-commit: tidy generate generate-client lint export-docs-events openapi
 pc: pre-commit
 

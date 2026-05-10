@@ -2,21 +2,12 @@ import { randomUUID } from "node:crypto";
 
 import type { PaymentAccount } from "../../contracts/account.ts";
 import type { Customer } from "../../contracts/customer.ts";
-import type {
-  LedgerPostingRequest,
-  LedgerPostingResult,
-} from "../../contracts/ledger.ts";
-import type {
-  PaymentAttempt,
-  PaymentOrder,
-} from "../../contracts/payment.ts";
-import type {
-  Provider,
-  ProviderBinding,
-  ProviderCapability,
-} from "../../contracts/provider.ts";
+import type { LedgerPostingRequest, LedgerPostingResult } from "../../contracts/ledger.ts";
+import type { PaymentAttempt, PaymentOrder } from "../../contracts/payment.ts";
+import type { Provider, ProviderBinding, ProviderCapability } from "../../contracts/provider.ts";
 import type {
   ReconciliationException,
+  ReconciliationRecord,
   ReconciliationRun,
 } from "../../contracts/reconciliation.ts";
 
@@ -50,13 +41,7 @@ export interface WebhookEvent {
   deliveryId?: string;
   idempotencyKey?: string;
   signatureValid?: boolean;
-  processingStatus:
-    | "received"
-    | "queued"
-    | "processing"
-    | "processed"
-    | "failed"
-    | "ignored";
+  processingStatus: "received" | "queued" | "processing" | "processed" | "failed" | "ignored";
   requestPath: string;
   headers: Record<string, string>;
   queryParams: Record<string, string>;
@@ -134,6 +119,16 @@ export interface ProviderHealth {
   reason?: string;
 }
 
+export interface WebhookProcessingAttempt {
+  id: string;
+  webhookEventId: string;
+  attemptNumber: number;
+  status: "processing" | "processed" | "failed" | "ignored";
+  errorMessage?: string;
+  startedAt: string;
+  finishedAt?: string;
+}
+
 export interface CreateCustomerInput {
   legalName: string;
   email?: string;
@@ -180,13 +175,20 @@ export class InMemoryGranvilleStore {
   readonly providerCommandQueue = new Map<string, ProviderCommandQueueItem>();
   readonly providerRequestAttempts = new Map<string, ProviderRequestAttempt>();
   readonly ledgerQueue = new Map<string, LedgerQueueItem>();
-  readonly ledgerPostingAttempts = new Map<string, Array<LedgerPostingResult & {
-    status: "processing" | "posted" | "failed";
-    errorMessage?: string;
-  }>>();
+  readonly ledgerPostingAttempts = new Map<
+    string,
+    Array<
+      LedgerPostingResult & {
+        status: "processing" | "posted" | "failed";
+        errorMessage?: string;
+      }
+    >
+  >();
   readonly reconciliationRuns = new Map<string, ReconciliationRun>();
   readonly reconciliationExceptions = new Map<string, ReconciliationException>();
+  readonly reconciliationRecords = new Map<string, ReconciliationRecord>();
   readonly webhooks = new Map<string, WebhookEvent>();
+  readonly webhookProcessingAttempts = new Map<string, WebhookProcessingAttempt>();
   readonly auditEvents: AuditEvent[] = [];
   readonly idempotency = new Map<string, IdempotencyRecord>();
   readonly providerHealth = new Map<string, ProviderHealth>();
@@ -274,9 +276,8 @@ export class InMemoryGranvilleStore {
   ): PaymentAttempt {
     const now = timestamp();
     const attemptNumber =
-      [...this.paymentAttempts.values()].filter(
-        (attempt) => attempt.paymentOrderId === order.id,
-      ).length + 1;
+      [...this.paymentAttempts.values()].filter((attempt) => attempt.paymentOrderId === order.id)
+        .length + 1;
     const attempt: PaymentAttempt = {
       id: randomUUID(),
       paymentOrderId: order.id,
@@ -304,12 +305,7 @@ export class InMemoryGranvilleStore {
   enqueueProviderCommand(
     input: Omit<
       ProviderCommandQueueItem,
-      | "id"
-      | "status"
-      | "retryCount"
-      | "availableAt"
-      | "createdAt"
-      | "updatedAt"
+      "id" | "status" | "retryCount" | "availableAt" | "createdAt" | "updatedAt"
     >,
   ): ProviderCommandQueueItem {
     const existing = [...this.providerCommandQueue.values()].find(
@@ -340,8 +336,7 @@ export class InMemoryGranvilleStore {
   claimProviderCommand(): ProviderCommandQueueItem | undefined {
     const now = timestamp();
     const command = [...this.providerCommandQueue.values()].find(
-      (candidate) =>
-        candidate.status === "pending" && candidate.availableAt <= now,
+      (candidate) => candidate.status === "pending" && candidate.availableAt <= now,
     );
     if (!command) {
       return undefined;
@@ -375,7 +370,7 @@ export class InMemoryGranvilleStore {
     const now = timestamp();
     const updated = {
       ...command,
-      status: retryCount >= 3 ? "dead_lettered" as const : "pending" as const,
+      status: retryCount >= 3 ? ("dead_lettered" as const) : ("pending" as const),
       retryCount,
       lastError: error,
       availableAt: new Date(Date.now() + retryCount * 1000).toISOString(),
@@ -443,16 +438,10 @@ export class InMemoryGranvilleStore {
       occurredAt: input.occurredAt ?? timestamp(),
     };
     this.providerTransactions.set(record.id, record);
-    this.audit(
-      "service",
-      "provider_transaction.recorded",
-      "provider_transaction",
-      record.id,
-      {
-        paymentAttemptId: record.paymentAttemptId,
-        providerTransactionId: record.providerTransactionId,
-      },
-    );
+    this.audit("service", "provider_transaction.recorded", "provider_transaction", record.id, {
+      paymentAttemptId: record.paymentAttemptId,
+      providerTransactionId: record.providerTransactionId,
+    });
     return clone(record);
   }
 
@@ -505,7 +494,7 @@ export class InMemoryGranvilleStore {
     const retryCount = item.retryCount + 1;
     const updated = {
       ...item,
-      status: retryCount >= 3 ? "dead_lettered" as const : "failed" as const,
+      status: retryCount >= 3 ? ("dead_lettered" as const) : ("failed" as const),
       retryCount,
       lastError: error,
       updatedAt: timestamp(),
@@ -541,6 +530,139 @@ export class InMemoryGranvilleStore {
     };
     this.ledgerQueue.set(id, updated);
     this.audit("service", "ledger_posting.replayed", "ledger_posting", id);
+    return clone(updated);
+  }
+
+  queueWebhookForProcessing(id: string): WebhookEvent {
+    const event = this.require(this.webhooks, id, "webhook_event");
+    const updated = { ...event, processingStatus: "queued" as const };
+    this.webhooks.set(id, updated);
+    return clone(updated);
+  }
+
+  claimWebhookForProcessing(): WebhookEvent | undefined {
+    const event = [...this.webhooks.values()].find(
+      (candidate) => candidate.processingStatus === "queued",
+    );
+    if (!event) {
+      return undefined;
+    }
+    const now = timestamp();
+    const updated = { ...event, processingStatus: "processing" as const };
+    this.webhooks.set(event.id, updated);
+    const attemptNumber =
+      [...this.webhookProcessingAttempts.values()].filter((a) => a.webhookEventId === event.id)
+        .length + 1;
+    const attempt: WebhookProcessingAttempt = {
+      id: randomUUID(),
+      webhookEventId: event.id,
+      attemptNumber,
+      status: "processing",
+      startedAt: now,
+    };
+    this.webhookProcessingAttempts.set(attempt.id, attempt);
+    return clone(updated);
+  }
+
+  markWebhookProcessed(id: string): WebhookEvent {
+    const event = this.require(this.webhooks, id, "webhook_event");
+    const now = timestamp();
+    const updated = {
+      ...event,
+      processingStatus: "processed" as const,
+      processedAt: now,
+    };
+    this.webhooks.set(id, updated);
+    const latestAttempt = [...this.webhookProcessingAttempts.values()]
+      .filter((a) => a.webhookEventId === id && a.status === "processing")
+      .sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
+    if (latestAttempt) {
+      this.webhookProcessingAttempts.set(latestAttempt.id, {
+        ...latestAttempt,
+        status: "processed",
+        finishedAt: now,
+      });
+    }
+    return clone(updated);
+  }
+
+  markWebhookFailed(id: string, error: string): WebhookEvent {
+    const event = this.require(this.webhooks, id, "webhook_event");
+    const now = timestamp();
+    const attemptCount = [...this.webhookProcessingAttempts.values()].filter(
+      (a) => a.webhookEventId === id,
+    ).length;
+    const nextStatus = attemptCount >= 3 ? ("failed" as const) : ("queued" as const);
+    const updated = { ...event, processingStatus: nextStatus, lastError: error };
+    this.webhooks.set(id, updated);
+    const latestAttempt = [...this.webhookProcessingAttempts.values()]
+      .filter((a) => a.webhookEventId === id && a.status === "processing")
+      .sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
+    if (latestAttempt) {
+      this.webhookProcessingAttempts.set(latestAttempt.id, {
+        ...latestAttempt,
+        status: "failed",
+        errorMessage: error,
+        finishedAt: now,
+      });
+    }
+    this.audit("service", "webhook.processing_failed", "webhook_event", id, {
+      attemptCount,
+      nextStatus,
+      error,
+    });
+    return clone(updated);
+  }
+
+  markWebhookIgnored(id: string): WebhookEvent {
+    const event = this.require(this.webhooks, id, "webhook_event");
+    const now = timestamp();
+    const updated = {
+      ...event,
+      processingStatus: "ignored" as const,
+      processedAt: now,
+    };
+    this.webhooks.set(id, updated);
+    const latestAttempt = [...this.webhookProcessingAttempts.values()]
+      .filter((a) => a.webhookEventId === id && a.status === "processing")
+      .sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
+    if (latestAttempt) {
+      this.webhookProcessingAttempts.set(latestAttempt.id, {
+        ...latestAttempt,
+        status: "ignored",
+        finishedAt: now,
+      });
+    }
+    return clone(updated);
+  }
+
+  createReconciliationRecord(
+    input: Omit<ReconciliationRecord, "id" | "createdAt">,
+  ): ReconciliationRecord {
+    const record: ReconciliationRecord = {
+      ...input,
+      id: randomUUID(),
+      createdAt: timestamp(),
+    };
+    this.reconciliationRecords.set(record.id, record);
+    return clone(record);
+  }
+
+  resolveReconciliationException(
+    id: string,
+    resolvedBy: string,
+    note?: string,
+  ): ReconciliationException {
+    const exception = this.require(this.reconciliationExceptions, id, "reconciliation_exception");
+    const now = timestamp();
+    const updated: ReconciliationException = {
+      ...exception,
+      status: "resolved",
+      resolvedAt: now,
+      resolvedBy,
+      manualNote: note ?? exception.manualNote,
+    };
+    this.reconciliationExceptions.set(id, updated);
     return clone(updated);
   }
 

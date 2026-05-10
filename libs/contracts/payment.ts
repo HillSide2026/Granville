@@ -12,22 +12,15 @@ export const canonicalPaymentStatuses = [
   "cancelled",
 ] as const;
 
-export type CanonicalPaymentStatus =
-  (typeof canonicalPaymentStatuses)[number];
+export type CanonicalPaymentStatus = (typeof canonicalPaymentStatuses)[number];
 
 export const paymentDirections = ["outbound", "inbound"] as const;
 
 export type PaymentDirection = (typeof paymentDirections)[number];
 
-export const paymentTransactionTypes = [
-  "payment",
-  "refund",
-  "payout",
-  "transfer",
-] as const;
+export const paymentTransactionTypes = ["payment", "refund", "payout", "transfer"] as const;
 
-export type PaymentTransactionType =
-  (typeof paymentTransactionTypes)[number];
+export type PaymentTransactionType = (typeof paymentTransactionTypes)[number];
 
 export interface PaymentOrder {
   id: string;

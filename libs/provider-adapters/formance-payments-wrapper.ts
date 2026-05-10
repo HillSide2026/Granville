@@ -53,9 +53,7 @@ export class FormancePaymentsWrapperAdapter implements PaymentAccountProvider {
     };
   }
 
-  async initiatePayment(
-    input: PaymentInstruction,
-  ): Promise<ProviderPaymentResult> {
+  async initiatePayment(input: PaymentInstruction): Promise<ProviderPaymentResult> {
     return {
       providerTransactionId: `formance-payment-${input.granvillePaymentAttemptId}`,
       providerReference: input.granvillePaymentOrderId,

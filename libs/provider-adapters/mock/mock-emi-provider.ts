@@ -1,15 +1,15 @@
 import { randomUUID } from "node:crypto";
 
-import {
-  type CreateCustomerInput,
-  type OpenAccountInput,
-  type PaymentAccountProvider,
-  type PaymentInstruction,
-  type ProviderAccount,
-  type ProviderBalance,
-  type ProviderCustomer,
-  type ProviderPaymentResult,
-  type ProviderTransaction,
+import type {
+  CreateCustomerInput,
+  OpenAccountInput,
+  PaymentAccountProvider,
+  PaymentInstruction,
+  ProviderAccount,
+  ProviderBalance,
+  ProviderCustomer,
+  ProviderPaymentResult,
+  ProviderTransaction,
 } from "../interfaces/index.ts";
 
 function now(): Date {
@@ -45,12 +45,10 @@ export class MockEmiProvider implements PaymentAccountProvider {
     };
   }
 
-  async initiatePayment(
-    input: PaymentInstruction,
-  ): Promise<ProviderPaymentResult> {
+  async initiatePayment(input: PaymentInstruction): Promise<ProviderPaymentResult> {
     return {
       providerTransactionId: `mock-tx-${input.granvillePaymentAttemptId}`,
-      providerReference: input.granvillePaymentOrderId,
+      providerReference: input.granvillePaymentAttemptId,
       status: "completed",
       metadata: input.metadata ?? {},
     };
@@ -68,11 +66,7 @@ export class MockEmiProvider implements PaymentAccountProvider {
     };
   }
 
-  async listTransactions(
-    accountId: string,
-    from: Date,
-    to: Date,
-  ): Promise<ProviderTransaction[]> {
+  async listTransactions(accountId: string, from: Date, to: Date): Promise<ProviderTransaction[]> {
     return [
       {
         providerTransactionId: `mock-list-${accountId}`,

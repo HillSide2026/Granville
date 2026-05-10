@@ -41,9 +41,7 @@ export class MockBankProvider implements PaymentAccountProvider {
     };
   }
 
-  async initiatePayment(
-    input: PaymentInstruction,
-  ): Promise<ProviderPaymentResult> {
+  async initiatePayment(input: PaymentInstruction): Promise<ProviderPaymentResult> {
     return {
       providerTransactionId: `mock-bank-tx-${input.granvillePaymentAttemptId}`,
       providerReference: `bank-${input.granvillePaymentOrderId}`,
@@ -64,11 +62,7 @@ export class MockBankProvider implements PaymentAccountProvider {
     };
   }
 
-  async listTransactions(
-    accountId: string,
-    from: Date,
-    to: Date,
-  ): Promise<ProviderTransaction[]> {
+  async listTransactions(accountId: string, from: Date, to: Date): Promise<ProviderTransaction[]> {
     return [
       {
         providerTransactionId: `mock-bank-list-${accountId}`,

@@ -3,21 +3,11 @@ export interface Money {
   asset: string;
 }
 
-export const paymentAccountStatuses = [
-  "created",
-  "active",
-  "suspended",
-  "closed",
-] as const;
+export const paymentAccountStatuses = ["created", "active", "suspended", "closed"] as const;
 
 export type PaymentAccountStatus = (typeof paymentAccountStatuses)[number];
 
-export const paymentAccountKinds = [
-  "virtual",
-  "settlement",
-  "clearing",
-  "external",
-] as const;
+export const paymentAccountKinds = ["virtual", "settlement", "clearing", "external"] as const;
 
 export type PaymentAccountKind = (typeof paymentAccountKinds)[number];
 

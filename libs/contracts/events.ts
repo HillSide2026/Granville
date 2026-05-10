@@ -16,8 +16,7 @@ export const granvilleDomainEventTypes = [
   "audit.event.created",
 ] as const;
 
-export type GranvilleDomainEventType =
-  (typeof granvilleDomainEventTypes)[number];
+export type GranvilleDomainEventType = (typeof granvilleDomainEventTypes)[number];
 
 export interface GranvilleDomainEvent<TPayload = unknown> {
   id: string;

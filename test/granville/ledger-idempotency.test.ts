@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-
-import { LedgerWriter } from "../../apps/ledger-writer/src/ledger-writer.ts";
 import { GranvilleApi } from "../../apps/api/src/granville-api.ts";
+import { LedgerWriter } from "../../apps/ledger-writer/src/ledger-writer.ts";
 
 test("duplicate provider results do not create duplicate ledger postings", async () => {
   const api = new GranvilleApi();
@@ -24,7 +23,10 @@ test("duplicate provider results do not create duplicate ledger postings", async
   assert.equal(api.store.providerTransactions.size, 1);
   assert.equal(api.store.ledgerQueue.size, 1);
   assert.equal([...api.store.ledgerQueue.values()][0]?.status, "posted");
-  assert.equal(api.store.ledgerPostingAttempts.get([...api.store.ledgerQueue.keys()][0])?.length, 1);
+  assert.equal(
+    api.store.ledgerPostingAttempts.get([...api.store.ledgerQueue.keys()][0])?.length,
+    1,
+  );
 });
 
 test("ledger writer can replay failed postings with deterministic transaction ids", async () => {

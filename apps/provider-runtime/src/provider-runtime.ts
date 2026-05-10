@@ -1,7 +1,7 @@
 import { paymentCompletedPosting } from "../../../libs/ledger-postings/src/payment-postings.ts";
-import {
+import type {
   InMemoryGranvilleStore,
-  type ProviderCommandQueueItem,
+  ProviderCommandQueueItem,
 } from "../../../libs/persistence/src/in-memory-store.ts";
 import { ProviderAdapterRegistry } from "../../../libs/provider-adapters/adapter-registry.ts";
 
@@ -153,15 +153,19 @@ export class ProviderRuntime {
     });
 
     if (status === "completed") {
-      this.store.enqueueLedgerPosting(
-        paymentCompletedPosting(updatedOrder, updatedAttempt),
-      );
+      this.store.enqueueLedgerPosting(paymentCompletedPosting(updatedOrder, updatedAttempt));
     }
 
-    this.store.audit("service", "provider_runtime.payment_executed", "payment_attempt", attempt.id, {
-      providerBindingId: attempt.providerBindingId,
-      providerTransactionId: result.providerTransactionId,
-      status,
-    });
+    this.store.audit(
+      "service",
+      "provider_runtime.payment_executed",
+      "payment_attempt",
+      attempt.id,
+      {
+        providerBindingId: attempt.providerBindingId,
+        providerTransactionId: result.providerTransactionId,
+        status,
+      },
+    );
   }
 }

@@ -3,6 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:granville": "node --test --experimental-strip-types test/granville/*.test.ts"
+    "test:granville": "node --test --experimental-strip-types test/granville/*.test.ts",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.15"
   }
 }

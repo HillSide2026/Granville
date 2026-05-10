@@ -3,13 +3,13 @@ import { createHash } from "node:crypto";
 import type { PaymentAccount } from "../../../libs/contracts/account.ts";
 import type { Customer } from "../../../libs/contracts/customer.ts";
 import type { PaymentAttempt, PaymentOrder } from "../../../libs/contracts/payment.ts";
-import { RoutingEngine } from "../../../libs/router/routing-engine.ts";
-import {
-  type CreateCustomerInput,
-  type CreatePaymentAccountInput,
-  type CreatePaymentOrderInput,
+import type {
+  CreateCustomerInput,
+  CreatePaymentAccountInput,
+  CreatePaymentOrderInput,
   InMemoryGranvilleStore,
 } from "../../../libs/persistence/src/in-memory-store.ts";
+import { RoutingEngine } from "../../../libs/router/routing-engine.ts";
 
 export interface CommandContext {
   idempotencyKey?: string;
@@ -44,8 +44,7 @@ export class GranvilleOrchestrator {
     },
     context: CommandContext = {},
   ): PaymentAccount {
-    const providerBindingId =
-      input.providerBindingId ?? this.store.getMockProviderBinding().id;
+    const providerBindingId = input.providerBindingId ?? this.store.getMockProviderBinding().id;
     return this.store.withIdempotency(
       "payment_accounts.create",
       context.idempotencyKey,
@@ -64,10 +63,7 @@ export class GranvilleOrchestrator {
     );
   }
 
-  createPayment(
-    input: CreatePaymentOrderInput,
-    context: CommandContext = {},
-  ): PaymentOrder {
+  createPayment(input: CreatePaymentOrderInput, context: CommandContext = {}): PaymentOrder {
     return this.store.withIdempotency(
       "payments.create",
       context.idempotencyKey,

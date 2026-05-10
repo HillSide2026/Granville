@@ -14,8 +14,7 @@ export function paymentCompletedPosting(
     postingKey: "payment.completed",
     idempotencyKey: `payment:${order.id}:attempt:${attempt.id}:completed`,
     ledgerName: "default",
-    description:
-      "Granville accounting mirror for completed provider payment instruction",
+    description: "Granville accounting mirror for completed provider payment instruction",
     postings: [
       {
         source: `customers:${order.customerId}:pending`,

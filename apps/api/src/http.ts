@@ -47,8 +47,10 @@ export class GranvilleHttpControllers {
     body: Record<string, unknown>,
     context: HttpContext,
   ): Promise<{ statusCode: number; body: unknown }> {
-    const path = new URL(url, "http://granville.local").pathname;
+    const parsed = new URL(url, "http://granville.local");
+    const path = parsed.pathname;
     const parts = path.split("/").filter(Boolean);
+    const query = parsed.searchParams;
 
     if (method === "POST" && path === "/customers") {
       requireRole(context, "customer:write");
@@ -121,6 +123,131 @@ export class GranvilleHttpControllers {
       requireRole(context, "admin:read");
       return { statusCode: 200, body: this.api.getAuditEvents() };
     }
+    if (method === "GET" && path === "/admin/customers") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.adminGetCustomers() };
+    }
+    if (method === "GET" && path === "/admin/payment-accounts") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.adminGetPaymentAccounts() };
+    }
+    if (method === "GET" && path === "/admin/payments") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.adminGetPayments() };
+    }
+    if (method === "GET" && path === "/admin/payment-attempts") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.adminGetPaymentAttempts() };
+    }
+    if (method === "GET" && path === "/admin/provider-transactions") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.adminGetProviderTransactions() };
+    }
+    if (method === "GET" && path === "/admin/webhook-events") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.adminGetWebhookEvents() };
+    }
+    if (method === "GET" && path === "/admin/ledger-postings") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.adminGetLedgerPostings() };
+    }
+    if (method === "GET" && path === "/admin/reconciliation/runs") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.adminGetReconciliationRuns() };
+    }
+    if (method === "GET" && path === "/admin/reconciliation/exceptions") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.adminGetReconciliationExceptions() };
+    }
+    if (
+      method === "POST" &&
+      parts[0] === "admin" &&
+      parts[1] === "webhooks" &&
+      parts[2] &&
+      parts[3] === "retry"
+    ) {
+      requireRole(context, "admin:write");
+      return { statusCode: 200, body: this.api.adminRetryWebhook(parts[2]) };
+    }
+    if (
+      method === "POST" &&
+      parts[0] === "admin" &&
+      parts[1] === "ledger-postings" &&
+      parts[2] &&
+      parts[3] === "retry"
+    ) {
+      requireRole(context, "admin:write");
+      return { statusCode: 200, body: this.api.adminRetryLedgerPosting(parts[2]) };
+    }
+    if (
+      method === "POST" &&
+      parts[0] === "admin" &&
+      parts[1] === "reconciliation" &&
+      parts[2] === "exceptions" &&
+      parts[3] &&
+      parts[4] === "resolve"
+    ) {
+      requireRole(context, "admin:write");
+      const resolvedBy = String(body.resolvedBy ?? context.principal.id);
+      const note = body.note ? String(body.note) : undefined;
+      return { statusCode: 200, body: this.api.adminResolveException(parts[3], resolvedBy, note) };
+    }
+    if (
+      method === "POST" &&
+      parts[0] === "admin" &&
+      parts[1] === "providers" &&
+      parts[2] &&
+      parts[3] === "disable"
+    ) {
+      requireRole(context, "admin:write");
+      return { statusCode: 200, body: this.api.adminDisableProvider(parts[2]) };
+    }
+    if (method === "GET" && path === "/admin/metrics") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.metricsSnapshot() };
+    }
+    if (method === "GET" && path === "/admin/reports/payment-history") {
+      requireRole(context, "admin:read");
+      return {
+        statusCode: 200,
+        body: this.api.reportPaymentHistory({
+          from: query.get("from") ?? undefined,
+          to: query.get("to") ?? undefined,
+          status: query.get("status") ?? undefined,
+        }),
+      };
+    }
+    if (method === "GET" && path === "/admin/reports/audit-export") {
+      requireRole(context, "admin:read");
+      const ndjson = this.api.reportAuditExport({
+        from: query.get("from") ?? undefined,
+        to: query.get("to") ?? undefined,
+      });
+      return { statusCode: 200, body: ndjson };
+    }
+    if (method === "GET" && path === "/admin/reports/settlement") {
+      requireRole(context, "admin:read");
+      return {
+        statusCode: 200,
+        body: this.api.reportSettlement({
+          from: query.get("from") ?? undefined,
+          to: query.get("to") ?? undefined,
+        }),
+      };
+    }
+    if (method === "POST" && path === "/admin/notes") {
+      requireRole(context, "admin:write");
+      const resourceType = String(body.resourceType ?? "");
+      const resourceId = String(body.resourceId ?? "");
+      const note = String(body.note ?? "");
+      if (!resourceType || !resourceId || !note) {
+        throw new HttpError(400, "resourceType, resourceId, and note are required");
+      }
+      return {
+        statusCode: 201,
+        body: this.api.adminAddNote(resourceType, resourceId, note, context.principal.id),
+      };
+    }
 
     throw new HttpError(404, `No route for ${method} ${path}`);
   }
@@ -157,6 +284,7 @@ function authenticate(authorization?: string): Principal {
         "reconciliation:read",
         "reconciliation:write",
         "admin:read",
+        "admin:write",
       ],
     };
   }

@@ -43,13 +43,7 @@ export interface PaymentInstruction {
 export interface ProviderPaymentResult {
   providerTransactionId: string;
   providerReference?: string;
-  status:
-    | "accepted"
-    | "processing"
-    | "completed"
-    | "failed"
-    | "returned"
-    | "cancelled";
+  status: "accepted" | "processing" | "completed" | "failed" | "returned" | "cancelled";
   metadata: Record<string, string>;
 }
 

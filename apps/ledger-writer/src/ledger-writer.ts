@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 
 import type { LedgerPostingResult } from "../../../libs/contracts/ledger.ts";
-import { InMemoryGranvilleStore } from "../../../libs/persistence/src/in-memory-store.ts";
+import type { InMemoryGranvilleStore } from "../../../libs/persistence/src/in-memory-store.ts";
 
 export class LedgerWriter {
   store: InMemoryGranvilleStore;
@@ -44,8 +44,5 @@ export class LedgerWriter {
 }
 
 function deterministicTransactionId(idempotencyKey: string): string {
-  return `mock-formance-${createHash("sha256")
-    .update(idempotencyKey)
-    .digest("hex")
-    .slice(0, 24)}`;
+  return `mock-formance-${createHash("sha256").update(idempotencyKey).digest("hex").slice(0, 24)}`;
 }

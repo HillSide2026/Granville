@@ -1,9 +1,4 @@
-export const customerStatuses = [
-  "created",
-  "active",
-  "restricted",
-  "closed",
-] as const;
+export const customerStatuses = ["created", "active", "restricted", "closed"] as const;
 
 export type CustomerStatus = (typeof customerStatuses)[number];
 

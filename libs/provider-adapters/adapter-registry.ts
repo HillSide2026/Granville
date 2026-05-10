@@ -1,6 +1,6 @@
 import type { ProviderBinding } from "../contracts/provider.ts";
-import type { PaymentAccountProvider } from "./interfaces/index.ts";
 import { FormancePaymentsWrapperAdapter } from "./formance-payments-wrapper.ts";
+import type { PaymentAccountProvider } from "./interfaces/index.ts";
 import { MockBankProvider, MockEmiProvider } from "./mock/index.ts";
 import { NativeEmiProvider } from "./native-emi-provider.ts";
 
