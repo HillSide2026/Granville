@@ -9,16 +9,28 @@ Scaffolding completed in this repo:
 - Granville-owned application boundaries under `apps/`
 - Shared contracts and ownership boundaries under `libs/`
 - Local operations wrapper under `ops/`
-- Upstream version pinning in [ops/versions.lock.yaml](/Users/matthewajlevinelaw/Repos/Granville/ops/versions.lock.yaml)
-- Local wrapper compose in [ops/docker-compose.local.yml](/Users/matthewajlevinelaw/Repos/Granville/ops/docker-compose.local.yml)
+- Upstream version pinning in [ops/versions.lock.yaml](../ops/versions.lock.yaml)
+- Local wrapper compose in [ops/docker-compose.local.yml](../ops/docker-compose.local.yml)
 
-Remaining work to actually realize Milestone 1:
+Current implementation status:
+
+- Mock EMI Stage 1 flow is implemented and covered by `test/granville/e2e-stage1-payment-flow.test.ts`.
+- Granville HTTP controllers, client SDK tests, routing rules, provider runtime, ledger writer, webhook ingest, reconciliation, admin operations, and reporting tests pass in memory.
+- Postgres migrations, seed data, and `PostgresGranvilleStore` are wired for persistent acceptance testing.
+
+Next checkpoint:
+
+- Prove the same Stage 1 flow through a real migrated Postgres database and local API process.
+- Use `npm run db:migrate` with `DATABASE_URL` to apply migrations and mock provider seeds.
+- Use `TEST_DATABASE_URL` to run the Postgres-backed tests.
+
+Remaining work to take Milestone 1 from mock-complete to local-operable:
 
 1. Workspace migration
    Move from the interim root-ledger layout to the target `third_party/formance-*` layout without losing local history or breaking CI.
 
 2. Granville Postgres schema
-   Create tables for `payment_orders`, `payment_attempts`, `provider_bindings`, `idempotency_keys`, `webhook_events`, and `reconciliation_cases`.
+   Keep migrations current for `payment_orders`, `payment_attempts`, `provider_bindings`, `idempotency_keys`, `webhook_events`, reconciliation, audit, routing, provider health, and queue tables.
 
 3. Canonical domain package
    Implement the models described in `libs/domain` and keep them independent from Formance `connectorID`.
@@ -36,9 +48,9 @@ Remaining work to actually realize Milestone 1:
    Implement normalized posting templates and idempotent writes into Formance Ledger.
 
 8. First provider path
-   Choose one provider and implement the first adapter.
-   If the provider is already covered well by Formance Payments, use `apps/provider-runtime/adapters/formance-payments`.
-   If not, build the adapter natively in Granville.
+   Stage 1 currently uses `mock-emi`.
+   The first real provider path is a native Granville EMI adapter behind the existing adapter boundary.
+   Use a Formance Payments wrapper for a later provider only when an upstream connector already covers that provider cleanly.
 
 9. Webhook ingest and replay
    Add a Granville-owned webhook event store, signature verification policy, replay tooling, and normalized event publication.

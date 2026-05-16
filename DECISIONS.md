@@ -97,3 +97,30 @@ Decision:
 Reason:
 
 - the current root still contains the upstream ledger checkout, which obscures repo ownership even after scaffolding
+
+## ADR-009
+
+Status: accepted
+
+Decision:
+
+- The next Stage 1 checkpoint is Postgres-backed local operability, not additional in-memory feature scope.
+
+Reason:
+
+- the mock EMI flow now passes through the Granville API, orchestrator, router, provider runtime, ledger writer, webhook ingest, reconciliation, audit, admin, and reporting surfaces
+- production confidence now depends on proving the same flow with migrated operational storage and a local API process
+
+## ADR-010
+
+Status: accepted
+
+Decision:
+
+- The first real Stage 1 provider path is a native Granville EMI adapter behind the existing provider adapter boundary.
+- A Formance Payments wrapper remains available as an infrastructure path when an upstream connector already covers a provider cleanly.
+
+Reason:
+
+- Granville must preserve provider portability and keep provider-native status, request, and identifier semantics out of its canonical contracts
+- a wrapper over Formance Payments is useful infrastructure, but should not become the customer-facing orchestration model

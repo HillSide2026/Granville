@@ -25,6 +25,8 @@ services:
       retries: 5
     networks:
       - granville
+    ports:
+      - "5433:5432"
     volumes:
       - granville-postgres:/var/lib/postgresql/data
 
@@ -37,6 +39,7 @@ services:
         psql $$DATABASE_URL -f /migrations/0002_provider_runtime_and_health.sql &&
         psql $$DATABASE_URL -f /migrations/0003_m5_m6_schema_additions.sql &&
         psql $$DATABASE_URL -f /migrations/0004_schema_gaps.sql &&
+        psql $$DATABASE_URL -f /migrations/0005_reconciliation_ignore.sql &&
         psql $$DATABASE_URL -f /seeds/mock-providers.sql
       "
     depends_on:
@@ -73,7 +76,11 @@ services:
     volumes:
       - ../:/workspace
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/admin/metrics || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --header='Authorization: Bearer dev-admin' -qO- http://localhost:8080/admin/metrics || exit 1",
+        ]
       interval: 15s
       timeout: 5s
       retries: 5

@@ -24,10 +24,23 @@ Layout:
 
 - `migrations/`: SQL migrations
 - `schema/`: table-group documentation and ownership notes
+- `migrate.ts`: local migration and seed runner
 
 Current migration set:
 
-- [migrations/0001_granville_operational_core.sql](/Users/matthewajlevinelaw/Repos/Granville/libs/db/migrations/0001_granville_operational_core.sql)
+- [migrations/0001_granville_operational_core.sql](migrations/0001_granville_operational_core.sql)
+- [migrations/0002_provider_runtime_and_health.sql](migrations/0002_provider_runtime_and_health.sql)
+- [migrations/0003_m5_m6_schema_additions.sql](migrations/0003_m5_m6_schema_additions.sql)
+- [migrations/0004_schema_gaps.sql](migrations/0004_schema_gaps.sql)
+- [migrations/0005_reconciliation_ignore.sql](migrations/0005_reconciliation_ignore.sql)
+
+Local setup:
+
+```sh
+DATABASE_URL=postgres://... npm run db:migrate
+```
+
+The runner applies every SQL file under `migrations/` in filename order, then applies seed files under `seeds/`. The current seed set installs the mock EMI and mock bank providers used by local acceptance tests.
 
 Important rule:
 
