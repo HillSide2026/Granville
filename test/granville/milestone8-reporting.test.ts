@@ -132,7 +132,7 @@ test("M8: settlement summary counts failed payments separately", async () => {
   api.store.updatePaymentOrder(payment.id, { status: "failed" });
 
   const summary = api.reportSettlement({});
-  const line = summary.find((s) => s.asset === "GBP/2")!;
+  const line = summary.find((s) => s.asset === "GBP/2");
   assert.ok(line);
   assert.equal(line.completedCount, 1);
   assert.equal(line.failedCount, 1);

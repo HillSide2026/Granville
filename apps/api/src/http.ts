@@ -90,7 +90,9 @@ export class GranvilleHttpControllers {
       requireRole(context, "customer:write");
       const customer = required(this.api.getCustomer(parts[1]));
       const metadata = asObject(asObject(body).metadata);
-      const updated = this.api.store.updateCustomer(customer.id, { metadata: { ...customer.metadata, ...metadata } });
+      const updated = this.api.store.updateCustomer(customer.id, {
+        metadata: { ...customer.metadata, ...metadata },
+      });
       this.api.store.audit("service", "customer.updated", "customer", customer.id);
       return { statusCode: 200, body: updated };
     }
@@ -190,7 +192,9 @@ export class GranvilleHttpControllers {
       requireRole(context, "admin:read");
       return {
         statusCode: 200,
-        body: this.api.adminGetReconciliationExceptions({ status: query.get("status") ?? undefined }),
+        body: this.api.adminGetReconciliationExceptions({
+          status: query.get("status") ?? undefined,
+        }),
       };
     }
     if (method === "POST" && path === "/admin/reconciliation/statements") {
@@ -295,7 +299,13 @@ export class GranvilleHttpControllers {
       requireRole(context, "admin:read");
       return { statusCode: 200, body: this.api.listRoutingRules() };
     }
-    if (method === "GET" && parts[0] === "admin" && parts[1] === "routing-rules" && parts[2] && !parts[3]) {
+    if (
+      method === "GET" &&
+      parts[0] === "admin" &&
+      parts[1] === "routing-rules" &&
+      parts[2] &&
+      !parts[3]
+    ) {
       requireRole(context, "admin:read");
       return { statusCode: 200, body: required(this.api.getRoutingRule(parts[2])) };
     }
@@ -312,7 +322,13 @@ export class GranvilleHttpControllers {
         }),
       };
     }
-    if (method === "PATCH" && parts[0] === "admin" && parts[1] === "routing-rules" && parts[2] && !parts[3]) {
+    if (
+      method === "PATCH" &&
+      parts[0] === "admin" &&
+      parts[1] === "routing-rules" &&
+      parts[2] &&
+      !parts[3]
+    ) {
       requireRole(context, "admin:write");
       return {
         statusCode: 200,
@@ -326,7 +342,13 @@ export class GranvilleHttpControllers {
         }),
       };
     }
-    if (method === "POST" && parts[0] === "admin" && parts[1] === "routing-rules" && parts[2] && parts[3] === "deactivate") {
+    if (
+      method === "POST" &&
+      parts[0] === "admin" &&
+      parts[1] === "routing-rules" &&
+      parts[2] &&
+      parts[3] === "deactivate"
+    ) {
       requireRole(context, "admin:write");
       return { statusCode: 200, body: this.api.deactivateRoutingRule(parts[2]) };
     }

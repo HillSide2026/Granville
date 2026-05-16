@@ -64,12 +64,7 @@ export class RoutingEngine {
 
   ensureRoutable(providerBindingId: string, input: RoutingDecisionInput): string {
     const binding = this.providerBindings.find((candidate) => candidate.id === providerBindingId);
-    if (
-      !binding ||
-      !binding.active ||
-      !this.isHealthy(binding.id) ||
-      !this.supports(binding, input)
-    ) {
+    if (!binding?.active || !this.isHealthy(binding.id) || !this.supports(binding, input)) {
       return this.defaultProviderBindingId(input);
     }
     return providerBindingId;

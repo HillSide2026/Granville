@@ -163,11 +163,18 @@ async function handleDashboard(): Promise<string> {
   const completedPayments = payments.filter((p) => p.status === "completed").length;
   const activeRules = rules.filter((r) => r.active).length;
 
-  const recentActivity = [...auditEvents].reverse().slice(0, 10).map((e) => `
+  const recentActivity =
+    [...auditEvents]
+      .reverse()
+      .slice(0, 10)
+      .map(
+        (e) => `
     <div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:12px">
       <span style="color:#666;white-space:nowrap">${ts(e.createdAt)}</span>
       <span><strong>${e.actorType}</strong> <code style="font-size:11px">${e.action}</code> on ${e.resourceType}/${short(String(e.resourceId))}</span>
-    </div>`).join("") || `<p class="empty">No activity yet.</p>`;
+    </div>`,
+      )
+      .join("") || `<p class="empty">No activity yet.</p>`;
 
   return `
     <div class="stat-grid">
@@ -523,11 +530,7 @@ async function handleAdminPost(path: string): Promise<string> {
     return "ok";
   }
   // POST /admin/routing-rules/:id/deactivate
-  if (
-    parts[0] === "admin" &&
-    parts[1] === "routing-rules" &&
-    parts[3] === "deactivate"
-  ) {
+  if (parts[0] === "admin" && parts[1] === "routing-rules" && parts[3] === "deactivate") {
     await adminPost(`/admin/routing-rules/${parts[2]}/deactivate`);
     return "ok";
   }

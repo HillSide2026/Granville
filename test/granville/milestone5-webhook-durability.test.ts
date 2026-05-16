@@ -169,7 +169,8 @@ test("M5: failed webhook records attempt and can be retried", async () => {
   );
 
   api.drainWebhooks();
-  const afterFail = api.store.webhooks.get(result.id)!;
+  const afterFail = api.store.webhooks.get(result.id);
+  assert.ok(afterFail);
   assert.ok(
     ["queued", "failed"].includes(afterFail.processingStatus),
     `status should be queued (retry) or failed (dead-letter), got: ${afterFail.processingStatus}`,
@@ -198,9 +199,10 @@ test("M5: webhook processing emits audit events", async () => {
   );
   const providerRef = attempt?.providerReference ?? attempt?.providerTransactionId;
   assert.ok(providerRef);
+  assert.ok(attempt);
 
   api.store.updatePaymentOrder(payment.id, { status: "processing", completedAt: undefined });
-  api.store.updatePaymentAttempt(attempt!.id, { status: "processing", completedAt: undefined });
+  api.store.updatePaymentAttempt(attempt.id, { status: "processing", completedAt: undefined });
 
   api.postWebhook(
     "mock-emi",

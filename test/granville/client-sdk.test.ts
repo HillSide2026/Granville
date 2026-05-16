@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
-import { createServer } from "node:http";
 import test from "node:test";
 
-import { GranvilleHttpControllers, createGranvilleServer } from "../../apps/api/src/http.ts";
+import { createGranvilleServer, GranvilleHttpControllers } from "../../apps/api/src/http.ts";
 import { GranvilleClient } from "../../pkg/client/granville/src/client.ts";
 import { GranvilleApiError } from "../../pkg/client/granville/src/errors.ts";
 

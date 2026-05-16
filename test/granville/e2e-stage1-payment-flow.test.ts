@@ -64,7 +64,8 @@ test("Stage 1 acceptance: full mock EMI payment flow via webhook path", async ()
 
   // ── 4. Submit: orchestrator → router → provider command enqueued ──────────
   const { attempt } = api.orchestrator.submitPayment(payment.id);
-  const orderAfterSubmit = api.getPayment(payment.id)!;
+  const orderAfterSubmit = api.getPayment(payment.id);
+  assert.ok(orderAfterSubmit);
   assert.equal(orderAfterSubmit.status, "submitted_to_provider");
   assert.equal(attempt.paymentOrderId, payment.id);
 
@@ -72,7 +73,8 @@ test("Stage 1 acceptance: full mock EMI payment flow via webhook path", async ()
   const jobsProcessed = await api.providerRuntime.drain();
   assert.ok(jobsProcessed >= 1, "provider runtime should process at least one command");
 
-  const orderAfterProvider = api.getPayment(payment.id)!;
+  const orderAfterProvider = api.getPayment(payment.id);
+  assert.ok(orderAfterProvider);
   assert.equal(orderAfterProvider.status, "completed", "mock EMI completes synchronously");
 
   assert.equal(api.store.providerTransactions.size, 1, "one provider transaction recorded");
@@ -95,7 +97,8 @@ test("Stage 1 acceptance: full mock EMI payment flow via webhook path", async ()
   // The webhook processor must handle a webhook for an already-completed payment
   // gracefully (idempotent — no double-posting).
   // Re-read the attempt from the store: providerReference is set by the runtime after drain.
-  const liveAttempt = api.store.paymentAttempts.get(attempt.id)!;
+  const liveAttempt = api.store.paymentAttempts.get(attempt.id);
+  assert.ok(liveAttempt);
   const providerRef = liveAttempt.providerReference ?? liveAttempt.providerTransactionId;
   assert.ok(providerRef, "attempt must have a provider reference");
 
@@ -108,7 +111,8 @@ test("Stage 1 acceptance: full mock EMI payment flow via webhook path", async ()
   const webhooksProcessed = api.drainWebhooks();
   assert.ok(webhooksProcessed >= 1, "webhook processor should handle the event");
 
-  const webhookEvent = api.store.webhooks.get(webhookResult.id)!;
+  const webhookEvent = api.store.webhooks.get(webhookResult.id);
+  assert.ok(webhookEvent);
   assert.equal(webhookEvent.processingStatus, "processed");
 
   // No duplicate ledger posting — idempotency key prevents it.
@@ -122,7 +126,8 @@ test("Stage 1 acceptance: full mock EMI payment flow via webhook path", async ()
   const { runId, exceptionCount } = api.postReconciliationRun();
   assert.equal(exceptionCount, 0, "clean flow must produce zero reconciliation exceptions");
 
-  const run = api.store.reconciliationRuns.get(runId)!;
+  const run = api.store.reconciliationRuns.get(runId);
+  assert.ok(run);
   assert.equal(run.status, "completed");
   assert.ok(Number(run.summary.paymentOrderCount) >= 1);
 

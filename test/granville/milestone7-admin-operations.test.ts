@@ -209,7 +209,8 @@ test("M7: all privileged admin actions are audited", async () => {
   api.adminRetryWebhook(wh.id);
 
   // Retry ledger posting (force to dead_lettered first)
-  const posting = [...api.store.ledgerQueue.values()][0]!;
+  const posting = [...api.store.ledgerQueue.values()][0];
+  assert.ok(posting);
   api.store.ledgerQueue.set(posting.id, { ...posting, status: "dead_lettered", retryCount: 3 });
   api.adminRetryLedgerPosting(posting.id);
 

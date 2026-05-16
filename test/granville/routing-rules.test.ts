@@ -7,7 +7,14 @@ import { GranvilleHttpControllers } from "../../apps/api/src/http.ts";
 const adminCtx = {
   principal: {
     id: "dev-admin",
-    roles: ["admin:read", "admin:write", "customer:read", "customer:write", "payment:read", "payment:write"],
+    roles: [
+      "admin:read",
+      "admin:write",
+      "customer:read",
+      "customer:write",
+      "payment:read",
+      "payment:write",
+    ],
   },
 };
 const readOnlyAdminCtx = {
@@ -21,7 +28,10 @@ function makeApi(): GranvilleApi {
 async function makePayment(api: GranvilleApi, asset = "GBP/2") {
   const customer = api.postCustomer({ legalName: "Routing Test Co", countryCode: "GB" });
   const binding = api.store.getMockProviderBinding();
-  const account = api.postPaymentAccount({ customerId: customer.id, providerBindingId: binding.id });
+  const account = api.postPaymentAccount({
+    customerId: customer.id,
+    providerBindingId: binding.id,
+  });
   const payment = api.postPayment({
     customerId: customer.id,
     paymentAccountId: account.id,
@@ -71,14 +81,17 @@ test("rule matching asset routes payment to specified provider binding", async (
   });
 
   const { payment } = await makePayment(api, "GBP/2");
-  const submitted = await api.submitPayment(payment.id);
+  await api.submitPayment(payment.id);
 
   const attempt = [...api.store.paymentAttempts.values()].find(
     (a) => a.paymentOrderId === payment.id,
   );
   assert.ok(attempt, "payment attempt created");
   assert.equal(attempt.providerBindingId, mockEmiBinding.id, "routed to mock-emi via rule");
-  const decision = (attempt.routeSnapshot as Record<string, unknown>).decision as Record<string, unknown>;
+  const decision = (attempt.routeSnapshot as Record<string, unknown>).decision as Record<
+    string,
+    unknown
+  >;
   assert.ok((decision.rationale as string[]).some((r: string) => r.includes("gbp-to-mock-emi")));
 });
 
@@ -94,22 +107,23 @@ test("rule with non-matching conditions is skipped; capability fallback applies"
 
   // Submit a GBP payment — rule should not match, falls back to capability routing
   const { payment } = await makePayment(api, "GBP/2");
-  const submitted = await api.submitPayment(payment.id);
+  await api.submitPayment(payment.id);
 
   const attempt = [...api.store.paymentAttempts.values()].find(
     (a) => a.paymentOrderId === payment.id,
   );
   assert.ok(attempt, "payment attempt created even when rule doesn't match");
-  const decision = (attempt.routeSnapshot as Record<string, unknown>).decision as Record<string, unknown>;
+  const decision = (attempt.routeSnapshot as Record<string, unknown>).decision as Record<
+    string,
+    unknown
+  >;
   assert.ok((decision.rationale as string[]).some((r: string) => r.includes("capable provider")));
 });
 
 test("higher-priority rule (lower number) wins over lower-priority rule", async () => {
   const api = makeApi();
   const emiBinding = api.store.getMockProviderBinding();
-  const bankBinding = [...api.store.providerBindings.values()].find(
-    (b) => b.adapterKey === "mock-bank",
-  )!;
+  const bankBinding = getMockBankBinding(api);
 
   // Lower priority (higher number) — bank
   api.createRoutingRule({
@@ -154,7 +168,11 @@ test("inactive rule is never matched", async () => {
   const attempt = [...api.store.paymentAttempts.values()].find(
     (a) => a.paymentOrderId === payment.id,
   );
-  const decision = (attempt!.routeSnapshot as Record<string, unknown>).decision as Record<string, unknown>;
+  assert.ok(attempt, "payment attempt created");
+  const decision = (attempt.routeSnapshot as Record<string, unknown>).decision as Record<
+    string,
+    unknown
+  >;
   // Falls through to capability default, not matched by rule
   assert.ok((decision.rationale as string[]).some((r: string) => r.includes("capable provider")));
 });
@@ -201,9 +219,7 @@ test("updateRoutingRule changes priority and conditions live", async () => {
 test("payment routes to mock-bank when mock-emi disabled, no rule matches", async () => {
   const api = makeApi();
   const emiBinding = api.store.getMockProviderBinding();
-  const bankBinding = [...api.store.providerBindings.values()].find(
-    (b) => b.adapterKey === "mock-bank",
-  )!;
+  const bankBinding = getMockBankBinding(api);
 
   // No routing rules; disable EMI so capability fallback picks bank
   api.store.setProviderHealth(emiBinding.id, "disabled");
@@ -216,6 +232,14 @@ test("payment routes to mock-bank when mock-emi disabled, no rule matches", asyn
   );
   assert.equal(attempt?.providerBindingId, bankBinding.id, "bank selected when EMI disabled");
 });
+
+function getMockBankBinding(api: GranvilleApi) {
+  const binding = [...api.store.providerBindings.values()].find(
+    (candidate) => candidate.adapterKey === "mock-bank",
+  );
+  assert.ok(binding, "mock-bank binding seeded");
+  return binding;
+}
 
 // --- HTTP routes ---
 

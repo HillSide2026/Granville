@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
-import { createServer } from "node:http";
 import test from "node:test";
 
 import { GranvilleApi } from "../../apps/api/src/granville-api.ts";
-import { GranvilleHttpControllers, createGranvilleServer } from "../../apps/api/src/http.ts";
+import { createGranvilleServer, GranvilleHttpControllers } from "../../apps/api/src/http.ts";
+import type {
+  ReconciliationException,
+  ReconciliationRun,
+} from "../../libs/contracts/reconciliation.ts";
 
 function buildApi() {
   return new GranvilleApi();
@@ -25,22 +28,6 @@ async function makeCompletedPayment(api: GranvilleApi, suffix: string) {
   return await api.submitPayment(payment.id);
 }
 
-async function withServer(
-  fn: (baseUrl: string, token: string) => Promise<void>,
-): Promise<void> {
-  const controllers = new GranvilleHttpControllers();
-  const server = createGranvilleServer(controllers);
-  await new Promise<void>((resolve) => server.listen(0, resolve));
-  const port = (server.address() as { port: number }).port;
-  try {
-    await fn(`http://localhost:${port}`, "dev-admin");
-  } finally {
-    await new Promise<void>((resolve, reject) =>
-      server.close((err) => (err ? reject(err) : resolve())),
-    );
-  }
-}
-
 // ── Period-scoped runs ────────────────────────────────────────────────────────
 
 test("period-scoped run: only processes orders within date range", async () => {
@@ -51,8 +38,7 @@ test("period-scoped run: only processes orders within date range", async () => {
   const result = api.postReconciliationRun({ to: "2000-01-01T00:00:00.000Z" });
   assert.equal(result.exceptionCount, 0, "no orders in range should yield 0 exceptions");
 
-  const run = api.store.reconciliationRuns.get(result.runId)!;
-  assert.ok(run, "run should be created");
+  const run = requireRun(api, result.runId);
   const summary = run.summary as Record<string, unknown>;
   assert.equal(summary.paymentOrderCount, 0, "paymentOrderCount should be 0 (none in range)");
 });
@@ -63,7 +49,7 @@ test("period-scoped run: periodStart/periodEnd populated on ReconciliationRun", 
   const to = "2026-12-31T23:59:59.999Z";
 
   const result = api.postReconciliationRun({ from, to });
-  const run = api.store.reconciliationRuns.get(result.runId)!;
+  const run = requireRun(api, result.runId);
   assert.equal(run.periodStart, from);
   assert.equal(run.periodEnd, to);
 });
@@ -136,14 +122,14 @@ test("aging pass: info → warning after 1 hour", () => {
 
   // Backdate to 2 hours ago
   api.store.reconciliationExceptions.set(ex.id, {
-    ...api.store.reconciliationExceptions.get(ex.id)!,
+    ...requireException(api, ex.id),
     createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
   });
 
   const { escalated } = api.adminRunAgingPass();
   assert.equal(escalated, 1);
 
-  const updated = api.store.reconciliationExceptions.get(ex.id)!;
+  const updated = requireException(api, ex.id);
   assert.equal(updated.severity, "warning");
 });
 
@@ -158,14 +144,14 @@ test("aging pass: warning → critical after 24 hours", () => {
 
   // Backdate to 25 hours ago
   api.store.reconciliationExceptions.set(ex.id, {
-    ...api.store.reconciliationExceptions.get(ex.id)!,
+    ...requireException(api, ex.id),
     createdAt: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(),
   });
 
   const { escalated } = api.adminRunAgingPass();
   assert.equal(escalated, 1);
 
-  const updated = api.store.reconciliationExceptions.get(ex.id)!;
+  const updated = requireException(api, ex.id);
   assert.equal(updated.severity, "critical");
 });
 
@@ -180,7 +166,7 @@ test("aging pass: resolved exceptions not escalated", () => {
 
   // Backdate and mark resolved
   api.store.reconciliationExceptions.set(ex.id, {
-    ...api.store.reconciliationExceptions.get(ex.id)!,
+    ...requireException(api, ex.id),
     createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     status: "resolved",
   });
@@ -188,7 +174,7 @@ test("aging pass: resolved exceptions not escalated", () => {
   const { escalated } = api.adminRunAgingPass();
   assert.equal(escalated, 0, "resolved exceptions must not be escalated");
 
-  const updated = api.store.reconciliationExceptions.get(ex.id)!;
+  const updated = requireException(api, ex.id);
   assert.equal(updated.severity, "info", "severity unchanged");
 });
 
@@ -210,7 +196,7 @@ test("ignoreReconciliationException: status=ignored, ignoredAt/By set", () => {
   assert.equal(ignored.manualNote, "acceptable gap");
 
   // Verify in store
-  const stored = api.store.reconciliationExceptions.get(ex.id)!;
+  const stored = requireException(api, ex.id);
   assert.equal(stored.status, "ignored");
 });
 
@@ -225,7 +211,7 @@ test("ignored exception not re-escalated by aging pass", () => {
 
   // Backdate to 2 hours ago and mark ignored
   api.store.reconciliationExceptions.set(ex.id, {
-    ...api.store.reconciliationExceptions.get(ex.id)!,
+    ...requireException(api, ex.id),
     createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     status: "ignored",
   });
@@ -265,18 +251,33 @@ test("GET /reconciliation/exceptions?status=open returns only open exceptions", 
     const allResp = await fetch(`${base}/reconciliation/exceptions`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    const all = await allResp.json() as unknown[];
+    const all = (await allResp.json()) as unknown[];
     assert.ok(all.length >= 2, "should have at least 2 exceptions total");
 
     const openResp = await fetch(`${base}/reconciliation/exceptions?status=open`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    const open = await openResp.json() as Array<{ status: string }>;
+    const open = (await openResp.json()) as Array<{ status: string }>;
     assert.ok(open.length >= 1, "should have at least one open exception");
-    assert.ok(open.every((e) => e.status === "open"), "all returned exceptions must be open");
+    assert.ok(
+      open.every((e) => e.status === "open"),
+      "all returned exceptions must be open",
+    );
   } finally {
     await new Promise<void>((resolve, reject) =>
       server.close((err) => (err ? reject(err) : resolve())),
     );
   }
 });
+
+function requireRun(api: GranvilleApi, id: string): ReconciliationRun {
+  const run = api.store.reconciliationRuns.get(id);
+  assert.ok(run, "run should be created");
+  return run;
+}
+
+function requireException(api: GranvilleApi, id: string): ReconciliationException {
+  const exception = api.store.reconciliationExceptions.get(id);
+  assert.ok(exception, "reconciliation exception should exist");
+  return exception;
+}
