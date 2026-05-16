@@ -1,0 +1,7 @@
+{
+  "name": "@granville/client",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Typed TypeScript client for the Granville API",
+  "main": "./src/client.ts"
+}

@@ -14,10 +14,7 @@ import type {
   ProviderTransactionRecord,
 } from "./in-memory-store.ts";
 import type { GranvilleRepositories } from "./repository-contracts.ts";
-
-export interface SqlClient {
-  query<T = unknown>(sql: string, params?: readonly unknown[]): Promise<{ rows: T[] }>;
-}
+import type { SqlClient } from "../../db/client.ts";
 
 export class PostgresGranvilleRepositories implements GranvilleRepositories {
   client: SqlClient;

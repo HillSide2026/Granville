@@ -2,6 +2,7 @@ export interface LedgerPostingRequest {
   id: string;
   aggregateType: string;
   aggregateId: string;
+  postingKey: string;
   idempotencyKey: string;
   ledgerName: string;
   description: string;

@@ -1,141 +1,899 @@
 openapi: 3.1.0
 info:
   title: Granville API
-  version: 0.1.0
-  description: Milestone 1 API surface for Granville-owned payment orchestration.
+  version: 1.0.0
+  description: Granville payment orchestration platform — MSB Stage 1
+servers:
+  - url: http://localhost:8080
+    description: Local development
 security:
   - bearerAuth: []
+
 paths:
   /customers:
     post:
+      operationId: createCustomer
       summary: Create a customer
+      tags: [Customers]
       parameters:
         - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCustomerInput"
       responses:
         "201":
           description: Customer created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+
   /customers/{id}:
     get:
+      operationId: getCustomer
       summary: Get a customer
+      tags: [Customers]
       parameters:
         - $ref: "#/components/parameters/ResourceId"
       responses:
         "200":
           description: Customer found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
     patch:
-      summary: Update customer metadata or lifecycle state
+      operationId: patchCustomer
+      summary: Update customer metadata
+      tags: [Customers]
       parameters:
         - $ref: "#/components/parameters/ResourceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                metadata:
+                  type: object
+                  additionalProperties:
+                    type: string
       responses:
         "200":
           description: Customer updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /payment-accounts:
     post:
-      summary: Open a payment account through the orchestrator
+      operationId: createPaymentAccount
+      summary: Open a payment account
+      tags: [PaymentAccounts]
       parameters:
         - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePaymentAccountInput"
       responses:
         "201":
           description: Payment account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentAccount"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+
   /payment-accounts/{id}:
     get:
+      operationId: getPaymentAccount
       summary: Get a payment account
+      tags: [PaymentAccounts]
       parameters:
         - $ref: "#/components/parameters/ResourceId"
       responses:
         "200":
           description: Payment account found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentAccount"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /payments:
     post:
+      operationId: createPayment
       summary: Create a payment order
+      tags: [Payments]
       parameters:
         - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePaymentOrderInput"
       responses:
         "201":
           description: Payment order created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentOrder"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+
   /payments/{id}:
     get:
+      operationId: getPayment
       summary: Get a payment order
+      tags: [Payments]
       parameters:
         - $ref: "#/components/parameters/ResourceId"
       responses:
         "200":
           description: Payment order found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentOrder"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /payments/{id}/status:
     get:
+      operationId: getPaymentStatus
       summary: Get canonical payment status
+      tags: [Payments]
       parameters:
         - $ref: "#/components/parameters/ResourceId"
       responses:
         "200":
-          description: Payment status found
+          description: Payment status
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, status]
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /payments/{id}/submit:
     post:
-      summary: Submit a payment through routing and provider runtime queues
+      operationId: submitPayment
+      summary: Submit a payment through routing and provider runtime
+      tags: [Payments]
       parameters:
         - $ref: "#/components/parameters/ResourceId"
       responses:
         "202":
           description: Payment submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentOrder"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /payments/{id}/cancel:
     post:
+      operationId: cancelPayment
       summary: Cancel a payment before completion
+      tags: [Payments]
       parameters:
         - $ref: "#/components/parameters/ResourceId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
       responses:
         "200":
           description: Payment cancelled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentOrder"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /payments/{id}/retry:
     post:
+      operationId: retryPayment
       summary: Retry a failed or returned payment
+      tags: [Payments]
       parameters:
         - $ref: "#/components/parameters/ResourceId"
       responses:
         "202":
           description: Payment retry queued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentOrder"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /webhooks/{provider}:
     post:
+      operationId: receiveWebhook
       summary: Receive and durably store a provider webhook
+      tags: [Webhooks]
       parameters:
         - name: provider
           in: path
           required: true
           schema:
             type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
       responses:
         "202":
-          description: Webhook accepted for processing
+          description: Webhook accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, status]
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
   /reconciliation/runs:
     post:
+      operationId: runReconciliation
       summary: Start a transaction-level reconciliation run
+      tags: [Reconciliation]
       responses:
         "202":
           description: Reconciliation queued
-  /reconciliation/runs/{id}:
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [runId, exceptionCount]
+                properties:
+                  runId:
+                    type: string
+                  exceptionCount:
+                    type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /reconciliation/exceptions:
     get:
-      summary: Get a reconciliation run
+      operationId: getReconciliationExceptions
+      summary: List open reconciliation exceptions
+      tags: [Reconciliation]
+      responses:
+        "200":
+          description: Reconciliation exceptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReconciliationException"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/audit-events:
+    get:
+      operationId: getAuditEvents
+      summary: List all audit events
+      tags: [Admin]
+      responses:
+        "200":
+          description: Audit events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditEvent"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/customers:
+    get:
+      operationId: adminGetCustomers
+      summary: List all customers
+      tags: [Admin]
+      responses:
+        "200":
+          description: All customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Customer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/payment-accounts:
+    get:
+      operationId: adminGetPaymentAccounts
+      summary: List all payment accounts
+      tags: [Admin]
+      responses:
+        "200":
+          description: All payment accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentAccount"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/payments:
+    get:
+      operationId: adminGetPayments
+      summary: List all payment orders
+      tags: [Admin]
+      responses:
+        "200":
+          description: All payment orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentOrder"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/payment-attempts:
+    get:
+      operationId: adminGetPaymentAttempts
+      summary: List all payment attempts
+      tags: [Admin]
+      responses:
+        "200":
+          description: All payment attempts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentAttempt"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/provider-transactions:
+    get:
+      operationId: adminGetProviderTransactions
+      summary: List all provider transactions
+      tags: [Admin]
+      responses:
+        "200":
+          description: All provider transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProviderTransaction"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/webhook-events:
+    get:
+      operationId: adminGetWebhookEvents
+      summary: List all webhook events
+      tags: [Admin]
+      responses:
+        "200":
+          description: All webhook events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WebhookEvent"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/ledger-postings:
+    get:
+      operationId: adminGetLedgerPostings
+      summary: List all ledger queue items
+      tags: [Admin]
+      responses:
+        "200":
+          description: All ledger queue items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LedgerQueueItem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/reconciliation/runs:
+    get:
+      operationId: adminGetReconciliationRuns
+      summary: List all reconciliation runs
+      tags: [Admin]
+      responses:
+        "200":
+          description: All reconciliation runs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReconciliationRun"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/reconciliation/exceptions:
+    get:
+      operationId: adminGetReconciliationExceptions
+      summary: List all reconciliation exceptions
+      tags: [Admin]
+      responses:
+        "200":
+          description: All reconciliation exceptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReconciliationException"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/webhooks/{id}/retry:
+    post:
+      operationId: adminRetryWebhook
+      summary: Re-queue a failed or ignored webhook for reprocessing
+      tags: [Admin]
       parameters:
         - $ref: "#/components/parameters/ResourceId"
       responses:
         "200":
-          description: Reconciliation run found
-  /reconciliation/exceptions:
-    get:
-      summary: List reconciliation exceptions
+          description: Webhook re-queued
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, status]
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /admin/ledger-postings/{id}/retry:
+    post:
+      operationId: adminRetryLedgerPosting
+      summary: Replay a dead-lettered ledger posting
+      tags: [Admin]
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
       responses:
         "200":
-          description: Reconciliation exceptions
-  /admin/audit-events:
-    get:
-      summary: List audit events
+          description: Ledger posting replayed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, status]
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /admin/reconciliation/exceptions/{id}/resolve:
+    post:
+      operationId: adminResolveException
+      summary: Manually resolve a reconciliation exception
+      tags: [Admin]
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resolvedBy:
+                  type: string
+                note:
+                  type: string
       responses:
         "200":
-          description: Audit events
+          description: Exception resolved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReconciliationException"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /admin/providers/{id}/disable:
+    post:
+      operationId: adminDisableProvider
+      summary: Disable a provider binding
+      tags: [Admin]
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Provider disabled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProviderBinding"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /admin/metrics:
+    get:
+      operationId: getMetrics
+      summary: Platform metrics snapshot
+      tags: [Admin]
+      responses:
+        "200":
+          description: Metrics snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlatformMetrics"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/reports/payment-history:
+    get:
+      operationId: getPaymentHistory
+      summary: Payment history report
+      tags: [Admin]
+      parameters:
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Payment history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentHistoryRecord"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/reports/audit-export:
+    get:
+      operationId: getAuditExport
+      summary: Audit log export in NDJSON format
+      tags: [Admin]
+      parameters:
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+      responses:
+        "200":
+          description: NDJSON audit export
+          content:
+            application/x-ndjson:
+              schema:
+                type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/reports/settlement:
+    get:
+      operationId: getSettlement
+      summary: Settlement summary report
+      tags: [Admin]
+      parameters:
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+      responses:
+        "200":
+          description: Settlement lines
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SettlementLine"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/notes:
+    post:
+      operationId: adminAddNote
+      summary: Attach a manual note to any resource
+      tags: [Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [resourceType, resourceId, note]
+              properties:
+                resourceType:
+                  type: string
+                resourceId:
+                  type: string
+                note:
+                  type: string
+      responses:
+        "201":
+          description: Note recorded as audit event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEvent"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/routing-rules:
+    get:
+      operationId: listRoutingRules
+      summary: List all routing rules
+      tags: [Admin]
+      responses:
+        "200":
+          description: All routing rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoutingRule"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      operationId: createRoutingRule
+      summary: Create a routing rule
+      tags: [Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRoutingRuleInput"
+      responses:
+        "201":
+          description: Routing rule created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoutingRule"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/routing-rules/{id}:
+    get:
+      operationId: getRoutingRule
+      summary: Get a routing rule
+      tags: [Admin]
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Routing rule found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoutingRule"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: updateRoutingRule
+      summary: Update a routing rule
+      tags: [Admin]
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoutingRuleInput"
+      responses:
+        "200":
+          description: Routing rule updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoutingRule"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /admin/routing-rules/{id}/deactivate:
+    post:
+      operationId: deactivateRoutingRule
+      summary: Deactivate a routing rule
+      tags: [Admin]
+      parameters:
+        - $ref: "#/components/parameters/ResourceId"
+      responses:
+        "200":
+          description: Routing rule deactivated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoutingRule"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+
   parameters:
     IdempotencyKey:
       name: Idempotency-Key
@@ -149,3 +907,685 @@ components:
       required: true
       schema:
         type: string
+        format: uuid
+    FromDate:
+      name: from
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+    ToDate:
+      name: to
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GranvilleError"
+    ValidationError:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GranvilleError"
+    Unauthorized:
+      description: Missing or invalid bearer token
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GranvilleError"
+    Forbidden:
+      description: Insufficient role
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GranvilleError"
+    IdempotencyConflict:
+      description: Idempotency key reused with a different request body
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GranvilleError"
+    InternalError:
+      description: Unexpected server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GranvilleError"
+
+  schemas:
+    GranvilleError:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              enum:
+                - NOT_FOUND
+                - VALIDATION_ERROR
+                - CONFLICT
+                - UNAUTHORIZED
+                - FORBIDDEN
+                - INTERNAL_ERROR
+                - IDEMPOTENCY_CONFLICT
+            message:
+              type: string
+            details:
+              {}
+
+    Money:
+      type: object
+      required: [amount, asset]
+      properties:
+        amount:
+          type: string
+          description: Decimal amount as a string (e.g. "10000")
+        asset:
+          type: string
+          description: Asset code with scale (e.g. "GBP/2")
+
+    Customer:
+      type: object
+      required: [id, type, status, legalName, metadata, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        externalReference:
+          type: string
+        type:
+          type: string
+          enum: [individual, business]
+        status:
+          type: string
+          enum: [created, active, restricted, closed]
+        legalName:
+          type: string
+        email:
+          type: string
+          format: email
+        countryCode:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateCustomerInput:
+      type: object
+      required: [legalName]
+      properties:
+        legalName:
+          type: string
+        email:
+          type: string
+          format: email
+        countryCode:
+          type: string
+        externalReference:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+
+    PaymentAccount:
+      type: object
+      required: [id, customerId, providerBindingId, kind, status, metadata, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        customerId:
+          type: string
+          format: uuid
+        providerBindingId:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum: [virtual, settlement, clearing, external]
+        status:
+          type: string
+          enum: [created, active, suspended, closed]
+        currencyCode:
+          type: string
+        countryCode:
+          type: string
+        displayName:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreatePaymentAccountInput:
+      type: object
+      required: [customerId]
+      properties:
+        customerId:
+          type: string
+          format: uuid
+        providerBindingId:
+          type: string
+          format: uuid
+        currencyCode:
+          type: string
+        countryCode:
+          type: string
+        displayName:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+
+    PaymentOrder:
+      type: object
+      required: [id, customerId, paymentAccountId, direction, transactionType, amount, status, metadata, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        customerId:
+          type: string
+          format: uuid
+        paymentAccountId:
+          type: string
+          format: uuid
+        direction:
+          type: string
+          enum: [outbound, inbound]
+        transactionType:
+          type: string
+          enum: [payment, refund, payout, transfer]
+        amount:
+          $ref: "#/components/schemas/Money"
+        beneficiaryReference:
+          type: string
+        providerReference:
+          type: string
+        status:
+          type: string
+          enum: [created, pending_review, submitted_to_provider, provider_accepted, processing, completed, failed, returned, cancelled]
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        submittedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+
+    CreatePaymentOrderInput:
+      type: object
+      required: [customerId, paymentAccountId, amount, asset]
+      properties:
+        customerId:
+          type: string
+          format: uuid
+        paymentAccountId:
+          type: string
+          format: uuid
+        amount:
+          type: string
+        asset:
+          type: string
+        beneficiaryReference:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+
+    PaymentAttempt:
+      type: object
+      required: [id, paymentOrderId, providerBindingId, attemptNumber, status, routeSnapshot, metadata, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        paymentOrderId:
+          type: string
+          format: uuid
+        providerBindingId:
+          type: string
+          format: uuid
+        attemptNumber:
+          type: integer
+        status:
+          type: string
+        providerRequestId:
+          type: string
+        providerTransactionId:
+          type: string
+        providerReference:
+          type: string
+        routeSnapshot:
+          type: object
+          additionalProperties: true
+        lastError:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        submittedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+
+    ProviderBinding:
+      type: object
+      required: [id, providerId, bindingKind, adapterKey, active, config, metadata, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        providerId:
+          type: string
+          format: uuid
+        bindingKind:
+          type: string
+        adapterKey:
+          type: string
+        active:
+          type: boolean
+        config:
+          type: object
+          additionalProperties: true
+        metadata:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ProviderHealth:
+      type: object
+      required: [providerBindingId, status, checkedAt, failureCount]
+      properties:
+        providerBindingId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [healthy, degraded, disabled]
+        checkedAt:
+          type: string
+          format: date-time
+        failureCount:
+          type: integer
+        latencyMs:
+          type: number
+        reason:
+          type: string
+
+    ProviderTransaction:
+      type: object
+      required: [id, providerBindingId, providerTransactionId, direction, status, amount, asset, occurredAt, rawPayload, metadata]
+      properties:
+        id:
+          type: string
+          format: uuid
+        providerBindingId:
+          type: string
+          format: uuid
+        paymentAttemptId:
+          type: string
+          format: uuid
+        paymentAccountId:
+          type: string
+          format: uuid
+        providerTransactionId:
+          type: string
+        providerReference:
+          type: string
+        direction:
+          type: string
+          enum: [outbound, inbound]
+        status:
+          type: string
+        amount:
+          type: string
+        asset:
+          type: string
+        occurredAt:
+          type: string
+          format: date-time
+        rawPayload:
+          type: object
+          additionalProperties: true
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+
+    WebhookEvent:
+      type: object
+      required: [id, providerBindingId, providerCode, processingStatus, requestPath, headers, queryParams, body, receivedAt, metadata]
+      properties:
+        id:
+          type: string
+          format: uuid
+        providerBindingId:
+          type: string
+          format: uuid
+        providerCode:
+          type: string
+        deliveryId:
+          type: string
+        idempotencyKey:
+          type: string
+        signatureValid:
+          type: boolean
+        processingStatus:
+          type: string
+          enum: [received, queued, processing, processed, failed, ignored]
+        requestPath:
+          type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        queryParams:
+          type: object
+          additionalProperties:
+            type: string
+        body:
+          type: string
+        receivedAt:
+          type: string
+          format: date-time
+        processedAt:
+          type: string
+          format: date-time
+        lastError:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+
+    LedgerQueueItem:
+      type: object
+      required: [id, aggregateType, aggregateId, postingKey, idempotencyKey, ledgerName, description, postings, metadata, status, retryCount, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        aggregateType:
+          type: string
+        aggregateId:
+          type: string
+        postingKey:
+          type: string
+        idempotencyKey:
+          type: string
+        ledgerName:
+          type: string
+        description:
+          type: string
+        postings:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+        status:
+          type: string
+          enum: [pending, processing, posted, failed, dead_lettered]
+        retryCount:
+          type: integer
+        lastError:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ReconciliationRun:
+      type: object
+      required: [id, runType, status, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        providerBindingId:
+          type: string
+          format: uuid
+        runType:
+          type: string
+        status:
+          type: string
+          enum: [queued, running, completed, failed]
+        periodStart:
+          type: string
+          format: date-time
+        periodEnd:
+          type: string
+          format: date-time
+        summary:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+
+    ReconciliationException:
+      type: object
+      required: [id, category, severity, status, description, evidence, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        reconciliationRunId:
+          type: string
+          format: uuid
+        paymentOrderId:
+          type: string
+          format: uuid
+        paymentAttemptId:
+          type: string
+          format: uuid
+        providerTransactionId:
+          type: string
+          format: uuid
+        ledgerPostingId:
+          type: string
+          format: uuid
+        category:
+          type: string
+        severity:
+          type: string
+        status:
+          type: string
+          enum: [open, resolved]
+        description:
+          type: string
+        evidence:
+          type: object
+          additionalProperties: true
+        manualNote:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        resolvedAt:
+          type: string
+          format: date-time
+        resolvedBy:
+          type: string
+
+    AuditEvent:
+      type: object
+      required: [id, actorType, action, resourceType, resourceId, payload, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        actorType:
+          type: string
+          enum: [system, user, service]
+        actorId:
+          type: string
+        action:
+          type: string
+        resourceType:
+          type: string
+        resourceId:
+          type: string
+        requestId:
+          type: string
+        idempotencyKey:
+          type: string
+        payload:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+
+    PlatformMetrics:
+      type: object
+      additionalProperties: true
+
+    PaymentHistoryRecord:
+      type: object
+      additionalProperties: true
+
+    SettlementLine:
+      type: object
+      additionalProperties: true
+
+    RoutingRule:
+      type: object
+      required: [id, name, priority, active, conditions, outcome, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        priority:
+          type: integer
+        active:
+          type: boolean
+        conditions:
+          type: object
+          additionalProperties: true
+        outcome:
+          type: object
+          properties:
+            providerBindingId:
+              type: string
+              format: uuid
+            rail:
+              type: string
+            executionMode:
+              type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateRoutingRuleInput:
+      type: object
+      required: [name, conditions, outcome]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        priority:
+          type: integer
+          default: 100
+        conditions:
+          type: object
+          additionalProperties: true
+        outcome:
+          type: object
+          properties:
+            providerBindingId:
+              type: string
+              format: uuid
+            rail:
+              type: string
+            executionMode:
+              type: string
+
+    UpdateRoutingRuleInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        priority:
+          type: integer
+        active:
+          type: boolean
+        conditions:
+          type: object
+          additionalProperties: true
+        outcome:
+          type: object
+          additionalProperties: true

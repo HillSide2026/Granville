@@ -72,6 +72,7 @@ function html(title: string, content: string): string {
   <nav>
     <span class="brand">Granville Ops</span>
     <a href="/">Dashboard</a>
+    <a href="/routing-rules">Routing Rules</a>
     <a href="/payments">Payments</a>
     <a href="/webhooks">Webhooks</a>
     <a href="/ledger">Ledger</a>
@@ -108,6 +109,8 @@ function statusBadge(status: string): string {
     disabled: "badge-grey",
     ignored: "badge-grey",
     unmatched: "badge-grey",
+    active: "badge-green",
+    inactive: "badge-grey",
   };
   const cls = map[status] ?? "badge-grey";
   return `<span class="badge ${cls}">${status}</span>`;
@@ -136,17 +139,35 @@ function ts(value: unknown): string {
   return `<span title="${d.toISOString()}">${d.toLocaleString()}</span>`;
 }
 
+function humanAge(createdAt: unknown): string {
+  const ms = Date.now() - new Date(String(createdAt)).getTime();
+  if (ms < 60_000) return `${Math.floor(ms / 1000)}s`;
+  if (ms < 3_600_000) return `${Math.floor(ms / 60_000)}m`;
+  const h = Math.floor(ms / 3_600_000);
+  const m = Math.floor((ms % 3_600_000) / 60_000);
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+
 async function handleDashboard(): Promise<string> {
-  const [payments, webhooks, exceptions, postings] = await Promise.all([
+  const [payments, webhooks, exceptions, postings, rules, auditEvents] = await Promise.all([
     adminFetch("/admin/payments") as Promise<Array<Record<string, unknown>>>,
     adminFetch("/admin/webhook-events") as Promise<Array<Record<string, unknown>>>,
     adminFetch("/admin/reconciliation/exceptions") as Promise<Array<Record<string, unknown>>>,
     adminFetch("/admin/ledger-postings") as Promise<Array<Record<string, unknown>>>,
+    adminFetch("/admin/routing-rules") as Promise<Array<Record<string, unknown>>>,
+    adminFetch("/admin/audit-events") as Promise<Array<Record<string, unknown>>>,
   ]);
   const openExceptions = exceptions.filter((e) => e.status === "open").length;
   const deadLetteredPostings = postings.filter((p) => p.status === "dead_lettered").length;
   const failedWebhooks = webhooks.filter((w) => w.processingStatus === "failed").length;
   const completedPayments = payments.filter((p) => p.status === "completed").length;
+  const activeRules = rules.filter((r) => r.active).length;
+
+  const recentActivity = [...auditEvents].reverse().slice(0, 10).map((e) => `
+    <div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:12px">
+      <span style="color:#666;white-space:nowrap">${ts(e.createdAt)}</span>
+      <span><strong>${e.actorType}</strong> <code style="font-size:11px">${e.action}</code> on ${e.resourceType}/${short(String(e.resourceId))}</span>
+    </div>`).join("") || `<p class="empty">No activity yet.</p>`;
 
   return `
     <div class="stat-grid">
@@ -155,8 +176,13 @@ async function handleDashboard(): Promise<string> {
       <div class="stat"><div class="stat-label">Open Exceptions</div><div class="stat-value" style="color:${openExceptions > 0 ? "#dc3545" : "#198754"}">${openExceptions}</div></div>
       <div class="stat"><div class="stat-label">Failed Webhooks</div><div class="stat-value" style="color:${failedWebhooks > 0 ? "#dc3545" : "#198754"}">${failedWebhooks}</div></div>
       <div class="stat"><div class="stat-label">Dead-Lettered Postings</div><div class="stat-value" style="color:${deadLetteredPostings > 0 ? "#dc3545" : "#198754"}">${deadLetteredPostings}</div></div>
+      <div class="stat"><div class="stat-label">Routing Rules (active)</div><div class="stat-value">${activeRules}</div></div>
     </div>
-    <p><a href="/payments">View all payments →</a> &nbsp; <a href="/reconciliation">View exceptions →</a></p>`;
+    <p><a href="/payments">View all payments →</a> &nbsp; <a href="/reconciliation">View exceptions →</a> &nbsp; <a href="/routing-rules">Manage routing rules →</a></p>
+    <h2 style="font-size:15px;margin:16px 0 8px">Recent Activity</h2>
+    <div style="background:#fff;border-radius:6px;padding:12px 16px;box-shadow:0 1px 3px rgba(0,0,0,.1)">
+      ${recentActivity}
+    </div>`;
 }
 
 async function handlePayments(): Promise<string> {
@@ -165,12 +191,82 @@ async function handlePayments(): Promise<string> {
     ["ID", "Status", "Amount", "Account", "Created"],
     rows,
     (r) => `<tr>
-      <td>${short(String(r.id))}</td>
+      <td><a href="/payments/${r.id}">${short(String(r.id))}</a></td>
       <td>${statusBadge(String(r.status))}</td>
       <td>${r.amount ? `${(r.amount as Record<string, unknown>).amount} ${(r.amount as Record<string, unknown>).asset}` : "—"}</td>
       <td>${short(String(r.paymentAccountId))}</td>
       <td>${ts(r.createdAt)}</td>
     </tr>`,
+  );
+}
+
+async function handlePaymentDetail(id: string): Promise<string> {
+  const [payment, allAttempts] = await Promise.all([
+    adminFetch(`/payments/${id}`) as Promise<Record<string, unknown>>,
+    adminFetch("/admin/payment-attempts") as Promise<Array<Record<string, unknown>>>,
+  ]);
+  const attempts = allAttempts.filter((a) => a.paymentOrderId === id);
+  const amount = payment.amount as Record<string, unknown> | null;
+
+  const attemptsSection =
+    attempts.length === 0
+      ? `<p class="empty">No payment attempts.</p>`
+      : `<table>
+           <thead><tr><th>#</th><th>Provider Binding</th><th>Status</th><th>Started</th><th>Completed</th><th>Error</th></tr></thead>
+           <tbody>
+             ${attempts
+               .map(
+                 (a) => `<tr>
+               <td>${a.attemptNumber}</td>
+               <td>${short(String(a.providerBindingId))}</td>
+               <td>${statusBadge(String(a.status))}</td>
+               <td>${ts(a.submittedAt)}</td>
+               <td>${ts(a.completedAt)}</td>
+               <td style="color:#dc3545;font-size:11px">${a.lastError ?? "—"}</td>
+             </tr>`,
+               )
+               .join("")}
+           </tbody>
+         </table>`;
+
+  return `
+    <p style="margin-bottom:16px"><a href="/payments">← Back to Payments</a></p>
+    <div style="background:#fff;border-radius:6px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.1);margin-bottom:20px;font-size:13px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+        <div><strong>Status</strong><br>${statusBadge(String(payment.status))}</div>
+        <div><strong>Amount</strong><br>${amount ? `${amount.amount} ${amount.asset}` : "—"}</div>
+        <div><strong>Customer</strong><br>${short(String(payment.customerId))}</div>
+        <div><strong>Account</strong><br>${short(String(payment.paymentAccountId))}</div>
+        <div><strong>Created</strong><br>${ts(payment.createdAt)}</div>
+        <div><strong>Submitted</strong><br>${ts(payment.submittedAt)}</div>
+        <div><strong>Completed</strong><br>${ts(payment.completedAt)}</div>
+      </div>
+    </div>
+    <h2 style="font-size:15px;margin:0 0 8px">Payment Attempts Timeline</h2>
+    ${attemptsSection}`;
+}
+
+async function handleRoutingRules(): Promise<string> {
+  const rules = (await adminFetch("/admin/routing-rules")) as Array<Record<string, unknown>>;
+  return table(
+    ["Name", "Priority", "Active", "Conditions", "Outcome", "Created", "Action"],
+    rules,
+    (r) => {
+      const deactivateBtn = r.active
+        ? `<form class="action-form" method="POST" action="/admin/routing-rules/${r.id}/deactivate">
+             <button class="btn btn-danger" type="submit">Deactivate</button>
+           </form>`
+        : "";
+      return `<tr>
+        <td>${r.name}${r.description ? `<br><span style="font-size:11px;color:#666">${r.description}</span>` : ""}</td>
+        <td>${r.priority}</td>
+        <td>${statusBadge(r.active ? "active" : "inactive")}</td>
+        <td><code style="font-size:10px;word-break:break-all">${JSON.stringify(r.conditions)}</code></td>
+        <td><code style="font-size:10px;word-break:break-all">${JSON.stringify(r.outcome)}</code></td>
+        <td>${ts(r.createdAt)}</td>
+        <td>${deactivateBtn}</td>
+      </tr>`;
+    },
   );
 }
 
@@ -223,30 +319,72 @@ async function handleLedger(): Promise<string> {
 }
 
 async function handleReconciliation(): Promise<string> {
-  const rows = (await adminFetch("/admin/reconciliation/exceptions")) as Array<
-    Record<string, unknown>
-  >;
-  const rowsHtml = rows.map((r) => {
+  const [runs, exceptions] = await Promise.all([
+    adminFetch("/admin/reconciliation/runs") as Promise<Array<Record<string, unknown>>>,
+    adminFetch("/admin/reconciliation/exceptions") as Promise<Array<Record<string, unknown>>>,
+  ]);
+
+  const recentRuns = [...runs].reverse().slice(0, 10);
+  const runsSection =
+    recentRuns.length === 0
+      ? `<p class="empty">No reconciliation runs yet.</p>`
+      : `<table>
+           <thead><tr><th>ID</th><th>Type</th><th>Status</th><th>Period</th><th>Exceptions</th><th>Completed</th></tr></thead>
+           <tbody>
+             ${recentRuns
+               .map((r) => {
+                 const summary = (r.summary as Record<string, unknown>) ?? {};
+                 const period = r.periodStart
+                   ? `${String(r.periodStart).slice(0, 10)} → ${r.periodEnd ? String(r.periodEnd).slice(0, 10) : "∞"}`
+                   : "—";
+                 return `<tr>
+                   <td>${short(String(r.id))}</td>
+                   <td>${r.runType}</td>
+                   <td>${statusBadge(String(r.status))}</td>
+                   <td style="font-size:11px">${period}</td>
+                   <td>${summary.exceptionCount ?? "—"}</td>
+                   <td>${ts(r.completedAt)}</td>
+                 </tr>`;
+               })
+               .join("")}
+           </tbody>
+         </table>`;
+
+  const rowsHtml = exceptions.map((r) => {
     const resolveBtn =
       r.status === "open"
         ? `<form class="action-form" method="POST" action="/admin/reconciliation/exceptions/${r.id}/resolve">
              <button class="btn btn-success" type="submit">Resolve</button>
            </form>`
         : "";
+    const ignoreBtn =
+      r.status === "open"
+        ? `<form class="action-form" method="POST" action="/admin/reconciliation/exceptions/${r.id}/ignore">
+             <button class="btn btn-danger" type="submit">Ignore</button>
+           </form>`
+        : "";
+    const ageColor = r.severity === "critical" ? "color:#dc3545;font-weight:700" : "";
     return `<tr>
       <td>${short(String(r.id))}</td>
       <td><code style="font-size:11px">${r.category}</code></td>
       <td>${statusBadge(String(r.severity))}</td>
       <td>${statusBadge(String(r.status))}</td>
       <td style="max-width:220px;font-size:12px">${r.description}</td>
-      <td>${ts(r.createdAt)}</td>
-      <td>${resolveBtn}</td>
+      <td style="font-size:11px;${ageColor}">${humanAge(r.createdAt)}</td>
+      <td style="white-space:nowrap">${resolveBtn} ${ignoreBtn}</td>
     </tr>`;
   });
-  if (rowsHtml.length === 0) {
-    return `<p class="empty">No reconciliation exceptions — all clear.</p>`;
-  }
-  return `<table><thead><tr><th>ID</th><th>Category</th><th>Severity</th><th>Status</th><th>Description</th><th>Created</th><th>Action</th></tr></thead><tbody>${rowsHtml.join("")}</tbody></table>`;
+
+  const exceptionsSection =
+    rowsHtml.length === 0
+      ? `<p class="empty">No reconciliation exceptions — all clear.</p>`
+      : `<table><thead><tr><th>ID</th><th>Category</th><th>Severity</th><th>Status</th><th>Description</th><th>Age</th><th>Action</th></tr></thead><tbody>${rowsHtml.join("")}</tbody></table>`;
+
+  return `
+    <h2 style="font-size:15px;margin:0 0 8px">Recent Runs</h2>
+    ${runsSection}
+    <h2 style="font-size:15px;margin:24px 0 8px">Exceptions</h2>
+    ${exceptionsSection}`;
 }
 
 async function handleReports(): Promise<string> {
@@ -257,7 +395,10 @@ async function handleReports(): Promise<string> {
 
   const providerStatuses = metrics.providerOutageStatus as Record<string, string>;
   const providerRows = Object.entries(providerStatuses)
-    .map(([key, status]) => `<tr><td>${key}</td><td>${statusBadge(status)}</td></tr>`)
+    .map(
+      ([key, status]) =>
+        `<tr><td>${key}</td><td>${statusBadge(status)}</td><td>—</td><td>—</td></tr>`,
+    )
     .join("");
 
   const failureRatePct = (Number(metrics.paymentFailureRate) * 100).toFixed(2);
@@ -313,7 +454,7 @@ async function handleReports(): Promise<string> {
     </div>
 
     <h2 style="font-size:16px;margin:16px 0 8px">Provider Status</h2>
-    <table style="width:auto"><thead><tr><th>Adapter</th><th>Status</th></tr></thead><tbody>${providerRows}</tbody></table>
+    <table style="width:auto"><thead><tr><th>Adapter</th><th>Status</th><th>Failure Count</th><th>Last Error</th></tr></thead><tbody>${providerRows}</tbody></table>
 
     <h2 style="font-size:16px;margin:24px 0 8px">Settlement Summary (all time)</h2>
     ${settlementTable}
@@ -369,6 +510,27 @@ async function handleAdminPost(path: string): Promise<string> {
     });
     return "ok";
   }
+  // POST /admin/reconciliation/exceptions/:id/ignore
+  if (
+    parts[0] === "admin" &&
+    parts[1] === "reconciliation" &&
+    parts[2] === "exceptions" &&
+    parts[4] === "ignore"
+  ) {
+    await adminPost(`/admin/reconciliation/exceptions/${parts[3]}/ignore`, {
+      ignoredBy: "ops-ui",
+    });
+    return "ok";
+  }
+  // POST /admin/routing-rules/:id/deactivate
+  if (
+    parts[0] === "admin" &&
+    parts[1] === "routing-rules" &&
+    parts[3] === "deactivate"
+  ) {
+    await adminPost(`/admin/routing-rules/${parts[2]}/deactivate`);
+    return "ok";
+  }
   throw new Error(`Unknown action: ${path}`);
 }
 
@@ -393,6 +555,13 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
     } else if (path === "/payments") {
       title = "Payments";
       content = await handlePayments();
+    } else if (path.startsWith("/payments/") && path.split("/").length === 3) {
+      const id = path.split("/")[2];
+      title = `Payment ${id.slice(0, 8)}…`;
+      content = await handlePaymentDetail(id);
+    } else if (path === "/routing-rules") {
+      title = "Routing Rules";
+      content = await handleRoutingRules();
     } else if (path === "/webhooks") {
       title = "Webhook Events";
       content = await handleWebhooks();

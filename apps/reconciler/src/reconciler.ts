@@ -1,6 +1,8 @@
 import type { InMemoryGranvilleStore } from "../../../libs/persistence/src/in-memory-store.ts";
 
 const STALE_THRESHOLD_MS = 60 * 60 * 1000; // 1 hour
+const AGING_WARNING_MS = 60 * 60 * 1000; // 1 hour
+const AGING_CRITICAL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export class Reconciler {
   store: InMemoryGranvilleStore;
@@ -9,10 +11,29 @@ export class Reconciler {
     this.store = store;
   }
 
-  runTransactionLevel(): { runId: string; exceptionCount: number } {
+  runAgingPass(): { escalated: number } {
+    const now = Date.now();
+    let escalated = 0;
+    for (const exception of this.store.reconciliationExceptions.values()) {
+      if (exception.status !== "open") continue;
+      const ageMs = now - new Date(exception.createdAt).getTime();
+      if (exception.severity === "warning" && ageMs > AGING_CRITICAL_MS) {
+        this.store.updateReconciliationException(exception.id, { severity: "critical" });
+        escalated += 1;
+      } else if (exception.severity === "info" && ageMs > AGING_WARNING_MS) {
+        this.store.updateReconciliationException(exception.id, { severity: "warning" });
+        escalated += 1;
+      }
+    }
+    return { escalated };
+  }
+
+  runTransactionLevel(filter?: { from?: string; to?: string }): { runId: string; exceptionCount: number } {
     const run = this.store.createReconciliationRun({
       runType: "transaction_level",
       summary: {},
+      periodStart: filter?.from,
+      periodEnd: filter?.to,
     });
     this.store.updateReconciliationRun(run.id, {
       status: "running",
@@ -23,7 +44,12 @@ export class Reconciler {
     const staleCutoff = new Date(Date.now() - STALE_THRESHOLD_MS).toISOString();
 
     // --- Per-order checks ---
-    for (const order of this.store.paymentOrders.values()) {
+    const ordersToCheck = [...this.store.paymentOrders.values()].filter((o) => {
+      if (filter?.from && o.createdAt < filter.from) return false;
+      if (filter?.to && o.createdAt > filter.to) return false;
+      return true;
+    });
+    for (const order of ordersToCheck) {
       const attempts = [...this.store.paymentAttempts.values()].filter(
         (attempt) => attempt.paymentOrderId === order.id,
       );
@@ -220,7 +246,7 @@ export class Reconciler {
       completedAt: new Date().toISOString(),
       summary: {
         exceptionCount,
-        paymentOrderCount: this.store.paymentOrders.size,
+        paymentOrderCount: ordersToCheck.length,
         providerTransactionCount: this.store.providerTransactions.size,
       },
     });

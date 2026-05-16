@@ -4,9 +4,15 @@ import type { Customer } from "../../../libs/contracts/customer.ts";
 import type { PaymentAttempt, PaymentOrder } from "../../../libs/contracts/payment.ts";
 import type { ProviderBinding } from "../../../libs/contracts/provider.ts";
 import type {
+  ProviderStatementLine,
   ReconciliationException,
   ReconciliationRun,
 } from "../../../libs/contracts/reconciliation.ts";
+import type {
+  RoutingRule,
+  CreateRoutingRuleInput,
+  UpdateRoutingRuleInput,
+} from "../../../libs/contracts/routing.ts";
 import {
   type AuditEvent,
   type CreateCustomerInput,
@@ -126,7 +132,7 @@ export class GranvilleApi {
         normalizedStatus: normalized.status ?? "",
       },
     };
-    this.store.webhooks.set(event.id, event);
+    this.store.storeWebhookEvent(event);
     this.store.audit("service", "webhook.received", "webhook_event", event.id, {
       providerCode,
     });
@@ -137,8 +143,8 @@ export class GranvilleApi {
     return this.webhookProcessor.drain();
   }
 
-  postReconciliationRun(): { runId: string; exceptionCount: number } {
-    return this.reconciler.runTransactionLevel();
+  postReconciliationRun(filter?: { from?: string; to?: string }): { runId: string; exceptionCount: number } {
+    return this.reconciler.runTransactionLevel(filter);
   }
 
   runProviderWorker(): Promise<number> {
@@ -149,8 +155,37 @@ export class GranvilleApi {
     return this.ledgerWriter.postPending();
   }
 
-  getReconciliationExceptions() {
-    return [...this.store.reconciliationExceptions.values()];
+  getReconciliationExceptions(filter?: { status?: string }) {
+    const all = [...this.store.reconciliationExceptions.values()];
+    return filter?.status ? all.filter((e) => e.status === filter.status) : all;
+  }
+
+  ingestProviderStatement(lines: ProviderStatementLine[]): { ingested: number; duplicates: number } {
+    let ingested = 0;
+    let duplicates = 0;
+    for (const line of lines) {
+      const existing = [...this.store.providerTransactions.values()].find(
+        (tx) => tx.providerBindingId === line.providerBindingId && tx.providerTransactionId === line.providerReference,
+      );
+      if (existing) {
+        duplicates += 1;
+      } else {
+        this.store.recordProviderTransaction({
+          providerBindingId: line.providerBindingId,
+          providerTransactionId: line.providerReference,
+          providerReference: line.providerReference,
+          direction: "inbound",
+          status: "completed",
+          amount: line.amount,
+          asset: line.asset,
+          occurredAt: line.valueDate,
+          rawPayload: { description: line.description ?? "" },
+          metadata: {},
+        });
+        ingested += 1;
+      }
+    }
+    return { ingested, duplicates };
   }
 
   getAuditEvents(): AuditEvent[] {
@@ -191,8 +226,17 @@ export class GranvilleApi {
     return [...this.store.reconciliationRuns.values()];
   }
 
-  adminGetReconciliationExceptions(): ReconciliationException[] {
-    return [...this.store.reconciliationExceptions.values()];
+  adminGetReconciliationExceptions(filter?: { status?: string }): ReconciliationException[] {
+    const all = [...this.store.reconciliationExceptions.values()];
+    return filter?.status ? all.filter((e) => e.status === filter.status) : all;
+  }
+
+  adminRunAgingPass(): { escalated: number } {
+    return this.reconciler.runAgingPass();
+  }
+
+  adminIgnoreException(id: string, ignoredBy: string, note?: string): ReconciliationException {
+    return this.store.ignoreReconciliationException(id, ignoredBy, note);
   }
 
   adminRetryWebhook(webhookId: string): { id: string; status: string } {
@@ -238,6 +282,28 @@ export class GranvilleApi {
       { resolvedBy, note },
     );
     return exception;
+  }
+
+  // --- Routing rules ---
+
+  createRoutingRule(input: CreateRoutingRuleInput): RoutingRule {
+    return this.store.createRoutingRule(input);
+  }
+
+  getRoutingRule(id: string): RoutingRule | undefined {
+    return this.store.routingRules.get(id);
+  }
+
+  listRoutingRules(): RoutingRule[] {
+    return [...this.store.routingRules.values()];
+  }
+
+  updateRoutingRule(id: string, patch: UpdateRoutingRuleInput): RoutingRule {
+    return this.store.updateRoutingRule(id, patch);
+  }
+
+  deactivateRoutingRule(id: string): RoutingRule {
+    return this.store.deactivateRoutingRule(id);
   }
 
   adminDisableProvider(adapterKey: string): ProviderBinding {

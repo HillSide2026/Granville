@@ -93,6 +93,7 @@ export class GranvilleOrchestrator {
     }
 
     const router = new RoutingEngine({
+      rules: [...this.store.routingRules.values()],
       providerBindings: [...this.store.providerBindings.values()],
       providerCapabilities: [...this.store.providerCapabilities.values()],
       providerHealth: [...this.store.providerHealth.values()],

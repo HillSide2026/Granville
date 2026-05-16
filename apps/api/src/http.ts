@@ -1,5 +1,6 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 
+import type { GranvilleErrorCode } from "../../../libs/contracts/errors.ts";
 import { GranvilleApi } from "./granville-api.ts";
 
 export interface Principal {
@@ -14,11 +15,22 @@ export interface HttpContext {
 
 export class HttpError extends Error {
   statusCode: number;
+  code: GranvilleErrorCode;
 
-  constructor(statusCode: number, message: string) {
+  constructor(statusCode: number, message: string, code?: GranvilleErrorCode) {
     super(message);
     this.statusCode = statusCode;
+    this.code = code ?? httpStatusToCode(statusCode);
   }
+}
+
+function httpStatusToCode(status: number): GranvilleErrorCode {
+  if (status === 401) return "UNAUTHORIZED";
+  if (status === 403) return "FORBIDDEN";
+  if (status === 404) return "NOT_FOUND";
+  if (status === 409) return "CONFLICT";
+  if (status === 400) return "VALIDATION_ERROR";
+  return "INTERNAL_ERROR";
 }
 
 export class GranvilleHttpControllers {
@@ -35,9 +47,20 @@ export class GranvilleHttpControllers {
       const result = await this.route(request.method ?? "GET", request.url ?? "/", body, context);
       writeJson(response, result.statusCode, result.body);
     } catch (error) {
-      const statusCode = error instanceof HttpError ? error.statusCode : 500;
       const message = error instanceof Error ? error.message : "Internal server error";
-      writeJson(response, statusCode, { error: message });
+      const isIdempotencyConflict =
+        error instanceof Error && error.message.includes("Idempotency key reused");
+      const statusCode = isIdempotencyConflict
+        ? 409
+        : error instanceof HttpError
+          ? error.statusCode
+          : 500;
+      const code: GranvilleErrorCode = isIdempotencyConflict
+        ? "IDEMPOTENCY_CONFLICT"
+        : error instanceof HttpError
+          ? error.code
+          : "INTERNAL_ERROR";
+      writeJson(response, statusCode, { error: { code, message } });
     }
   }
 
@@ -67,8 +90,7 @@ export class GranvilleHttpControllers {
       requireRole(context, "customer:write");
       const customer = required(this.api.getCustomer(parts[1]));
       const metadata = asObject(asObject(body).metadata);
-      const updated = { ...customer, metadata: { ...customer.metadata, ...metadata } };
-      this.api.store.customers.set(customer.id, updated);
+      const updated = this.api.store.updateCustomer(customer.id, { metadata: { ...customer.metadata, ...metadata } });
       this.api.store.audit("service", "customer.updated", "customer", customer.id);
       return { statusCode: 200, body: updated };
     }
@@ -113,11 +135,20 @@ export class GranvilleHttpControllers {
     }
     if (method === "POST" && path === "/reconciliation/runs") {
       requireRole(context, "reconciliation:write");
-      return { statusCode: 202, body: this.api.postReconciliationRun() };
+      return {
+        statusCode: 202,
+        body: this.api.postReconciliationRun({
+          from: body.from ? String(body.from) : undefined,
+          to: body.to ? String(body.to) : undefined,
+        }),
+      };
     }
     if (method === "GET" && path === "/reconciliation/exceptions") {
       requireRole(context, "reconciliation:read");
-      return { statusCode: 200, body: this.api.getReconciliationExceptions() };
+      return {
+        statusCode: 200,
+        body: this.api.getReconciliationExceptions({ status: query.get("status") ?? undefined }),
+      };
     }
     if (method === "GET" && path === "/admin/audit-events") {
       requireRole(context, "admin:read");
@@ -157,7 +188,32 @@ export class GranvilleHttpControllers {
     }
     if (method === "GET" && path === "/admin/reconciliation/exceptions") {
       requireRole(context, "admin:read");
-      return { statusCode: 200, body: this.api.adminGetReconciliationExceptions() };
+      return {
+        statusCode: 200,
+        body: this.api.adminGetReconciliationExceptions({ status: query.get("status") ?? undefined }),
+      };
+    }
+    if (method === "POST" && path === "/admin/reconciliation/statements") {
+      requireRole(context, "admin:write");
+      const lines = Array.isArray(body.lines) ? body.lines : [];
+      return { statusCode: 200, body: this.api.ingestProviderStatement(lines) };
+    }
+    if (method === "POST" && path === "/admin/reconciliation/aging") {
+      requireRole(context, "admin:write");
+      return { statusCode: 200, body: this.api.adminRunAgingPass() };
+    }
+    if (
+      method === "POST" &&
+      parts[0] === "admin" &&
+      parts[1] === "reconciliation" &&
+      parts[2] === "exceptions" &&
+      parts[3] &&
+      parts[4] === "ignore"
+    ) {
+      requireRole(context, "admin:write");
+      const ignoredBy = String(body.ignoredBy ?? context.principal.id);
+      const note = body.note ? String(body.note) : undefined;
+      return { statusCode: 200, body: this.api.adminIgnoreException(parts[3], ignoredBy, note) };
     }
     if (
       method === "POST" &&
@@ -234,6 +290,45 @@ export class GranvilleHttpControllers {
           to: query.get("to") ?? undefined,
         }),
       };
+    }
+    if (method === "GET" && path === "/admin/routing-rules") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.listRoutingRules() };
+    }
+    if (method === "GET" && parts[0] === "admin" && parts[1] === "routing-rules" && parts[2] && !parts[3]) {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: required(this.api.getRoutingRule(parts[2])) };
+    }
+    if (method === "POST" && path === "/admin/routing-rules") {
+      requireRole(context, "admin:write");
+      return {
+        statusCode: 201,
+        body: this.api.createRoutingRule({
+          name: String(body.name ?? ""),
+          description: body.description ? String(body.description) : undefined,
+          priority: body.priority !== undefined ? Number(body.priority) : undefined,
+          conditions: asObject(body.conditions),
+          outcome: asObject(body.outcome),
+        }),
+      };
+    }
+    if (method === "PATCH" && parts[0] === "admin" && parts[1] === "routing-rules" && parts[2] && !parts[3]) {
+      requireRole(context, "admin:write");
+      return {
+        statusCode: 200,
+        body: this.api.updateRoutingRule(parts[2], {
+          name: body.name !== undefined ? String(body.name) : undefined,
+          description: body.description !== undefined ? String(body.description) : undefined,
+          priority: body.priority !== undefined ? Number(body.priority) : undefined,
+          active: body.active !== undefined ? Boolean(body.active) : undefined,
+          conditions: body.conditions !== undefined ? asObject(body.conditions) : undefined,
+          outcome: body.outcome !== undefined ? asObject(body.outcome) : undefined,
+        }),
+      };
+    }
+    if (method === "POST" && parts[0] === "admin" && parts[1] === "routing-rules" && parts[2] && parts[3] === "deactivate") {
+      requireRole(context, "admin:write");
+      return { statusCode: 200, body: this.api.deactivateRoutingRule(parts[2]) };
     }
     if (method === "POST" && path === "/admin/notes") {
       requireRole(context, "admin:write");

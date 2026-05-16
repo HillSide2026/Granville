@@ -6,17 +6,61 @@ networks:
 volumes:
   ledger-postgres: {}
   payments-postgres: {}
+  granville-postgres: {}
   prometheus-data: {}
   grafana-data: {}
 
 services:
+  granville-postgres:
+    profiles: ["granville"]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: granville
+      POSTGRES_PASSWORD: granville
+      POSTGRES_DB: granville
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U granville"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - granville
+    volumes:
+      - granville-postgres:/var/lib/postgresql/data
+
+  granville-migrate:
+    profiles: ["granville"]
+    image: postgres:16-alpine
+    command: >
+      sh -c "
+        psql $$DATABASE_URL -f /migrations/0001_granville_operational_core.sql &&
+        psql $$DATABASE_URL -f /migrations/0002_provider_runtime_and_health.sql &&
+        psql $$DATABASE_URL -f /migrations/0003_m5_m6_schema_additions.sql &&
+        psql $$DATABASE_URL -f /migrations/0004_schema_gaps.sql &&
+        psql $$DATABASE_URL -f /seeds/mock-providers.sql
+      "
+    depends_on:
+      granville-postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://granville:granville@granville-postgres/granville?sslmode=disable
+    networks:
+      - granville
+    volumes:
+      - ../libs/db/migrations:/migrations:ro
+      - ../libs/db/seeds:/seeds:ro
+
   granville-api:
     profiles: ["granville"]
     image: node:22-alpine
     working_dir: /workspace
-    command: ["node", "--experimental-strip-types", "apps/api/src/http.ts"]
+    command: ["node", "--experimental-strip-types", "apps/api/src/server.ts"]
+    depends_on:
+      granville-migrate:
+        condition: service_completed_successfully
     environment:
-      GRANVILLE_API_PORT: "8080"
+      PORT: "8080"
+      DATABASE_URL: postgres://granville:granville@granville-postgres/granville?sslmode=disable
       FORMANCE_LEDGER_URL: http://ledger:3068
       OTEL_SERVICE_NAME: granville-api
       OTEL_TRACES_EXPORTER: otlp

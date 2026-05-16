@@ -50,6 +50,17 @@ export interface ReconciliationException {
   createdAt: string;
   resolvedAt?: string;
   resolvedBy?: string;
+  ignoredAt?: string;
+  ignoredBy?: string;
+}
+
+export interface ProviderStatementLine {
+  providerBindingId: string;
+  providerReference: string;
+  amount: string;
+  asset: string;
+  valueDate: string;
+  description?: string;
 }
 
 export interface ReconciliationRecord {

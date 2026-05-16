@@ -33,6 +33,7 @@ export interface RoutingDecision {
 export interface RoutingRule {
   id: string;
   name: string;
+  description?: string;
   priority: number;
   active: boolean;
   conditions: Record<string, unknown>;
@@ -41,4 +42,23 @@ export interface RoutingRule {
     rail?: PaymentRail;
     executionMode?: "provider_runtime";
   };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateRoutingRuleInput {
+  name: string;
+  description?: string;
+  priority?: number;
+  conditions: Record<string, unknown>;
+  outcome: RoutingRule["outcome"];
+}
+
+export interface UpdateRoutingRuleInput {
+  name?: string;
+  description?: string;
+  priority?: number;
+  active?: boolean;
+  conditions?: Record<string, unknown>;
+  outcome?: RoutingRule["outcome"];
 }

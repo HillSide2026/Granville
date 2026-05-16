@@ -10,6 +10,7 @@ import type {
   ReconciliationRecord,
   ReconciliationRun,
 } from "../../contracts/reconciliation.ts";
+import type { RoutingRule, CreateRoutingRuleInput, UpdateRoutingRuleInput } from "../../contracts/routing.ts";
 
 export interface AuditEvent {
   id: string;
@@ -192,6 +193,7 @@ export class InMemoryGranvilleStore {
   readonly auditEvents: AuditEvent[] = [];
   readonly idempotency = new Map<string, IdempotencyRecord>();
   readonly providerHealth = new Map<string, ProviderHealth>();
+  readonly routingRules = new Map<string, RoutingRule>();
 
   constructor() {
     this.seedMockProvider();
@@ -666,6 +668,35 @@ export class InMemoryGranvilleStore {
     return clone(updated);
   }
 
+  updateReconciliationException(
+    id: string,
+    patch: Partial<Pick<ReconciliationException, "severity" | "status" | "manualNote" | "ignoredAt" | "ignoredBy">>,
+  ): ReconciliationException {
+    const exception = this.require(this.reconciliationExceptions, id, "reconciliation_exception");
+    const updated: ReconciliationException = { ...exception, ...patch };
+    this.reconciliationExceptions.set(id, updated);
+    return clone(updated);
+  }
+
+  ignoreReconciliationException(
+    id: string,
+    ignoredBy: string,
+    note?: string,
+  ): ReconciliationException {
+    const now = timestamp();
+    const updated = this.updateReconciliationException(id, {
+      status: "ignored",
+      ignoredAt: now,
+      ignoredBy,
+      ...(note !== undefined ? { manualNote: note } : {}),
+    });
+    this.audit("user", "reconciliation_exception.ignored", "reconciliation_exception", id, {
+      ignoredBy,
+      note,
+    });
+    return updated;
+  }
+
   createReconciliationRun(
     input: Omit<ReconciliationRun, "id" | "status" | "createdAt">,
   ): ReconciliationRun {
@@ -767,6 +798,60 @@ export class InMemoryGranvilleStore {
       responsePayload: clone(result.response),
     });
     return result.response;
+  }
+
+  storeWebhookEvent(event: WebhookEvent): void {
+    this.webhooks.set(event.id, event);
+  }
+
+  updateCustomer(id: string, patch: Partial<Omit<Customer, "id" | "createdAt">>): Customer {
+    const existing = this.require(this.customers, id, "customer");
+    const updated = { ...existing, ...patch, updatedAt: new Date().toISOString() };
+    this.customers.set(id, updated);
+    return clone(updated);
+  }
+
+  createRoutingRule(input: CreateRoutingRuleInput): RoutingRule {
+    const now = timestamp();
+    const rule: RoutingRule = {
+      id: randomUUID(),
+      name: input.name,
+      description: input.description,
+      priority: input.priority ?? 100,
+      active: true,
+      conditions: input.conditions,
+      outcome: input.outcome,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.routingRules.set(rule.id, rule);
+    this.audit("service", "routing_rule.created", "routing_rule", rule.id, { name: rule.name });
+    return clone(rule);
+  }
+
+  updateRoutingRule(id: string, patch: UpdateRoutingRuleInput): RoutingRule {
+    const existing = this.require(this.routingRules, id, "routing_rule");
+    const updated: RoutingRule = {
+      ...existing,
+      ...(patch.name !== undefined ? { name: patch.name } : {}),
+      ...(patch.description !== undefined ? { description: patch.description } : {}),
+      ...(patch.priority !== undefined ? { priority: patch.priority } : {}),
+      ...(patch.active !== undefined ? { active: patch.active } : {}),
+      ...(patch.conditions !== undefined ? { conditions: patch.conditions } : {}),
+      ...(patch.outcome !== undefined ? { outcome: patch.outcome } : {}),
+      updatedAt: timestamp(),
+    };
+    this.routingRules.set(id, updated);
+    this.audit("service", "routing_rule.updated", "routing_rule", id, { patch });
+    return clone(updated);
+  }
+
+  deactivateRoutingRule(id: string): RoutingRule {
+    const existing = this.require(this.routingRules, id, "routing_rule");
+    const updated: RoutingRule = { ...existing, active: false, updatedAt: timestamp() };
+    this.routingRules.set(id, updated);
+    this.audit("service", "routing_rule.deactivated", "routing_rule", id);
+    return clone(updated);
   }
 
   getMockProviderBinding(): ProviderBinding {
