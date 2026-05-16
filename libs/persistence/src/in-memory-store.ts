@@ -10,7 +10,11 @@ import type {
   ReconciliationRecord,
   ReconciliationRun,
 } from "../../contracts/reconciliation.ts";
-import type { RoutingRule, CreateRoutingRuleInput, UpdateRoutingRuleInput } from "../../contracts/routing.ts";
+import type {
+  CreateRoutingRuleInput,
+  RoutingRule,
+  UpdateRoutingRuleInput,
+} from "../../contracts/routing.ts";
 
 export interface AuditEvent {
   id: string;
@@ -432,7 +436,14 @@ export class InMemoryGranvilleStore {
         transaction.providerTransactionId === input.providerTransactionId,
     );
     if (existing) {
-      return clone(existing);
+      const updated: ProviderTransactionRecord = {
+        ...existing,
+        ...input,
+        id: existing.id,
+        occurredAt: input.occurredAt ?? existing.occurredAt,
+      };
+      this.providerTransactions.set(existing.id, updated);
+      return clone(updated);
     }
     const record: ProviderTransactionRecord = {
       ...input,
@@ -670,7 +681,12 @@ export class InMemoryGranvilleStore {
 
   updateReconciliationException(
     id: string,
-    patch: Partial<Pick<ReconciliationException, "severity" | "status" | "manualNote" | "ignoredAt" | "ignoredBy">>,
+    patch: Partial<
+      Pick<
+        ReconciliationException,
+        "severity" | "status" | "manualNote" | "ignoredAt" | "ignoredBy"
+      >
+    >,
   ): ReconciliationException {
     const exception = this.require(this.reconciliationExceptions, id, "reconciliation_exception");
     const updated: ReconciliationException = { ...exception, ...patch };

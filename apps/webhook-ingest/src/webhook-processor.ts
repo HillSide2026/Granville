@@ -100,6 +100,24 @@ export class WebhookProcessor {
           this.store.enqueueLedgerPosting(paymentCompletedPosting(updatedOrder, updatedAttempt));
         }
       }
+
+      if (normalized.providerTransactionId) {
+        this.store.recordProviderTransaction({
+          providerBindingId: attempt.providerBindingId,
+          paymentAttemptId: attempt.id,
+          paymentAccountId: order.paymentAccountId,
+          providerTransactionId: normalized.providerTransactionId,
+          providerReference: normalized.providerReference,
+          direction: order.direction,
+          status: normalized.status,
+          amount: order.amount.amount,
+          asset: order.amount.asset,
+          rawPayload: normalized.rawPayload,
+          metadata: {
+            providerCode: webhook.providerCode,
+          },
+        });
+      }
     }
 
     this.store.markWebhookProcessed(webhookId);

@@ -1,3 +1,5 @@
+import { normalizeAirwallexWebhook } from "./airwallex/index.ts";
+
 export interface NormalizedProviderWebhook {
   providerCode: string;
   providerReference?: string;
@@ -10,6 +12,9 @@ export function normalizeProviderWebhook(
   providerCode: string,
   payload: Record<string, unknown>,
 ): NormalizedProviderWebhook {
+  if (providerCode === "airwallex") {
+    return normalizeAirwallexWebhook(payload);
+  }
   if (providerCode === "mock-bank") {
     return {
       providerCode,

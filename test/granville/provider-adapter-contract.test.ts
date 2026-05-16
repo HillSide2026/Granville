@@ -5,7 +5,13 @@ import { ProviderAdapterRegistry } from "../../libs/provider-adapters/adapter-re
 
 const registry = new ProviderAdapterRegistry();
 
-for (const adapterKey of ["mock-emi", "mock-bank", "native-emi", "formance-payments"]) {
+for (const adapterKey of [
+  "mock-emi",
+  "mock-bank",
+  "native-emi",
+  "airwallex",
+  "formance-payments",
+]) {
   test(`adapter contract: ${adapterKey}`, async () => {
     const provider = registry.resolve(binding(adapterKey));
     const customer = await provider.createCustomer({
@@ -55,7 +61,7 @@ function binding(adapterKey: string): ProviderBinding {
     adapterKey,
     formanceConnectorId: `connector-${adapterKey}`,
     active: true,
-    config: {},
+    config: adapterKey === "airwallex" ? { dryRun: true } : {},
     metadata: {},
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

@@ -9,8 +9,8 @@ import type {
   ReconciliationRun,
 } from "../../../libs/contracts/reconciliation.ts";
 import type {
-  RoutingRule,
   CreateRoutingRuleInput,
+  RoutingRule,
   UpdateRoutingRuleInput,
 } from "../../../libs/contracts/routing.ts";
 import {
@@ -22,6 +22,7 @@ import {
   type ProviderTransactionRecord,
   type WebhookEvent,
 } from "../../../libs/persistence/src/in-memory-store.ts";
+import { verifyAirwallexWebhookSignature } from "../../../libs/provider-adapters/airwallex/index.ts";
 import { normalizeProviderWebhook } from "../../../libs/provider-adapters/webhook-normalizer.ts";
 import {
   type DateRangeFilter,
@@ -113,23 +114,50 @@ export class GranvilleApi {
     return payment ? { id: payment.id, status: payment.status } : undefined;
   }
 
-  postWebhook(providerCode: string, body: string): { id: string; status: string } {
-    const providerBindingId = this.store.getProviderBindingByAdapterKey(providerCode).id;
+  postWebhook(
+    providerCode: string,
+    body: string,
+    options: { headers?: Record<string, string>; queryParams?: Record<string, string> } = {},
+  ): { id: string; status: string } {
+    const binding = this.store.getProviderBindingByAdapterKey(providerCode);
+    const providerBindingId = binding.id;
+    const headers = options.headers ?? {};
     const normalized = normalizeProviderWebhook(providerCode, parseWebhookBody(body));
+    const idempotencyKey = webhookIdempotencyKey(providerCode, body, normalized.rawPayload);
+    const existing = [...this.store.webhooks.values()].find(
+      (event) =>
+        event.providerBindingId === providerBindingId && event.idempotencyKey === idempotencyKey,
+    );
+    if (existing) {
+      return { id: existing.id, status: existing.processingStatus };
+    }
+
+    const signatureCheck =
+      providerCode === "airwallex"
+        ? verifyAirwallexWebhookSignature(
+            body,
+            headers,
+            airwallexWebhookSecret(binding.config) ?? process.env.AIRWALLEX_WEBHOOK_SECRET,
+          )
+        : { valid: true };
     const event = {
       id: randomUUID(),
       providerBindingId,
       providerCode,
-      processingStatus: "queued" as const,
+      deliveryId: idempotencyKey,
+      idempotencyKey,
+      signatureValid: signatureCheck.valid,
+      processingStatus: signatureCheck.valid ? ("queued" as const) : ("ignored" as const),
       requestPath: `/webhooks/${providerCode}`,
-      headers: {},
-      queryParams: {},
+      headers,
+      queryParams: options.queryParams ?? {},
       body,
       receivedAt: new Date().toISOString(),
       metadata: {
         normalizedProviderReference: normalized.providerReference ?? "",
         normalizedProviderTransactionId: normalized.providerTransactionId ?? "",
         normalizedStatus: normalized.status ?? "",
+        signatureFailureReason: signatureCheck.reason ?? "",
       },
     };
     this.store.storeWebhookEvent(event);
@@ -143,8 +171,18 @@ export class GranvilleApi {
     return this.webhookProcessor.drain();
   }
 
-  postReconciliationRun(filter?: { from?: string; to?: string }): { runId: string; exceptionCount: number } {
+  postReconciliationRun(filter?: { from?: string; to?: string }): {
+    runId: string;
+    exceptionCount: number;
+  } {
     return this.reconciler.runTransactionLevel(filter);
+  }
+
+  syncProviderTransactions(
+    adapterKey: string,
+    filter?: { from?: string; to?: string },
+  ): Promise<{ synced: number }> {
+    return this.reconciler.syncProviderTransactions(adapterKey, filter);
   }
 
   runProviderWorker(): Promise<number> {
@@ -160,12 +198,17 @@ export class GranvilleApi {
     return filter?.status ? all.filter((e) => e.status === filter.status) : all;
   }
 
-  ingestProviderStatement(lines: ProviderStatementLine[]): { ingested: number; duplicates: number } {
+  ingestProviderStatement(lines: ProviderStatementLine[]): {
+    ingested: number;
+    duplicates: number;
+  } {
     let ingested = 0;
     let duplicates = 0;
     for (const line of lines) {
       const existing = [...this.store.providerTransactions.values()].find(
-        (tx) => tx.providerBindingId === line.providerBindingId && tx.providerTransactionId === line.providerReference,
+        (tx) =>
+          tx.providerBindingId === line.providerBindingId &&
+          tx.providerTransactionId === line.providerReference,
       );
       if (existing) {
         duplicates += 1;
@@ -251,7 +294,10 @@ export class GranvilleApi {
     }
     this.store.queueWebhookForProcessing(webhookId);
     this.store.audit("user", "admin.webhook.retry_requested", "webhook_event", webhookId, {});
-    const updated = this.store.webhooks.get(webhookId)!;
+    const updated = this.store.webhooks.get(webhookId);
+    if (!updated) {
+      throw new Error(`Unknown webhook_event: ${webhookId}`);
+    }
     return { id: webhookId, status: updated.processingStatus };
   }
 
@@ -268,7 +314,10 @@ export class GranvilleApi {
       postingId,
       {},
     );
-    const updated = this.store.ledgerQueue.get(postingId)!;
+    const updated = this.store.ledgerQueue.get(postingId);
+    if (!updated) {
+      throw new Error(`Unknown ledger_posting: ${postingId}`);
+    }
     return { id: postingId, status: updated.status };
   }
 
@@ -358,4 +407,25 @@ function parseWebhookBody(body: string): Record<string, unknown> {
   } catch {
     return {};
   }
+}
+
+function webhookIdempotencyKey(
+  providerCode: string,
+  body: string,
+  payload: Record<string, unknown>,
+): string {
+  const providerEventId = stringField(payload.id) ?? stringField(payload.event_id);
+  if (providerEventId) {
+    return providerEventId;
+  }
+  return `${providerCode}:${Buffer.from(body).toString("base64url")}`;
+}
+
+function airwallexWebhookSecret(config: Record<string, unknown>): string | undefined {
+  const value = config.webhookSecret;
+  return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function stringField(value: unknown): string | undefined {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
 }

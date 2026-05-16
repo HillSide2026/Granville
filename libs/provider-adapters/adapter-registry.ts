@@ -1,4 +1,5 @@
 import type { ProviderBinding } from "../contracts/provider.ts";
+import { AirwallexEmiProvider } from "./airwallex/index.ts";
 import { FormancePaymentsWrapperAdapter } from "./formance-payments-wrapper.ts";
 import type { PaymentAccountProvider } from "./interfaces/index.ts";
 import { MockBankProvider, MockEmiProvider } from "./mock/index.ts";
@@ -11,6 +12,7 @@ export class ProviderAdapterRegistry {
     this.register("mock-emi", () => new MockEmiProvider());
     this.register("mock-bank", () => new MockBankProvider());
     this.register("native-emi", () => new NativeEmiProvider());
+    this.register("airwallex", (binding) => AirwallexEmiProvider.fromBinding(binding));
     this.register(
       "formance-payments",
       (binding) => new FormancePaymentsWrapperAdapter(binding.formanceConnectorId),

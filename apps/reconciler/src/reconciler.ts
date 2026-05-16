@@ -1,4 +1,5 @@
 import type { InMemoryGranvilleStore } from "../../../libs/persistence/src/in-memory-store.ts";
+import { ProviderAdapterRegistry } from "../../../libs/provider-adapters/adapter-registry.ts";
 
 const STALE_THRESHOLD_MS = 60 * 60 * 1000; // 1 hour
 const AGING_WARNING_MS = 60 * 60 * 1000; // 1 hour
@@ -6,9 +7,48 @@ const AGING_CRITICAL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export class Reconciler {
   store: InMemoryGranvilleStore;
+  registry: ProviderAdapterRegistry;
 
-  constructor(store: InMemoryGranvilleStore) {
+  constructor(store: InMemoryGranvilleStore, registry = new ProviderAdapterRegistry()) {
     this.store = store;
+    this.registry = registry;
+  }
+
+  async syncProviderTransactions(
+    adapterKey: string,
+    filter: { from?: string; to?: string } = {},
+  ): Promise<{ synced: number }> {
+    const binding = this.store.getProviderBindingByAdapterKey(adapterKey);
+    const provider = this.registry.resolve(binding);
+    const transactions = await provider.listTransactions(
+      binding.id,
+      filter.from ? new Date(filter.from) : new Date(0),
+      filter.to ? new Date(filter.to) : new Date(),
+    );
+    let synced = 0;
+    for (const transaction of transactions) {
+      const attempt = this.findAttemptForProviderTransaction(
+        transaction.providerReference,
+        transaction.providerTransactionId,
+      );
+      const order = attempt ? this.store.paymentOrders.get(attempt.paymentOrderId) : undefined;
+      this.store.recordProviderTransaction({
+        providerBindingId: binding.id,
+        paymentAttemptId: attempt?.id,
+        paymentAccountId: order?.paymentAccountId,
+        providerTransactionId: transaction.providerTransactionId,
+        providerReference: transaction.providerReference,
+        direction: "outbound",
+        status: transaction.status,
+        amount: transaction.amount,
+        asset: transaction.asset,
+        occurredAt: transaction.occurredAt.toISOString(),
+        rawPayload: transaction.rawPayload ?? {},
+        metadata: transaction.metadata,
+      });
+      synced += 1;
+    }
+    return { synced };
   }
 
   runAgingPass(): { escalated: number } {
@@ -28,7 +68,10 @@ export class Reconciler {
     return { escalated };
   }
 
-  runTransactionLevel(filter?: { from?: string; to?: string }): { runId: string; exceptionCount: number } {
+  runTransactionLevel(filter?: { from?: string; to?: string }): {
+    runId: string;
+    exceptionCount: number;
+  } {
     const run = this.store.createReconciliationRun({
       runType: "transaction_level",
       summary: {},
@@ -255,5 +298,16 @@ export class Reconciler {
     });
 
     return { runId: run.id, exceptionCount };
+  }
+
+  private findAttemptForProviderTransaction(
+    providerReference?: string,
+    providerTransactionId?: string,
+  ) {
+    return [...this.store.paymentAttempts.values()].find(
+      (attempt) =>
+        (providerReference && attempt.providerReference === providerReference) ||
+        (providerTransactionId && attempt.providerTransactionId === providerTransactionId),
+    );
   }
 }
