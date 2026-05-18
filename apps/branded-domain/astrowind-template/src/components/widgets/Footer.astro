@@ -1,0 +1,124 @@
+---
+import { Icon } from 'astro-icon/components';
+import Logo from '~/components/Logo.astro';
+import { getHomePermalink } from '~/utils/permalinks';
+
+interface Link {
+  text?: string;
+  href?: string;
+  ariaLabel?: string;
+  icon?: string;
+  target?: string;
+}
+
+interface Links {
+  title?: string;
+  links: Array<Link>;
+}
+
+export interface Props {
+  links: Array<Links>;
+  secondaryLinks: Array<Link>;
+  socialLinks: Array<Link>;
+  description?: string;
+  footNote?: string;
+  theme?: string;
+}
+
+const { socialLinks = [], secondaryLinks = [], links = [], description = '', footNote = '', theme = 'light' } = Astro.props;
+
+const navigationLinks = links.flatMap(({ links: groupLinks }) => groupLinks ?? []);
+
+const resolveHref = (href?: string) => (!href || href.includes('{{') ? '#' : href);
+---
+
+<footer class:list={[{ dark: theme === 'dark' }, 'relative border-t border-slate-900/45 dark:border-slate-800/55 not-prose']}>
+  <div
+    class="absolute inset-0 pointer-events-none bg-[linear-gradient(180deg,rgba(4,9,16,0.82),rgba(3,8,14,0.98)_18%,rgba(3,8,14,1))]"
+    aria-hidden="true"
+  ></div>
+  <div class="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-slate-900/12 to-transparent" aria-hidden="true"></div>
+  <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-600/22 to-transparent" aria-hidden="true"></div>
+  <div
+    class="relative max-w-7xl mx-auto px-4 sm:px-6 dark:text-slate-300 intersect-once intersect-quarter intersect-no-queue motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+  >
+    <div class="grid gap-10 py-12 md:gap-12 md:py-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)_auto] lg:items-start">
+      <div class="max-w-sm">
+        <a class="inline-flex items-center" href={getHomePermalink()} aria-label="Granville Finance home">
+          <Logo />
+        </a>
+        {description && <p class="mt-4 max-w-xs text-sm leading-7 text-slate-400">{description}</p>}
+      </div>
+
+      <div class="lg:justify-self-center">
+        <div class="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-slate-500">Navigation</div>
+        <ul class="mt-4 grid gap-x-10 gap-y-3 text-sm sm:grid-cols-2">
+          {navigationLinks.map(({ text, href, ariaLabel }) => (
+            <li>
+              <a
+                class="text-slate-400 transition duration-150 ease-in-out hover:text-slate-100"
+                href={resolveHref(href)}
+                aria-label={ariaLabel}
+              >
+                <Fragment set:html={text} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="lg:justify-self-end">
+        <div class="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-slate-500">LinkedIn</div>
+        <ul class="mt-4 flex items-center gap-3 lg:justify-end">
+          {socialLinks.map(({ ariaLabel, href, text, icon, target }) => {
+            const resolvedHref = resolveHref(href);
+
+            return (
+              <li>
+                <a
+                  class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-700/80 bg-[rgba(255,255,255,0.03)] text-slate-300 transition duration-150 ease-in-out hover:border-slate-500 hover:bg-slate-800/70 hover:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-500/50 focus:ring-offset-2 focus:ring-offset-[#040910]"
+                  aria-label={ariaLabel}
+                  href={resolvedHref}
+                  {...(target && resolvedHref !== '#' ? { target, rel: 'noopener noreferrer' } : {})}
+                >
+                  {icon && <Icon name={icon} class="h-5 w-5" />}
+                  <Fragment set:html={text} />
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+
+    {secondaryLinks?.length ? (
+      <div class="border-t border-slate-800/80 py-5">
+        <ul class="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+          {secondaryLinks.map(({ text, href, ariaLabel }) => (
+            <li>
+              <a
+                class="text-slate-500 transition duration-150 ease-in-out hover:text-slate-300"
+                href={resolveHref(href)}
+                aria-label={ariaLabel}
+              >
+                <Fragment set:html={text} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : (
+      ''
+    )}
+
+    <div class="border-t border-slate-800/80 pt-5 pb-8 md:pb-10">
+      {
+        footNote && (
+          <p class="max-w-4xl text-left text-xs leading-6 text-slate-500">
+            <Fragment set:html={footNote} />
+          </p>
+        )
+      }
+    </div>
+  </div>
+</footer>

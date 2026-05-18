@@ -1,0 +1,54 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+import { granville } from '~/data/granville';
+
+const metadata = {
+  title: 'Contact',
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Contact"
+    title="Contact Granville"
+    subtitle="Use this page for sales, platform access, partnerships, compliance, privacy, or general product questions."
+    callToAction={{
+      variant: 'primary',
+      text: 'Sign up',
+      href: granville.appSignUpUrl,
+      target: '_blank',
+    }}
+  />
+
+  <Features2
+    title="Where to send your inquiry"
+    items={[
+      {
+        title: 'General',
+        description: `For product questions and introductions: ${granville.generalEmail}.`,
+        icon: 'tabler:mail',
+      },
+      {
+        title: 'Sales and onboarding',
+        description: `For platform access, commercials, and onboarding conversations: ${granville.salesEmail}.`,
+        icon: 'tabler:briefcase',
+      },
+      {
+        title: 'Privacy and legal',
+        description: `For privacy, legal, or compliance matters: ${granville.privacyEmail} and ${granville.legalEmail}.`,
+        icon: 'tabler:shield-lock',
+      },
+    ]}
+  />
+
+  <CallToAction
+    tagline="Company"
+    title={granville.tradingName}
+    subtitle={`${granville.tradingName} is a trading name of ${granville.companyName}. Service availability may depend on jurisdiction, onboarding, and compliance review.`}
+    actions={[{ variant: 'primary', text: 'Sign up', href: granville.appSignUpUrl, target: '_blank' }]}
+  />
+</Layout>

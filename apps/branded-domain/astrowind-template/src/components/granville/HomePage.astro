@@ -1,0 +1,175 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Header from '~/components/widgets/Header.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import Content from '~/components/widgets/Content.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import InfrastructureVisual from '~/components/granville/InfrastructureVisual.astro';
+
+import { getPermalink } from '~/utils/permalinks';
+import { homepage } from '~/data/homepage';
+
+const metadata = {
+  title: homepage.hero.title,
+  ignoreTitleTemplate: true,
+  description: homepage.hero.subtitle,
+};
+
+const headerLinks = homepage.navigation.links.map((link) => ({
+  text: link.text,
+  href: getPermalink(link.href),
+}));
+
+const headerActions = [homepage.navigation.primaryAction];
+---
+
+<Layout metadata={metadata}>
+  <Fragment slot="header">
+    <Header links={headerLinks} actions={headerActions} isSticky />
+  </Fragment>
+
+  <Hero
+    tagline={homepage.hero.tagline}
+    actions={[
+      { variant: 'primary', ...homepage.hero.primaryAction },
+      { variant: 'secondary', ...homepage.hero.secondaryAction, href: getPermalink(homepage.hero.secondaryAction.href) },
+    ]}
+  >
+    <Fragment slot="title">{homepage.hero.title}</Fragment>
+
+    <Fragment slot="subtitle">{homepage.hero.subtitle}</Fragment>
+
+    <Fragment slot="content">
+      <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm text-muted lg:justify-center">
+        {homepage.hero.highlights.map((item) => (
+          <span class="rounded-full border border-gray-500/60 px-4 py-2 dark:border-slate-700">{item}</span>
+        ))}
+      </div>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(159,147,180,0.22),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(213,191,155,0.16),transparent_26%),linear-gradient(180deg,rgba(7,17,27,1),rgba(4,9,16,0.96))]"></div>
+    </Fragment>
+  </Hero>
+
+  <Features2
+    id="platform"
+    tagline={homepage.products.tagline}
+    title={homepage.products.title}
+    subtitle={homepage.products.subtitle}
+    items={homepage.products.items}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(159,147,180,0.1),transparent_40%),linear-gradient(180deg,rgba(4,9,16,0.98),rgba(4,9,16,0.98))]"></div>
+    </Fragment>
+  </Features2>
+
+  <Content
+    id="payments"
+    tagline={homepage.operatingModel.tagline}
+    title={homepage.operatingModel.title}
+    subtitle={homepage.operatingModel.subtitle}
+    isReversed
+    items={homepage.operatingModel.items}
+    classes={{
+      container: 'pt-20 md:pt-24 lg:pt-28',
+      headline: {
+        title: 'text-4xl md:text-5xl font-bold tracking-tighter mb-4 font-heading text-slate-900 dark:text-slate-900',
+        subtitle: 'max-w-3xl mx-auto sm:text-center text-xl text-slate-600 dark:text-slate-600',
+      },
+      content: 'text-lg text-slate-600 dark:text-slate-600',
+      itemTitle: 'text-lg font-medium leading-6 text-slate-900 dark:text-slate-900 ml-2 rtl:ml-0 rtl:mr-2',
+      itemDescription: 'text-slate-600 dark:text-slate-600 ml-2 rtl:ml-0 rtl:mr-2',
+    }}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(213,191,155,0.2),transparent_24%),radial-gradient(circle_at_top_right,rgba(184,198,214,0.3),transparent_32%),linear-gradient(180deg,rgba(234,240,245,0.98),rgba(245,243,239,0.99))]"></div>
+    </Fragment>
+
+    <Fragment slot="content">
+      <h3 class="mb-4 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-900 sm:text-3xl">
+        {homepage.operatingModel.contentTitle}
+      </h3>
+      <p class="text-slate-600 dark:text-slate-600">{homepage.operatingModel.contentBody}</p>
+    </Fragment>
+
+    <Fragment slot="image">
+      <InfrastructureVisual />
+    </Fragment>
+  </Content>
+
+  <FAQs
+    id="company"
+    title={homepage.company.title}
+    columns={2}
+    items={homepage.company.items}
+    classes={{
+      container: 'pt-6 md:pt-8 lg:pt-10 pb-2 md:pb-4',
+      headline: {
+        container: 'max-w-3xl text-left md:mx-0 md:mb-10',
+        title: 'text-4xl font-bold tracking-tighter text-page md:text-5xl',
+      },
+      items: 'gap-6 md:gap-7',
+      itemWrapper:
+        'h-full items-start gap-4 rounded-[26px] border border-[rgba(184,198,214,0.08)] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0.012))] px-6 py-7 shadow-[0_18px_40px_rgba(0,0,0,0.14)] transition duration-200 ease-out hover:border-[rgba(184,198,214,0.14)] hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.016))] hover:shadow-[0_24px_54px_rgba(0,0,0,0.18)]',
+      iconWrapper:
+        'mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[rgba(184,198,214,0.08)] bg-[rgba(255,255,255,0.03)]',
+      icon: 'mr-0 mt-0 h-5 w-5 text-secondary',
+      body: 'flex-1',
+      itemTitle: 'text-2xl font-semibold leading-tight tracking-tight text-page md:text-[1.72rem]',
+      itemDescription: 'max-w-md text-slate-400',
+    }}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(184,198,214,0.06),transparent_20%),linear-gradient(180deg,rgba(4,9,16,0),rgba(4,9,16,0.68)_18%,rgba(4,9,16,0.96)_100%)]"></div>
+    </Fragment>
+  </FAQs>
+
+  <CallToAction
+    id="contact"
+    tagline={homepage.closing.tagline}
+    title={homepage.closing.title}
+    subtitle={homepage.closing.subtitle}
+    classes={{
+      container: '-mt-4 md:-mt-6 lg:-mt-8 pt-2 md:pt-4 pb-10 md:pb-12 lg:pb-14',
+      panel:
+        'relative isolate overflow-hidden max-w-5xl rounded-[34px] border border-[rgba(184,198,214,0.09)] bg-[linear-gradient(180deg,rgba(10,18,29,0.74),rgba(4,9,16,0.96))] p-9 shadow-[0_32px_96px_rgba(2,8,18,0.5),inset_0_1px_0_rgba(255,255,255,0.03)] backdrop-blur-2xl md:p-14',
+      inner: 'gap-8 md:flex-row md:items-end md:justify-between md:gap-10',
+      headline: {
+        container: 'mb-0 max-w-2xl text-left md:mx-0',
+        tagline: 'text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-secondary',
+        title: 'mb-4 text-4xl font-bold tracking-tighter text-page md:text-[3.35rem]',
+        subtitle: 'max-w-xl text-left text-lg text-slate-400 md:mx-0 md:text-xl',
+      },
+      actions: 'm-0 mt-0 max-w-none flex-col gap-3 sm:flex-row md:w-auto md:justify-end md:self-end',
+      actionWrap: 'w-full sm:w-auto',
+    }}
+    actions={[
+      {
+        variant: 'primary',
+        class:
+          'px-8 ring-1 ring-white/10 shadow-[0_18px_40px_rgba(213,191,155,0.12)] hover:shadow-[0_22px_48px_rgba(213,191,155,0.16)]',
+        ...homepage.closing.primaryAction,
+      },
+      {
+        variant: 'secondary',
+        class:
+          'border-slate-600/70 bg-[rgba(255,255,255,0.035)] text-slate-100 hover:border-slate-500/80 hover:bg-slate-800/70',
+        ...homepage.closing.secondaryAction,
+        href: getPermalink(homepage.closing.secondaryAction.href),
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(184,198,214,0.06),transparent_22%),radial-gradient(circle_at_72%_18%,rgba(213,191,155,0.08),transparent_18%),linear-gradient(180deg,rgba(4,9,16,0.28),rgba(4,9,16,0.88)_28%,rgba(3,8,14,1)_100%)]"></div>
+      <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-[#03080e]"></div>
+    </Fragment>
+    <Fragment slot="panelBg">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(184,198,214,0.14),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(213,191,155,0.1),transparent_22%),linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0)_46%)]"></div>
+      <div class="absolute inset-[1px] rounded-[33px] bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0)_30%,rgba(255,255,255,0.01)_100%)] opacity-80"></div>
+      <div class="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-slate-200/20 to-transparent"></div>
+    </Fragment>
+  </CallToAction>
+</Layout>
