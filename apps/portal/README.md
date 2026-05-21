@@ -1,23 +1,25 @@
 # Granville Portal
 
-Standalone customer-facing React application for authenticated onboarding, account visibility, balances, and payment activity.
+Customer-facing React application for authenticated onboarding, account visibility, balances, and payment activity.
 
 ## Current scope
 
-- Browser-routed portal shell under `apps/portal`
-- Mocked portal-local API layer in `src/api/`
-- Reduced route surface: `sign-in`, `sign-up`, `dashboard`, `accounts`, `activity`, `settings`
-- Placeholder customer data only in this phase
+- Vite, React, TypeScript, TanStack Router, and shadcn/ui portal under `apps/portal`
+- Granville modules for wallets, balances, transfers, beneficiaries, approvals, cards, FX, and compliance
+- Portal-local API client and placeholder data for the current MVP phase
+- Clerk-ready auth screens and an authenticated layout shell
 
 ## Commands
 
 ```bash
 npm install
-npm start
+npm run dev
+npm run build
+npm test
 ```
 
 ## Notes
 
 - The app remains standalone with its own `package.json`.
-- The current shell is intentionally decoupled from `apps/api`; future integration should replace `src/api/mockData.js` through `src/api/client.js`.
-- Because the app now uses browser routing, deployed hosting should provide an SPA history fallback for routes such as `/sign-in` and `/dashboard`.
+- Future integration should connect the portal API client to `apps/api`.
+- Deployed hosting should provide an SPA history fallback for browser routes.

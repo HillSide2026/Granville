@@ -1,9 +1,0 @@
-.tooltip{
-    margin-bottom: .375rem;
-}
-
-// Wrapper for the tooltip content
-.tooltip-inner {
-    @include box-shadow($box-shadow);
-}
-  
