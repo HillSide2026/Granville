@@ -15,6 +15,8 @@ import type {
 } from "../../../libs/contracts/routing.ts";
 import {
   type AuditEvent,
+  type Beneficiary,
+  type CreateBeneficiaryInput,
   type CreateCustomerInput,
   type CreatePaymentOrderInput,
   InMemoryGranvilleStore,
@@ -98,6 +100,16 @@ export class GranvilleApi {
 
   cancelPayment(id: string, reason?: string): PaymentOrder {
     return this.orchestrator.cancelPayment(id, reason);
+  }
+
+  approvePayment(id: string, actorId: string, note?: string): Promise<PaymentOrder> {
+    this.store.audit("user", "payment.approved", "payment_order", id, { actorId, note });
+    return this.submitPayment(id);
+  }
+
+  rejectPayment(id: string, actorId: string, note?: string): PaymentOrder {
+    this.store.audit("user", "payment.rejected", "payment_order", id, { actorId, note });
+    return this.cancelPayment(id, note ?? "Rejected by operator");
   }
 
   retryPayment(id: string): PaymentOrder {
@@ -380,6 +392,24 @@ export class GranvilleApi {
 
   metricsSnapshot(): PlatformMetrics {
     return this.reportEngine.metricsSnapshot();
+  }
+
+  // --- Beneficiaries ---
+
+  listBeneficiaries(): Beneficiary[] {
+    return [...this.store.beneficiaries.values()];
+  }
+
+  createBeneficiary(input: CreateBeneficiaryInput): Beneficiary {
+    return this.store.createBeneficiary(input);
+  }
+
+  updateBeneficiary(id: string, patch: Partial<CreateBeneficiaryInput>): Beneficiary {
+    return this.store.updateBeneficiary(id, patch);
+  }
+
+  deleteBeneficiary(id: string): void {
+    this.store.deleteBeneficiary(id);
   }
 
   adminAddNote(

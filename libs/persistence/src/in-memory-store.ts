@@ -160,6 +160,29 @@ export interface CreatePaymentOrderInput {
   metadata?: Record<string, string>;
 }
 
+export interface Beneficiary {
+  id: string;
+  displayName: string;
+  accountNumber: string;
+  sortCode?: string;
+  iban?: string;
+  bankName?: string;
+  countryCode: string;
+  currency: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateBeneficiaryInput {
+  displayName: string;
+  accountNumber: string;
+  sortCode?: string;
+  iban?: string;
+  bankName?: string;
+  countryCode: string;
+  currency: string;
+}
+
 function timestamp(): string {
   return new Date().toISOString();
 }
@@ -198,6 +221,7 @@ export class InMemoryGranvilleStore {
   readonly idempotency = new Map<string, IdempotencyRecord>();
   readonly providerHealth = new Map<string, ProviderHealth>();
   readonly routingRules = new Map<string, RoutingRule>();
+  readonly beneficiaries = new Map<string, Beneficiary>();
 
   constructor() {
     this.seedMockProvider();
@@ -868,6 +892,36 @@ export class InMemoryGranvilleStore {
     this.routingRules.set(id, updated);
     this.audit("service", "routing_rule.deactivated", "routing_rule", id);
     return clone(updated);
+  }
+
+  createBeneficiary(input: CreateBeneficiaryInput): Beneficiary {
+    const now = timestamp();
+    const beneficiary: Beneficiary = {
+      id: randomUUID(),
+      displayName: input.displayName,
+      accountNumber: input.accountNumber,
+      sortCode: input.sortCode,
+      iban: input.iban,
+      bankName: input.bankName,
+      countryCode: input.countryCode,
+      currency: input.currency,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.beneficiaries.set(beneficiary.id, beneficiary);
+    return clone(beneficiary);
+  }
+
+  updateBeneficiary(id: string, patch: Partial<CreateBeneficiaryInput>): Beneficiary {
+    const existing = this.require(this.beneficiaries, id, "beneficiary");
+    const updated: Beneficiary = { ...existing, ...patch, id, updatedAt: timestamp() };
+    this.beneficiaries.set(id, updated);
+    return clone(updated);
+  }
+
+  deleteBeneficiary(id: string): void {
+    this.require(this.beneficiaries, id, "beneficiary");
+    this.beneficiaries.delete(id);
   }
 
   getMockProviderBinding(): ProviderBinding {

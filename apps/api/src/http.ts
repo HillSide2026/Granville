@@ -75,6 +75,19 @@ export class GranvilleHttpControllers {
     const parts = path.split("/").filter(Boolean);
     const query = parsed.searchParams;
 
+    if (method === "POST" && path === "/auth/login") {
+      const token = String(body.token ?? "");
+      if (!token) throw new HttpError(400, "token is required");
+      const principal = authenticate(`Bearer ${token}`);
+      const role = principalRole(principal);
+      return { statusCode: 200, body: { accessToken: token, role, id: principal.id } };
+    }
+    if (method === "GET" && path === "/auth/me") {
+      return {
+        statusCode: 200,
+        body: { id: context.principal.id, role: principalRole(context.principal) },
+      };
+    }
     if (method === "POST" && path === "/customers") {
       requireRole(context, "customer:write");
       return {
@@ -122,6 +135,28 @@ export class GranvilleHttpControllers {
     if (method === "POST" && parts[0] === "payments" && parts[1] && parts[2] === "retry") {
       requireRole(context, "payment:write");
       return { statusCode: 202, body: this.api.retryPayment(parts[1]) };
+    }
+    if (method === "POST" && parts[0] === "payments" && parts[1] && parts[2] === "approve") {
+      requireRole(context, "payment:write");
+      return {
+        statusCode: 202,
+        body: await this.api.approvePayment(
+          parts[1],
+          context.principal.id,
+          body.note ? String(body.note) : undefined,
+        ),
+      };
+    }
+    if (method === "POST" && parts[0] === "payments" && parts[1] && parts[2] === "reject") {
+      requireRole(context, "payment:write");
+      return {
+        statusCode: 200,
+        body: this.api.rejectPayment(
+          parts[1],
+          context.principal.id,
+          body.note ? String(body.note) : undefined,
+        ),
+      };
     }
     if (method === "GET" && parts[0] === "payments" && parts[1] && !parts[2]) {
       requireRole(context, "payment:read");
@@ -366,6 +401,24 @@ export class GranvilleHttpControllers {
       };
     }
 
+    if (method === "GET" && path === "/beneficiaries") {
+      requireRole(context, "payment:read");
+      return { statusCode: 200, body: this.api.listBeneficiaries() };
+    }
+    if (method === "POST" && path === "/beneficiaries") {
+      requireRole(context, "payment:write");
+      return { statusCode: 201, body: this.api.createBeneficiary(asObject(body) as Parameters<typeof this.api.createBeneficiary>[0]) };
+    }
+    if (method === "PATCH" && parts[0] === "beneficiaries" && parts[1] && !parts[2]) {
+      requireRole(context, "payment:write");
+      return { statusCode: 200, body: this.api.updateBeneficiary(parts[1], asObject(body)) };
+    }
+    if (method === "DELETE" && parts[0] === "beneficiaries" && parts[1] && !parts[2]) {
+      requireRole(context, "payment:write");
+      this.api.deleteBeneficiary(parts[1]);
+      return { statusCode: 204, body: null };
+    }
+
     throw new HttpError(404, `No route for ${method} ${path}`);
   }
 
@@ -412,6 +465,13 @@ function authenticate(authorization?: string): Principal {
     };
   }
   throw new HttpError(403, "Unknown principal");
+}
+
+function principalRole(principal: Principal): string {
+  if (principal.roles.includes("admin:write")) return "admin";
+  if (principal.roles.includes("reconciliation:write")) return "ops";
+  if (principal.roles.includes("admin:read")) return "compliance";
+  return "customer";
 }
 
 function requireRole(context: HttpContext, role: string): void {
