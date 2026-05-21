@@ -2,7 +2,7 @@
 
 This is the minimal public-facing page set for Granville's branded domain.
 
-The active implementation lives in `branded-domain-site/`. It started from AstroWind's `src/pages/homes/saas.astro`, but `branded-domain-site/` is now the single source of truth for public-facing pages. The root-level `index.html` and `styles.css` files are legacy draft reference only.
+The active implementation lives in `branded-domain-site/`. It started from AstroWind's `src/pages/homes/saas.astro`, but `branded-domain-site/` is now the single source of truth for public-facing pages. The archived `archive/index.html` and `archive/styles.css` files are legacy draft reference only.
 
 Assumptions:
 
