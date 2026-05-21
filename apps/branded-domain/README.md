@@ -1,15 +1,16 @@
-# branded-domain draft
+# branded-domain
 
-Static draft homepage for Granville's branded domain.
+Public-facing materials for Granville's branded domain.
 
 Files:
 
-- `index.html` contains the page structure and working copy
-- `styles.css` contains the visual system and responsive layout
+- `branded-domain-site/` is the active Astro app and the single source of truth for public-facing pages
+- `PAGE_MAP.md` documents the current route plan and content guardrails
+- `index.html` is a legacy static homepage draft kept for reference only
+- `styles.css` is the companion legacy stylesheet for `index.html`
 
 Notes:
 
-- the current text reflects supplied marketing copy updated to use `Granville` and `Granville Finance`
-- footer routes such as `/terms` and `/privacy` are placeholders for a future supporting page if the public site expands beyond one page
-- the structure is intentionally compact so we can keep the domain to one page now and add one supporting page later if needed
-- `astrowind-template/` now serves as the working Astro-based MVP scaffold for the branded domain, including the lean public route set and legal pages
+- the current marketing implementation lives in `branded-domain-site/`, including the homepage and legal pages
+- the root-level static draft is no longer an active sibling site and should not receive new public-facing changes
+- footer routes such as `/terms` and `/privacy` were placeholders in the legacy draft before the Astro app became the active implementation

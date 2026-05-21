@@ -1,4 +1,4 @@
-AstroWind was copied here from `https://github.com/arthelokyo/astrowind`.
+Granville's `branded-domain-site` app was originally copied here from `https://github.com/arthelokyo/astrowind`.
 
 Upstream snapshot:
 
@@ -24,5 +24,7 @@ Other useful entrypoints:
 
 Notes:
 
+- This directory is the active public-facing site and the single source of truth for branded-domain pages.
+- The root-level `../index.html` and `../styles.css` files are legacy draft artifacts kept for reference only.
 - This copy intentionally excludes the upstream `.git` directory.
 - AstroWind's README notes a Node.js requirement of `>= 22.12.0`.

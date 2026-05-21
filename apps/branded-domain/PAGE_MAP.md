@@ -1,6 +1,8 @@
 # Granville Branded Domain Page Map
 
-This is the minimal public-facing page set for a believable Granville marketing site built around AstroWind's `src/pages/homes/saas.astro`.
+This is the minimal public-facing page set for Granville's branded domain.
+
+The active implementation lives in `branded-domain-site/`. It started from AstroWind's `src/pages/homes/saas.astro`, but `branded-domain-site/` is now the single source of truth for public-facing pages. The root-level `index.html` and `styles.css` files are legacy draft reference only.
 
 Assumptions:
 
@@ -38,7 +40,7 @@ Recommended sections:
 
 Notes:
 
-- use AstroWind `src/pages/homes/saas.astro` as the starting template
+- iterate from `branded-domain-site/src/pages/index.astro` and `branded-domain-site/src/data/homepage.ts`
 - remove demo pricing, blog, and generic SaaS filler unless they are backed by real Granville content
 
 ### `/contact`
@@ -75,7 +77,7 @@ Include:
 
 Notes:
 
-- AstroWind's demo terms page is only a structural placeholder and must be rewritten
+- the current page in `branded-domain-site/` is only a structural placeholder and must be rewritten
 
 ### `/privacy`
 
@@ -96,7 +98,7 @@ Include:
 
 Notes:
 
-- AstroWind's demo privacy page is only a structural placeholder and must be rewritten
+- the current page in `branded-domain-site/` is only a structural placeholder and must be rewritten
 
 ### `/cookie-notice`
 
