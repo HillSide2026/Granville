@@ -1,20 +1,20 @@
 {
-  "name": "Volt React Dashboard",
-  "short_name": "Volt React Dashboard",
+  "name": "Granville Portal",
+  "short_name": "Granville",
   "icons": [
     {
-      "src": "/docs/4.3/assets/img/favicons/android-chrome-192x192.png",
+      "src": "/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/docs/4.3/assets/img/favicons/android-chrome-512x512.png",
+      "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "start_url": "/?utm_source=a2hs",
-  "theme_color": "#563d7c",
-  "background_color": "#563d7c",
+  "start_url": "/sign-in",
+  "theme_color": "#262b40",
+  "background_color": "#f3f7fa",
   "display": "standalone"
 }

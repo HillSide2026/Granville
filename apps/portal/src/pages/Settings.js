@@ -1,90 +1,74 @@
-import React from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBoxOpen, faCartArrowDown, faChartPie, faChevronDown, faClipboard, faCommentDots, faFileAlt, faPlus, faRocket, faStore } from '@fortawesome/free-solid-svg-icons';
-import { Col, Row, Button, Dropdown } from '@themesberg/react-bootstrap';
-import { ChoosePhotoWidget, ProfileCardWidget } from "../components/Widgets";
-import { GeneralInfoForm } from "../components/Forms";
+import React, { useEffect, useState } from "react";
+import { Col, Row, Spinner } from "@themesberg/react-bootstrap";
 
-import Profile3 from "../assets/img/team/profile-picture-3.jpg";
+import { portalClient } from "../api/client";
+import PageHeader from "../components/PageHeader";
+import { OrganizationSettingsForm, OperationalContactsCard } from "../components/Forms";
+import { OrganizationSnapshotCard } from "../components/Widgets";
 
+export default function Settings() {
+  const [data, setData] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [savedAt, setSavedAt] = useState("");
 
-export default () => {
+  useEffect(() => {
+    let mounted = true;
+
+    portalClient.getSettings().then((nextData) => {
+      if (mounted) {
+        setData(nextData);
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const saveSettings = async (nextSettings) => {
+    setSaving(true);
+    const saved = await portalClient.saveSettings(nextSettings);
+    setData((current) => ({
+      ...current,
+      settings: saved.settings,
+      profile: saved.profile,
+    }));
+    setSavedAt(saved.savedAt);
+    setSaving(false);
+  };
+
+  if (!data) {
+    return (
+      <div className="py-5 text-center">
+        <Spinner animation="border" />
+      </div>
+    );
+  }
+
   return (
     <>
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-        <Dropdown>
-          <Dropdown.Toggle as={Button} variant="secondary" className="text-dark me-2">
-            <FontAwesomeIcon icon={faPlus} className="me-2" />
-            <span>New</span>
-          </Dropdown.Toggle>
-          <Dropdown.Menu className="dashboard-dropdown dropdown-menu-left mt-2">
-            <Dropdown.Item>
-              <FontAwesomeIcon icon={faFileAlt} className="me-2" /> Document
-            </Dropdown.Item>
-            <Dropdown.Item>
-              <FontAwesomeIcon icon={faCommentDots} className="me-2" /> Message
-            </Dropdown.Item>
-            <Dropdown.Item>
-              <FontAwesomeIcon icon={faBoxOpen} className="me-2" /> Product
-            </Dropdown.Item>
-
-            <Dropdown.Divider />
-
-            <Dropdown.Item>
-              <FontAwesomeIcon icon={faRocket} className="text-danger me-2" /> Subscription Plan
-              </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-
-        <div className="d-flex">
-          <Dropdown>
-            <Dropdown.Toggle as={Button} variant="primary">
-              <FontAwesomeIcon icon={faClipboard} className="me-2" /> Reports
-              <span className="icon icon-small ms-1"><FontAwesomeIcon icon={faChevronDown} /></span>
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="dashboard-dropdown dropdown-menu-left mt-1">
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faBoxOpen} className="me-2" /> Products
-              </Dropdown.Item>
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faStore} className="me-2" /> Customers
-              </Dropdown.Item>
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faCartArrowDown} className="me-2" /> Orders
-              </Dropdown.Item>
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faChartPie} className="me-2" /> Console
-              </Dropdown.Item>
-
-              <Dropdown.Divider />
-
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faRocket} className="text-success me-2" /> All Reports
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Settings"
+        title="Profile and controls"
+        description="Profile, reporting, and operational contact details for the authenticated customer shell."
+        badge={data.organization.status}
+      />
 
       <Row>
-        <Col xs={12} xl={8}>
-          <GeneralInfoForm />
+        <Col xs={12} xl={4} className="mb-4">
+          <OrganizationSnapshotCard organization={data.organization} profile={data.profile} />
         </Col>
-
-        <Col xs={12} xl={4}>
-          <Row>
-            <Col xs={12}>
-              <ProfileCardWidget />
-            </Col>
-            <Col xs={12}>
-              <ChoosePhotoWidget
-                title="Select profile photo"
-                photo={Profile3}
-              />
-            </Col>
-          </Row>
+        <Col xs={12} xl={8} className="mb-4">
+          <OrganizationSettingsForm
+            settings={data.settings}
+            onSave={saveSettings}
+            saving={saving}
+            savedAt={savedAt}
+          />
         </Col>
       </Row>
+
+      <OperationalContactsCard contacts={data.contacts} />
     </>
   );
-};
+}

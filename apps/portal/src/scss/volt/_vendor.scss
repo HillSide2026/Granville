@@ -1,9 +1,3 @@
-// Vendor
-@import "vendor/headroom";
-@import "vendor/prism";
-@import "vendor/chartist/chartist";
-@import "vendor/datepicker";
-
-// choices js
-// @import "node_modules/choices.js/src/styles/base.scss";
-// @import "node_modules/choices.js/src/styles/choices.scss";
+// Phase 1 cleanup removed the template plugin pages that depended on
+// extra vendor styles. Keep this file as the single place to reintroduce
+// focused plugin styling later, if the product needs it.
