@@ -111,6 +111,20 @@ granville/
     formance-stack/
 ```
 
+## Current Application Surfaces
+
+- [apps/branded-domain/](/Users/matthewajlevinelaw/Repos/Granville/apps/branded-domain) is the public marketing and legal site.
+- [apps/portal/](/Users/matthewajlevinelaw/Repos/Granville/apps/portal) is the standalone customer-facing authenticated portal shell.
+- [apps/api/](/Users/matthewajlevinelaw/Repos/Granville/apps/api) is the Granville customer-facing API boundary.
+- [apps/ops-ui/](/Users/matthewajlevinelaw/Repos/Granville/apps/ops-ui) is the internal operations console.
+
+Portal status:
+
+- browser-routed sign-in and sign-up entry points exist at `/sign-in` and `/sign-up`
+- the current shell exposes `dashboard`, `accounts`, `activity`, and `settings`
+- the portal currently uses a local mock API boundary in [apps/portal/src/api/](/Users/matthewajlevinelaw/Repos/Granville/apps/portal/src/api)
+- future product work should replace that mock boundary with real calls into `apps/api`
+
 ## Local Development
 
 Ledger only:
@@ -131,6 +145,16 @@ Notes:
 - webhook-driven connector testing requires a real public `STACK_PUBLIC_URL`
 - Granville business logic should be added under `apps/` and `libs/`, not in upstream Formance packages
 
+Portal only:
+
+```sh
+cd apps/portal
+npm install
+npm start
+```
+
+The current customer portal shell should open on the browser-routed sign-in page at `/sign-in`.
+
 ## Key Docs
 
 - Architecture overview: [ARCHITECTURE.md](/Users/matthewajlevinelaw/Repos/Granville/ARCHITECTURE.md)
@@ -138,3 +162,4 @@ Notes:
 - Ops wrapper: [ops/README.md](/Users/matthewajlevinelaw/Repos/Granville/ops/README.md)
 - Version pins: [ops/versions.lock.yaml](/Users/matthewajlevinelaw/Repos/Granville/ops/versions.lock.yaml)
 - Implementation roadmap: [roadmap/granville-repo-implementation-roadmap.md](/Users/matthewajlevinelaw/Repos/Granville/roadmap/granville-repo-implementation-roadmap.md)
+- Portal shell notes: [apps/portal/README.md](/Users/matthewajlevinelaw/Repos/Granville/apps/portal/README.md)

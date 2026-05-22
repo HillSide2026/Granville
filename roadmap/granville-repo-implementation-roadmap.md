@@ -35,6 +35,18 @@ third_party/formance-payments
 third_party/formance-stack
 ```
 
+## Current Status Snapshot
+
+As of May 22, 2026:
+
+- the public marketing and legal site is implemented under `apps/branded-domain/`
+- the customer-facing portal shell is implemented under `apps/portal/`
+- the portal is now a reduced browser-routed shell with `sign-in`, `sign-up`, `dashboard`, `accounts`, `activity`, and `settings`
+- the portal currently uses a local mock client boundary in `apps/portal/src/api/`
+- the next portal milestone is replacing mock reads with real `apps/api` integration and adding authentication/session enforcement
+
+This means the repo already has a usable customer application surface, but it is still pre-production and intentionally thin.
+
 ## Phase 0 — Repo Boundary Cleanup
 
 Objective:
