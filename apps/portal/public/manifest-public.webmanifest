@@ -1,0 +1,21 @@
+{
+  "name": "Granville Finance",
+  "short_name": "Granville",
+  "start_url": "/sign-in",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#f8fafc",
+  "icons": [
+    {
+      "src": "/images/favicon-public.svg?v=20260523",
+      "sizes": "64x64",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/images/apple-touch-icon-public.svg?v=20260523",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

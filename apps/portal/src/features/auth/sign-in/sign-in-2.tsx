@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 import { Icon } from '@/components/ui/icon'
+import { BrandHead } from '@/components/brand-head'
 import dashboardDark from './assets/dashboard-dark.png'
 import dashboardLight from './assets/dashboard-light.png'
 import { UserAuthForm } from './components/user-auth-form'
@@ -8,6 +9,7 @@ import { UserAuthForm } from './components/user-auth-form'
 export function SignIn2() {
   return (
     <div className='relative container grid h-svh flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0'>
+      <BrandHead state='public' />
       <div className='lg:p-8'>
         <div className='mx-auto flex w-full flex-col justify-center space-y-2 py-8 sm:w-120 sm:p-8'>
           <div className='mb-4 flex items-center justify-center'>

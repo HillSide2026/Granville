@@ -1,0 +1,21 @@
+{
+  "name": "Granville Payments Platform",
+  "short_name": "Granville",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#07111f",
+  "icons": [
+    {
+      "src": "/images/favicon-portal.svg?v=20260523",
+      "sizes": "64x64",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/images/apple-touch-icon-portal.svg?v=20260523",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
