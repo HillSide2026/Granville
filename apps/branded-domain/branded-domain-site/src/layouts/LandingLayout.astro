@@ -22,8 +22,9 @@ const { metadata } = Astro.props;
         links={headerData?.links[2] ? [headerData.links[2]] : undefined}
         actions={[
           {
-            text: 'Download',
-            href: 'https://github.com/arthelokyo/astrowind',
+            text: 'Sign up',
+            href: headerData.actions[0]?.href,
+            target: headerData.actions[0]?.target,
           },
         ]}
         showToggleTheme

@@ -8,6 +8,7 @@ Documents:
 - [Development Milestones Review](development-milestones-review.md)
 - [MVP Milestone 1](mvp-milestone-1.md)
 - [MVP Milestone 2 Sketch](mvp-milestone-2-sketch.md)
+- [Design System Stage 1: Brand Foundations](design-system-stage-1-brand-foundations.md)
 
 Current working snapshot:
 

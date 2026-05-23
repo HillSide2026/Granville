@@ -24,10 +24,10 @@ export const homepage = {
       target: '_blank',
     },
     secondaryAction: {
-      text: 'Explore Products',
+      text: 'Discover Platform',
       href: '/#platform',
     },
-    highlights: ['Simple interfaces', 'Digital settlement infrastructure', 'Dynamic currency conversion'],
+    highlights: [],
   },
   products: {
     tagline: 'Platform',
@@ -35,20 +35,19 @@ export const homepage = {
     subtitle: '',
     items: [
       {
-        title: 'Payments Orchestration Platform',
-        description:
-          'A simple, scalable platform for routing payments, managing settlement, currency conversion, and API-based financial infrastructure.',
+        title: 'Treasury Platform',
+        description: 'A simple, scalable platform for routing payments, managing accounts, and currency conversion.',
         icon: 'tabler:route',
       },
       {
-        title: 'Operational Visibility and Reconciliation',
-        description:
-          'A unified operational layer for monitoring payment activity, tracking provider events, and reconciling execution against ledger truth.',
+        title: 'Operational Visibility',
+        description: 'A unified operational layer for monitoring payments, tracking providers, and reconciling execution.',
         icon: 'tabler:chart-dots-3',
       },
       {
-        title: 'Company',
-        description: 'A platform built for scale, backed by a company built to grow.',
+        title: 'User Security',
+        description:
+          'Secure authentication, account protection, and controlled access designed for modern financial operations.',
         icon: 'tabler:building-bank',
       },
     ],
@@ -100,7 +99,7 @@ export const homepage = {
     tagline: 'CONTACT',
     title: 'Build modern global payment operations.',
     subtitle:
-      'Speak with Granville Finance about infrastructure for payments, treasury workflows, settlement, and operational visibility.',
+      'Speak with Granville Finance about how we can help your treasury team move forward with confidence.',
     primaryAction: {
       text: 'Sign Up',
       href: granville.appSignUpUrl,

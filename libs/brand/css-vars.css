@@ -1,0 +1,42 @@
+:root {
+  --granville-color-navy-950: #03080e;
+  --granville-color-navy-900: #07111f;
+  --granville-color-navy-800: #0b1931;
+  --granville-color-slate-50: #f8fafc;
+  --granville-color-slate-100: #e5edf5;
+  --granville-color-slate-300: #b8c6d6;
+  --granville-color-slate-400: #94a3b8;
+  --granville-color-slate-500: #64748b;
+  --granville-color-gold-300: #d5bf9b;
+  --granville-color-gold-400: #c8ad7f;
+  --granville-color-border-subtle: rgba(184, 198, 214, 0.12);
+  --granville-color-border-strong: rgba(184, 198, 214, 0.22);
+  --granville-color-surface-public: #f8fafc;
+  --granville-color-surface-portal: #07111f;
+  --granville-color-danger: #dc2626;
+  --granville-color-success: #16a34a;
+  --granville-color-warning: #d97706;
+
+  --granville-font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --granville-font-heading: Manrope, Inter, ui-sans-serif, system-ui, sans-serif;
+  --granville-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --granville-space-grid: 8px;
+  --granville-space-icon-gap: 8px;
+  --granville-space-portal-card-compact: 16px;
+  --granville-space-portal-card: 20px;
+  --granville-space-portal-card-roomy: 24px;
+  --granville-space-marketing-card: 24px;
+  --granville-space-marketing-card-roomy: 32px;
+
+  --granville-radius-portal-control: 8px;
+  --granville-radius-portal-card: 8px;
+  --granville-radius-marketing-card: 24px;
+  --granville-radius-marketing-panel: 32px;
+  --granville-radius-app-icon: 14px;
+
+  --granville-width-standard: 1280px;
+  --granville-width-focused: 1024px;
+  --granville-width-narrow: 768px;
+}
+

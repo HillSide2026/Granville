@@ -1,8 +1,10 @@
 ---
-import favIconSvg from '~/assets/favicons/favicon.svg';
-import appleTouchIcon from '~/assets/favicons/apple-touch-icon.svg';
+import appleTouchIcon from '~/assets/favicons/granville-apple-touch-light.svg';
+import favIconSvg from '~/assets/favicons/granville-favicon-light.svg';
+
+const cacheBust = (src: string) => `${src}${src.includes('?') ? '&' : '?'}v=20260523`;
 ---
 
-<link rel="icon" type="image/svg+xml" href={favIconSvg.src} />
-<link rel="mask-icon" href={favIconSvg.src} color="#0f172a" />
-<link rel="apple-touch-icon" sizes="180x180" href={appleTouchIcon.src} />
+<link rel="icon" type="image/svg+xml" href={cacheBust(favIconSvg.src)} />
+<link rel="mask-icon" href={cacheBust(favIconSvg.src)} color="#0f172a" />
+<link rel="apple-touch-icon" sizes="180x180" href={cacheBust(appleTouchIcon.src)} />
