@@ -1,53 +1,36 @@
-import { useState, useCallback } from 'react'
-import { randomUUID } from '@/lib/utils'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { api } from '@/lib/api'
 import type { Beneficiary, CreateBeneficiaryInput } from '@/types/granville'
 
-const STORAGE_KEY = 'granville_beneficiaries'
-
-function load(): Beneficiary[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
-  } catch {
-    return []
-  }
-}
-
-function save(items: Beneficiary[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
-}
-
 export function useBeneficiaries() {
-  const [items, setItems] = useState<Beneficiary[]>(load)
+  const qc = useQueryClient()
 
-  const create = useCallback((input: CreateBeneficiaryInput): Beneficiary => {
-    const next: Beneficiary = {
-      ...input,
-      id: randomUUID(),
-      createdAt: new Date().toISOString(),
-    }
-    setItems((prev) => {
-      const updated = [next, ...prev]
-      save(updated)
-      return updated
-    })
-    return next
-  }, [])
+  const query = useQuery<Beneficiary[]>({
+    queryKey: ['beneficiaries'],
+    queryFn: () => api.get('/beneficiaries').then((r) => r.data),
+  })
 
-  const update = useCallback((id: string, patch: Partial<CreateBeneficiaryInput>) => {
-    setItems((prev) => {
-      const updated = prev.map((b) => (b.id === id ? { ...b, ...patch } : b))
-      save(updated)
-      return updated
-    })
-  }, [])
+  const create = useMutation<Beneficiary, Error, CreateBeneficiaryInput>({
+    mutationFn: (input) => api.post('/beneficiaries', input).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['beneficiaries'] }),
+  })
 
-  const remove = useCallback((id: string) => {
-    setItems((prev) => {
-      const updated = prev.filter((b) => b.id !== id)
-      save(updated)
-      return updated
-    })
-  }, [])
+  const update = useMutation<Beneficiary, Error, { id: string; patch: Partial<CreateBeneficiaryInput> }>({
+    mutationFn: ({ id, patch }) => api.patch(`/beneficiaries/${id}`, patch).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['beneficiaries'] }),
+  })
 
-  return { items, create, update, remove }
+  const remove = useMutation<void, Error, string>({
+    mutationFn: (id) => api.delete(`/beneficiaries/${id}`).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['beneficiaries'] }),
+  })
+
+  return {
+    items: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    create: (input: CreateBeneficiaryInput) => create.mutateAsync(input),
+    update: (id: string, patch: Partial<CreateBeneficiaryInput>) => update.mutateAsync({ id, patch }),
+    remove: (id: string) => remove.mutateAsync(id),
+  }
 }

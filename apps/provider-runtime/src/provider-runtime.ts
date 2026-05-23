@@ -4,6 +4,7 @@ import type {
   ProviderCommandQueueItem,
 } from "../../../libs/persistence/src/in-memory-store.ts";
 import { ProviderAdapterRegistry } from "../../../libs/provider-adapters/adapter-registry.ts";
+import { AirwallexApiError } from "../../../libs/provider-adapters/airwallex/index.ts";
 
 const providerStatusToPaymentStatus = {
   accepted: "provider_accepted",
@@ -28,17 +29,38 @@ export class ProviderRuntime {
     if (!command) {
       return false;
     }
+
+    const health = this.store.providerHealth.get(command.providerBindingId);
+    if (health?.status === "disabled") {
+      const failed = this.store.markProviderCommandFailed(
+        command.id,
+        `Provider binding ${command.providerBindingId} is disabled`,
+      );
+      if (failed.status === "dead_lettered") {
+        this.#markAttemptAndOrderFailed(command.paymentAttemptId, failed.lastError ?? "");
+      }
+      return false;
+    }
+
     try {
       await this.executeProviderCommand(command);
       this.store.markProviderCommandCompleted(command.id);
       return true;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      this.store.markProviderCommandFailed(command.id, message);
-      this.store.updatePaymentAttempt(command.paymentAttemptId, {
-        status: "failed",
-        lastError: message,
-      });
+      // Transient provider errors (rate limit, gateway timeout) reset the command to pending
+      // without consuming a retry slot so the backoff counter is not burned on infrastructure noise.
+      const isTransient = error instanceof AirwallexApiError && error.transient;
+      if (isTransient) {
+        this.store.markProviderCommandTransient(command.id, message);
+        return false;
+      }
+      const failed = this.store.markProviderCommandFailed(command.id, message);
+      // Only mark the payment attempt as failed when the command is permanently dead-lettered.
+      // Retryable application-level failures leave the attempt in its current state so it can recover.
+      if (failed.status === "dead_lettered") {
+        this.#markAttemptAndOrderFailed(command.paymentAttemptId, message);
+      }
       return false;
     }
   }
@@ -88,6 +110,20 @@ export class ProviderRuntime {
       throw new Error(`Unknown provider_binding: ${attempt.providerBindingId}`);
     }
     const provider = this.registry.resolve(binding);
+
+    if (attempt.providerReference) {
+      const duplicate = [...this.store.providerTransactions.values()].find(
+        (tx) =>
+          tx.paymentAttemptId !== attempt.id &&
+          tx.providerBindingId === attempt.providerBindingId &&
+          tx.providerReference === attempt.providerReference,
+      );
+      if (duplicate) {
+        throw new Error(
+          `Duplicate provider reference detected: ${attempt.providerReference} already recorded on transaction ${duplicate.id}`,
+        );
+      }
+    }
 
     const requestPayload = {
       granvillePaymentOrderId: order.id,
@@ -167,5 +203,13 @@ export class ProviderRuntime {
         status,
       },
     );
+  }
+
+  #markAttemptAndOrderFailed(paymentAttemptId: string, error: string): void {
+    this.store.updatePaymentAttempt(paymentAttemptId, { status: "failed", lastError: error });
+    const attempt = this.store.paymentAttempts.get(paymentAttemptId);
+    if (attempt) {
+      this.store.updatePaymentOrder(attempt.paymentOrderId, { status: "failed" });
+    }
   }
 }

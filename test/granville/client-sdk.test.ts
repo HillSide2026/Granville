@@ -1,3 +1,4 @@
+import { createHmac, randomUUID } from "node:crypto";
 import assert from "node:assert/strict";
 import test from "node:test";
 
@@ -123,6 +124,142 @@ test("unauthenticated request → GranvilleApiError(401, UNAUTHORIZED)", async (
         return true;
       },
     );
+  } finally {
+    await new Promise<void>((resolve, reject) =>
+      server.close((err) => (err ? reject(err) : resolve())),
+    );
+  }
+});
+
+test("POST /webhooks/:provider bypasses Bearer auth and returns 202", async () => {
+  const controllers = new GranvilleHttpControllers();
+  const server = createGranvilleServer(controllers);
+  await new Promise<void>((resolve) => server.listen(0, resolve));
+  const port = (server.address() as { port: number }).port;
+  const baseUrl = `http://localhost:${port}`;
+
+  // Use the SDK client (with auth) to create a payment and get a provider reference.
+  const authClient = new GranvilleClient({ baseUrl, token: "dev-admin" });
+  const customer = await authClient.createCustomer({ legalName: "Webhook Bypass Test" });
+  const account = await authClient.createPaymentAccount({ customerId: customer.id });
+  const payment = await authClient.createPayment({
+    customerId: customer.id,
+    paymentAccountId: account.id,
+    amount: "100",
+    asset: "GBP/2",
+  });
+  await authClient.submitPayment(payment.id);
+  await controllers.api.providerRuntime.drain();
+
+  const attempt = [...controllers.api.store.paymentAttempts.values()].find(
+    (a) => a.paymentOrderId === payment.id,
+  );
+  const ref = attempt?.providerReference ?? attempt?.providerTransactionId ?? "dummy-ref";
+
+  try {
+    // POST to /webhooks/mock-emi WITHOUT an Authorization header.
+    const body = JSON.stringify({ providerReference: ref, status: "completed" });
+    const res = await fetch(`${baseUrl}/webhooks/mock-emi`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body,
+    });
+    assert.equal(res.status, 202, "webhook endpoint should return 202 without auth");
+
+    const event = [...controllers.api.store.webhooks.values()].at(-1);
+    assert.ok(event, "webhook event should be stored");
+    assert.equal(event?.processingStatus, "queued");
+  } finally {
+    await new Promise<void>((resolve, reject) =>
+      server.close((err) => (err ? reject(err) : resolve())),
+    );
+  }
+});
+
+function seedAirwallexBinding(store: GranvilleHttpControllers["api"]["store"], webhookSecret?: string) {
+  const id = randomUUID();
+  const providerId = randomUUID();
+  const now = new Date().toISOString();
+  store.providers.set(providerId, {
+    id: providerId, code: "airwallex", displayName: "Airwallex", kind: "emi",
+    stage: "aw1", active: true, metadata: {}, createdAt: now, updatedAt: now,
+  });
+  store.providerBindings.set(id, {
+    id, providerId, bindingKind: "native_emi", adapterKey: "airwallex", active: true,
+    config: webhookSecret ? { webhookSecret } : {},
+    metadata: {}, createdAt: now, updatedAt: now,
+  });
+  store.setProviderHealth(id, "healthy");
+}
+
+test("POST /webhooks/airwallex accepts valid HMAC signature without Bearer token", async () => {
+  const controllers = new GranvilleHttpControllers();
+  const server = createGranvilleServer(controllers);
+  await new Promise<void>((resolve) => server.listen(0, resolve));
+  const port = (server.address() as { port: number }).port;
+  const baseUrl = `http://localhost:${port}`;
+
+  const secret = "test-webhook-secret-abc123";
+  seedAirwallexBinding(controllers.api.store, secret);
+
+  const ts = Date.now().toString();
+  const body = JSON.stringify({
+    name: "payout.transfer.paid",
+    data: { transfer: { id: "aw-tx-001", request_id: "aw-ref-001", status: "PAID" } },
+  });
+  const sig = createHmac("sha256", secret).update(`${ts}${body}`).digest("hex");
+
+  try {
+    const res = await fetch(`${baseUrl}/webhooks/airwallex`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-timestamp": ts,
+        "x-signature": sig,
+      },
+      body,
+    });
+    assert.equal(res.status, 202, "valid HMAC webhook should return 202");
+
+    const event = [...controllers.api.store.webhooks.values()].at(-1);
+    assert.ok(event, "webhook event should be stored");
+    assert.equal(event?.signatureValid, true, "signature should be marked valid");
+    assert.equal(event?.processingStatus, "queued", "valid webhook should be queued for processing");
+  } finally {
+    await new Promise<void>((resolve, reject) =>
+      server.close((err) => (err ? reject(err) : resolve())),
+    );
+  }
+});
+
+test("POST /webhooks/airwallex with bad signature stores event as ignored", async () => {
+  const controllers = new GranvilleHttpControllers();
+  const server = createGranvilleServer(controllers);
+  await new Promise<void>((resolve) => server.listen(0, resolve));
+  const port = (server.address() as { port: number }).port;
+
+  const secret = "correct-secret";
+  seedAirwallexBinding(controllers.api.store, secret);
+
+  const ts = Date.now().toString();
+  const body = JSON.stringify({ name: "payout.transfer.paid", data: {} });
+
+  try {
+    const res = await fetch(`http://localhost:${port}/webhooks/airwallex`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-timestamp": ts,
+        "x-signature": "badsignature",
+      },
+      body,
+    });
+    assert.equal(res.status, 202, "invalid HMAC should still return 202 (not rejected at HTTP)");
+
+    const event = [...controllers.api.store.webhooks.values()].at(-1);
+    assert.ok(event, "webhook event should be stored even with bad signature");
+    assert.equal(event?.signatureValid, false, "signature should be marked invalid");
+    assert.equal(event?.processingStatus, "ignored", "bad-signature webhook should be ignored");
   } finally {
     await new Promise<void>((resolve, reject) =>
       server.close((err) => (err ? reject(err) : resolve())),

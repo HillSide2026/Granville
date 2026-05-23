@@ -12,6 +12,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { GranvilleApi } from "../../apps/api/src/granville-api.ts";
+import { AirwallexApiError } from "../../libs/provider-adapters/airwallex/index.ts";
+import { ProviderAdapterRegistry } from "../../libs/provider-adapters/adapter-registry.ts";
+import { ProviderRuntime } from "../../apps/provider-runtime/src/provider-runtime.ts";
 
 test("Stage 1 acceptance: full mock EMI payment flow via webhook path", async () => {
   const api = new GranvilleApi();
@@ -228,4 +231,163 @@ test("Stage 1 acceptance: failed payment retry succeeds and reconciles cleanly",
   const history = api.reportPaymentHistory({ status: "completed" });
   assert.equal(history.length, 1);
   assert.ok(history[0].attemptCount >= 1);
+});
+
+test("provider runtime: disabled binding fails command without burning retry slot", async () => {
+  const api = new GranvilleApi();
+
+  const customer = api.postCustomer({ legalName: "Disabled Binding Test", countryCode: "GB" });
+  const account = api.postPaymentAccount({ customerId: customer.id });
+  const payment = api.postPayment({
+    customerId: customer.id,
+    paymentAccountId: account.id,
+    amount: "100",
+    asset: "GBP/2",
+  });
+
+  const { attempt } = api.orchestrator.submitPayment(payment.id);
+  const binding = api.store.getMockProviderBinding();
+
+  // Disable the provider before the runtime drains
+  api.store.setProviderHealth(binding.id, "disabled", "test_disable");
+
+  // First drain — command should fail-fast but retryCount goes 0→1
+  const processed = await api.providerRuntime.runOnce();
+  assert.equal(processed, false, "disabled binding returns false");
+
+  const command = [...api.store.providerCommandQueue.values()].find(
+    (c) => c.paymentAttemptId === attempt.id,
+  );
+  assert.ok(command, "command should still exist");
+  assert.equal(command?.retryCount, 1, "one retry consumed by the disabled-binding check");
+
+  // The payment attempt should NOT be marked failed yet (command not dead-lettered)
+  assert.notEqual(api.getPayment(payment.id)?.status, "failed",
+    "attempt should not be failed until command is dead-lettered",
+  );
+
+  // Run 2 more times to exhaust retries and dead-letter.
+  // Reset availableAt to past before each call (backoff is not under test here).
+  for (let i = 0; i < 2; i++) {
+    const cmd = [...api.store.providerCommandQueue.values()].find(
+      (c) => c.paymentAttemptId === attempt.id,
+    );
+    if (cmd) api.store.providerCommandQueue.set(cmd.id, { ...cmd, availableAt: new Date(0).toISOString() });
+    await api.providerRuntime.runOnce();
+  }
+
+  const deadCommand = [...api.store.providerCommandQueue.values()].find(
+    (c) => c.paymentAttemptId === attempt.id,
+  );
+  assert.equal(deadCommand?.status, "dead_lettered");
+  assert.equal(api.getPayment(payment.id)?.status, "failed",
+    "payment should be failed once command is dead-lettered",
+  );
+});
+
+test("provider runtime: transient AirwallexApiError resets command without incrementing retryCount", async () => {
+  const api = new GranvilleApi();
+
+  const customer = api.postCustomer({ legalName: "Transient Error Test", countryCode: "GB" });
+  const account = api.postPaymentAccount({ customerId: customer.id });
+  const payment = api.postPayment({
+    customerId: customer.id,
+    paymentAccountId: account.id,
+    amount: "100",
+    asset: "GBP/2",
+  });
+
+  const { attempt } = api.orchestrator.submitPayment(payment.id);
+
+  // Build a registry that throws a transient AirwallexApiError for any payment
+  class TransientRegistry extends ProviderAdapterRegistry {
+    resolve() {
+      return {
+        initiatePayment: async () => {
+          throw new AirwallexApiError(429, "rate limited", "rate_limit");
+        },
+        getTransaction: async () => { throw new AirwallexApiError(429, "rate limited"); },
+        createCustomer: async () => ({ providerCustomerId: "x", granvilleCustomerId: "x", status: "active" as const, metadata: {} }),
+        openPaymentAccount: async () => ({ providerAccountId: "x", granvillePaymentAccountId: "x", status: "active" as const, metadata: {} }),
+        getAccount: async () => ({ providerAccountId: "x", status: "active" as const, metadata: {} }),
+        getBalance: async () => ({ providerAccountId: "x", amount: "0", asset: "GBP/2", asOf: new Date() }),
+        listTransactions: async () => [],
+        handleWebhook: () => ({ providerCode: "test", rawPayload: {} }),
+      };
+    }
+  }
+
+  const runtime = new ProviderRuntime(api.store, new TransientRegistry());
+
+  const commandBefore = [...api.store.providerCommandQueue.values()].find(
+    (c) => c.paymentAttemptId === attempt.id,
+  );
+  const retryCountBefore = commandBefore?.retryCount ?? 0;
+
+  const processed = await runtime.runOnce();
+  assert.equal(processed, false, "transient error returns false");
+
+  const commandAfter = [...api.store.providerCommandQueue.values()].find(
+    (c) => c.paymentAttemptId === attempt.id,
+  );
+  assert.equal(
+    commandAfter?.retryCount,
+    retryCountBefore,
+    "transient error must not increment retryCount",
+  );
+  assert.equal(commandAfter?.status, "pending", "command should remain pending for retry");
+  assert.notEqual(api.getPayment(payment.id)?.status, "failed",
+    "payment should not be failed after a transient error",
+  );
+});
+
+test("provider runtime: permanent error dead-letters command and marks payment failed", async () => {
+  const api = new GranvilleApi();
+
+  const customer = api.postCustomer({ legalName: "Permanent Error Test", countryCode: "GB" });
+  const account = api.postPaymentAccount({ customerId: customer.id });
+  const payment = api.postPayment({
+    customerId: customer.id,
+    paymentAccountId: account.id,
+    amount: "100",
+    asset: "GBP/2",
+  });
+
+  const { attempt } = api.orchestrator.submitPayment(payment.id);
+
+  class PermanentFailRegistry extends ProviderAdapterRegistry {
+    resolve() {
+      return {
+        initiatePayment: async () => { throw new Error("hard provider rejection"); },
+        getTransaction: async () => { throw new Error("hard provider rejection"); },
+        createCustomer: async () => ({ providerCustomerId: "x", granvilleCustomerId: "x", status: "active" as const, metadata: {} }),
+        openPaymentAccount: async () => ({ providerAccountId: "x", granvillePaymentAccountId: "x", status: "active" as const, metadata: {} }),
+        getAccount: async () => ({ providerAccountId: "x", status: "active" as const, metadata: {} }),
+        getBalance: async () => ({ providerAccountId: "x", amount: "0", asset: "GBP/2", asOf: new Date() }),
+        listTransactions: async () => [],
+        handleWebhook: () => ({ providerCode: "test", rawPayload: {} }),
+      };
+    }
+  }
+
+  const runtime = new ProviderRuntime(api.store, new PermanentFailRegistry());
+
+  // Run 3 times to exhaust retries (maxRetries = 3 → dead_lettered on 3rd failure).
+  // Reset availableAt to past before each call (backoff timing is not under test here).
+  for (let i = 0; i < 3; i++) {
+    const cmd = [...api.store.providerCommandQueue.values()].find(
+      (c) => c.paymentAttemptId === attempt.id,
+    );
+    if (cmd) api.store.providerCommandQueue.set(cmd.id, { ...cmd, availableAt: new Date(0).toISOString() });
+    await runtime.runOnce();
+  }
+
+  const command = [...api.store.providerCommandQueue.values()].find(
+    (c) => c.paymentAttemptId === attempt.id,
+  );
+  assert.equal(command?.status, "dead_lettered", "command should be dead-lettered after 3 failures");
+  assert.equal(command?.retryCount, 3);
+  assert.equal(api.getPayment(payment.id)?.status, "failed",
+    "payment should be failed once command is dead-lettered",
+  );
 });

@@ -1,19 +1,19 @@
 <style is:inline>
   :root {
-    --aw-font-sans: system-ui;
+    --aw-font-sans: var(--granville-font-sans);
     --aw-font-serif: Georgia;
-    --aw-font-heading: system-ui;
+    --aw-font-heading: var(--granville-font-heading);
 
-    --aw-color-primary: rgb(184 198 214);
-    --aw-color-secondary: rgb(213 191 155);
+    --aw-color-primary: var(--granville-color-slate-300);
+    --aw-color-secondary: var(--granville-color-gold-300);
     --aw-color-accent: rgb(159 147 180);
 
-    --aw-color-text-heading: rgb(243 237 227);
-    --aw-color-text-default: rgb(243 237 227);
-    --aw-color-text-muted: rgb(169 181 194 / 72%);
-    --aw-color-bg-page: rgb(7 17 27);
+    --aw-color-text-heading: var(--granville-color-slate-50);
+    --aw-color-text-default: var(--granville-color-slate-50);
+    --aw-color-text-muted: color-mix(in srgb, var(--granville-color-slate-300) 72%, transparent);
+    --aw-color-bg-page: var(--granville-color-navy-900);
 
-    --aw-color-bg-page-dark: rgb(4 9 16);
+    --aw-color-bg-page-dark: var(--granville-color-navy-950);
 
     ::selection {
       background-color: rgb(159 147 180 / 40%);
@@ -21,22 +21,22 @@
   }
 
   .dark {
-    --aw-font-sans: system-ui;
+    --aw-font-sans: var(--granville-font-sans);
     --aw-font-serif: Georgia;
-    --aw-font-heading: system-ui;
+    --aw-font-heading: var(--granville-font-heading);
 
-    --aw-color-primary: rgb(184 198 214);
-    --aw-color-secondary: rgb(213 191 155);
+    --aw-color-primary: var(--granville-color-slate-300);
+    --aw-color-secondary: var(--granville-color-gold-300);
     --aw-color-accent: rgb(159 147 180);
 
-    --aw-color-text-heading: rgb(243 237 227);
-    --aw-color-text-default: rgb(243 237 227);
-    --aw-color-text-muted: rgb(169 181 194 / 72%);
-    --aw-color-bg-page: rgb(7 17 27);
+    --aw-color-text-heading: var(--granville-color-slate-50);
+    --aw-color-text-default: var(--granville-color-slate-50);
+    --aw-color-text-muted: color-mix(in srgb, var(--granville-color-slate-300) 72%, transparent);
+    --aw-color-bg-page: var(--granville-color-navy-900);
 
     ::selection {
       background-color: rgb(159 147 180 / 40%);
-      color: rgb(243 237 227);
+      color: var(--granville-color-slate-50);
     }
   }
 </style>

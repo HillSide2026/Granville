@@ -52,43 +52,50 @@ export class AirwallexEmiProvider implements PaymentAccountProvider {
   }
 
   async createCustomer(input: CreateCustomerInput): Promise<ProviderCustomer> {
-    this.#ensureDryRun("createCustomer");
+    // Airwallex is a payout rail, not an EMI — it has no customer registration concept.
+    // The customer identity lives in Granville; Airwallex only needs the beneficiary at payout time.
     return {
-      providerCustomerId: `airwallex-dry-run-customer-${input.granvilleCustomerId}`,
+      providerCustomerId: `airwallex:customer:${input.granvilleCustomerId}`,
       granvilleCustomerId: input.granvilleCustomerId,
       status: "active",
       metadata: {
         ...input.metadata,
         provider: "airwallex",
-        mode: "dry_run",
+        ...(this.client.config.dryRun ? { mode: "dry_run" } : {}),
       },
     };
   }
 
   async openPaymentAccount(input: OpenAccountInput): Promise<ProviderAccount> {
-    this.#ensureDryRun("openPaymentAccount");
+    // Airwallex uses org-level currency wallets, not per-customer accounts.
+    // We encode the currency in the providerAccountId so getBalance can resolve it later.
+    const currency = input.currencyCode ?? "GBP";
     return {
-      providerAccountId: `airwallex-dry-run-account-${input.granvillePaymentAccountId}`,
+      providerAccountId: `airwallex:wallet:${currency}:${input.granvillePaymentAccountId}`,
       granvillePaymentAccountId: input.granvillePaymentAccountId,
       status: "active",
-      currencyCode: input.currencyCode,
+      currencyCode: currency,
       countryCode: input.countryCode,
       metadata: {
         ...input.metadata,
         provider: "airwallex",
-        mode: "dry_run",
+        airwallexWalletCurrency: currency,
+        ...(this.client.config.dryRun ? { mode: "dry_run" } : {}),
       },
     };
   }
 
   async getAccount(accountId: string): Promise<ProviderAccount> {
-    this.#ensureDryRun("getAccount");
+    // Derive currency from the structured provider account ID.
+    const currency = parseCurrencyFromAccountId(accountId);
     return {
       providerAccountId: accountId,
       status: "active",
+      ...(currency ? { currencyCode: currency } : {}),
       metadata: {
         provider: "airwallex",
-        mode: "dry_run",
+        ...(currency ? { airwallexWalletCurrency: currency } : {}),
+        ...(this.client.config.dryRun ? { mode: "dry_run" } : {}),
       },
     };
   }
@@ -162,7 +169,21 @@ export class AirwallexEmiProvider implements PaymentAccountProvider {
   }
 
   async getBalance(accountId: string): Promise<ProviderBalance> {
-    this.#ensureDryRun("getBalance");
+    if (!this.client.config.dryRun) {
+      const currency = parseCurrencyFromAccountId(accountId) ?? "GBP";
+      const balances = await this.client.getBalances();
+      const match = balances.find(
+        (b) => b.currency.toUpperCase() === currency.toUpperCase(),
+      );
+      const asset = `${currency}/2`;
+      const rawAmount = match?.available_amount ?? "0";
+      return {
+        providerAccountId: accountId,
+        amount: normalizeBalanceAmount(rawAmount, asset),
+        asset,
+        asOf: match?.updated_at ? new Date(match.updated_at) : now(),
+      };
+    }
     return {
       providerAccountId: accountId,
       amount: "0",
@@ -174,11 +195,22 @@ export class AirwallexEmiProvider implements PaymentAccountProvider {
   handleWebhook(payload: Record<string, unknown>) {
     return normalizeAirwallexWebhook(payload);
   }
+}
 
-  #ensureDryRun(operation: string): void {
-    if (this.client.config.dryRun) return;
-    throw new Error(
-      `Airwallex ${operation} is not live-enabled yet; wire the provider-native payload mapping before disabling dry run`,
-    );
+function parseCurrencyFromAccountId(accountId: string): string | undefined {
+  // Format: airwallex:wallet:{CURRENCY}:{granvillePaymentAccountId}
+  const parts = accountId.split(":");
+  if (parts[0] === "airwallex" && parts[1] === "wallet" && parts[2]) {
+    return parts[2];
   }
+  return undefined;
+}
+
+function normalizeBalanceAmount(raw: string | number, asset: string): string {
+  // Airwallex balance amounts are in major units (e.g. "1000.50"); convert to minor units.
+  const scale = Number(asset.split("/")[1] ?? "0");
+  const str = typeof raw === "number" ? raw.toFixed(scale) : String(raw);
+  const [whole, frac = ""] = str.split(".");
+  const padded = frac.padEnd(scale, "0").slice(0, scale);
+  return (BigInt(whole) * 10n ** BigInt(scale) + BigInt(padded || "0")).toString();
 }

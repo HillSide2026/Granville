@@ -25,6 +25,28 @@ export interface AirwallexBeneficiary {
   transfer_methods?: string[];
 }
 
+export interface AirwallexBalance {
+  currency: string;
+  total_amount: string | number;
+  available_amount: string | number;
+  pending_amount?: string | number;
+  updated_at?: string;
+}
+
+export class AirwallexApiError extends Error {
+  readonly status: number;
+  readonly code: string | undefined;
+  readonly transient: boolean;
+
+  constructor(status: number, message: string, code?: string) {
+    super(message);
+    this.name = "AirwallexApiError";
+    this.status = status;
+    this.code = code;
+    this.transient = status === 429 || status === 503 || status === 502 || status === 504;
+  }
+}
+
 type FetchLike = typeof fetch;
 
 function asString(value: unknown): string | undefined {
@@ -88,8 +110,10 @@ export class AirwallexClient {
     });
     const body = await parseJson(response);
     if (!response.ok) {
-      throw new Error(
+      throw new AirwallexApiError(
+        response.status,
         `Airwallex authentication failed: ${response.status} ${summarizeError(body)}`,
+        asString(body.code),
       );
     }
     const token = asString(body.token);
@@ -120,6 +144,14 @@ export class AirwallexClient {
 
   async getPayoutStatus(transferId: string): Promise<AirwallexTransfer> {
     return this.#request<AirwallexTransfer>(`/api/v1/transfers/${transferId}`);
+  }
+
+  async getBalances(): Promise<AirwallexBalance[]> {
+    const response = await this.#request<{ items?: AirwallexBalance[] } | AirwallexBalance[]>(
+      "/api/v1/balances",
+    );
+    if (Array.isArray(response)) return response;
+    return (response as { items?: AirwallexBalance[] }).items ?? [];
   }
 
   async syncTransactions(
@@ -153,7 +185,11 @@ export class AirwallexClient {
     });
     const body = await parseJson(response);
     if (!response.ok) {
-      throw new Error(`Airwallex request failed: ${response.status} ${summarizeError(body)}`);
+      throw new AirwallexApiError(
+        response.status,
+        `Airwallex request failed: ${response.status} ${summarizeError(body)}`,
+        asString(body.code),
+      );
     }
     return body as T;
   }
@@ -170,5 +206,7 @@ async function parseJson(response: Response): Promise<Record<string, unknown>> {
 }
 
 function summarizeError(body: Record<string, unknown>): string {
-  return asString(body.message) ?? asString(body.error) ?? JSON.stringify(body);
+  const base = asString(body.message) ?? asString(body.error) ?? JSON.stringify(body);
+  if (body.errors) return `${base} — ${JSON.stringify(body.errors)}`;
+  return base;
 }

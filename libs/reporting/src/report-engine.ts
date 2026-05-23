@@ -30,7 +30,25 @@ export interface SettlementLine {
   returnedCount: number;
 }
 
+export interface CompliancePaymentRecord {
+  paymentOrderId: string;
+  customerId: string;
+  paymentAccountId: string;
+  beneficiaryReference?: string;
+  amount: string;
+  asset: string;
+  status: string;
+  providerBindingId?: string;
+  providerAdapterKey?: string;
+  providerTransactionId?: string;
+  providerReference?: string;
+  createdAt: string;
+  submittedAt?: string;
+  completedAt?: string;
+}
+
 export interface PlatformMetrics {
+  // Operational rates and backlogs (ops-ui / internal)
   paymentFailureRate: number;
   webhookFailureCount: number;
   queueBacklog: number;
@@ -38,6 +56,16 @@ export interface PlatformMetrics {
   reconciliationExceptionCount: number;
   providerOutageStatus: Record<string, string>;
   calculatedAt: string;
+  // Count-based fields (portal / dashboard)
+  totalCustomers: number;
+  totalPaymentAccounts: number;
+  totalPaymentOrders: number;
+  completedPayments: number;
+  failedPayments: number;
+  pendingPayments: number;
+  openReconciliationExceptions: number;
+  activeRoutingRules: number;
+  ledgerPostingQueueDepth: number;
 }
 
 function inRange(timestamp: string | undefined, filter: DateRangeFilter): boolean {
@@ -167,6 +195,8 @@ export class ReportEngine {
       providerOutageStatus[binding.adapterKey] = health?.status ?? "unknown";
     }
 
+    const pendingStatuses = new Set(["created", "pending", "submitted", "processing", "provider_accepted", "pending_review"]);
+
     return {
       paymentFailureRate: Math.round(paymentFailureRate * 10000) / 10000,
       webhookFailureCount,
@@ -175,6 +205,59 @@ export class ReportEngine {
       reconciliationExceptionCount,
       providerOutageStatus,
       calculatedAt: new Date().toISOString(),
+      totalCustomers: this.store.customers.size,
+      totalPaymentAccounts: this.store.paymentAccounts.size,
+      totalPaymentOrders: this.store.paymentOrders.size,
+      completedPayments: orders.filter((o) => o.status === "completed").length,
+      failedPayments: failedOrders.length,
+      pendingPayments: orders.filter((o) => pendingStatuses.has(o.status)).length,
+      openReconciliationExceptions: reconciliationExceptionCount,
+      activeRoutingRules: [...this.store.routingRules.values()].filter((r) => r.active).length,
+      ledgerPostingQueueDepth: [...this.store.ledgerQueue.values()].filter(
+        (p) => p.status === "pending" || p.status === "queued",
+      ).length,
     };
+  }
+
+  compliancePaymentsReport(filter: DateRangeFilter): CompliancePaymentRecord[] {
+    const results: CompliancePaymentRecord[] = [];
+
+    for (const order of this.store.paymentOrders.values()) {
+      if (!inRange(order.createdAt, filter)) continue;
+
+      const attempts = [...this.store.paymentAttempts.values()].filter(
+        (a) => a.paymentOrderId === order.id,
+      );
+      const lastAttempt = attempts.sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
+
+      const binding = lastAttempt?.providerBindingId
+        ? this.store.providerBindings.get(lastAttempt.providerBindingId)
+        : undefined;
+
+      const providerTxn = lastAttempt
+        ? [...this.store.providerTransactions.values()].find(
+            (t) => t.paymentAttemptId === lastAttempt.id,
+          )
+        : undefined;
+
+      results.push({
+        paymentOrderId: order.id,
+        customerId: order.customerId,
+        paymentAccountId: order.paymentAccountId,
+        beneficiaryReference: order.beneficiaryReference,
+        amount: order.amount.amount,
+        asset: order.amount.asset,
+        status: order.status,
+        providerBindingId: lastAttempt?.providerBindingId,
+        providerAdapterKey: binding?.adapterKey,
+        providerTransactionId: providerTxn?.providerTransactionId,
+        providerReference: order.providerReference,
+        createdAt: order.createdAt,
+        submittedAt: order.submittedAt,
+        completedAt: order.completedAt,
+      });
+    }
+
+    return results.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   }
 }

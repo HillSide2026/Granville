@@ -284,3 +284,111 @@ test("M7: POST /admin/notes validates required fields", async () => {
     /required/,
   );
 });
+
+// --- Provider enable ---
+
+const adminCtx = {
+  principal: { id: "dev-admin", roles: ["admin:read", "admin:write"] },
+};
+
+test("M7: adminEnableProvider restores health to healthy and emits audit event", async () => {
+  const api = new GranvilleApi();
+
+  api.adminDisableProvider("mock-emi");
+  const healthDisabled = api.store.providerHealth.get(api.store.getMockProviderBinding().id);
+  assert.equal(healthDisabled?.status, "disabled");
+
+  const auditsBefore = api.getAuditEvents().length;
+  api.adminEnableProvider("mock-emi");
+
+  const healthAfter = api.store.providerHealth.get(api.store.getMockProviderBinding().id);
+  assert.equal(healthAfter?.status, "healthy");
+  assert.equal(healthAfter?.reason, "enabled_by_admin");
+
+  const auditsAfter = api.getAuditEvents().length;
+  assert.ok(auditsAfter > auditsBefore);
+
+  const enableAudit = api.getAuditEvents().find((e) => e.action === "admin.provider.enabled");
+  assert.ok(enableAudit);
+  assert.equal(enableAudit.payload.adapterKey, "mock-emi");
+});
+
+test("M7: adminEnableProvider on an already-healthy provider is idempotent", async () => {
+  const api = new GranvilleApi();
+
+  const health = api.store.providerHealth.get(api.store.getMockProviderBinding().id);
+  assert.equal(health?.status, "healthy");
+
+  assert.doesNotThrow(() => api.adminEnableProvider("mock-emi"));
+  const after = api.store.providerHealth.get(api.store.getMockProviderBinding().id);
+  assert.equal(after?.status, "healthy");
+});
+
+// --- Provider list ---
+
+test("M7: adminListProviders returns all bindings with health status", async () => {
+  const api = new GranvilleApi();
+
+  const providers = api.adminListProviders();
+  assert.ok(providers.length >= 2, "should have at least mock-emi and mock-bank");
+
+  for (const p of providers) {
+    assert.ok(p.bindingId);
+    assert.ok(p.adapterKey);
+    assert.ok(typeof p.failureCount === "number");
+    assert.ok(p.status);
+  }
+
+  const emi = providers.find((p) => p.adapterKey === "mock-emi");
+  assert.ok(emi);
+  assert.equal(emi.status, "healthy");
+});
+
+test("M7: adminListProviders reflects disabled status after adminDisableProvider", async () => {
+  const api = new GranvilleApi();
+  api.adminDisableProvider("mock-emi");
+
+  const providers = api.adminListProviders();
+  const emi = providers.find((p) => p.adapterKey === "mock-emi");
+  assert.ok(emi);
+  assert.equal(emi.status, "disabled");
+  assert.equal(emi.reason, "disabled_by_admin");
+});
+
+test("M7: GET /admin/providers returns provider list", async () => {
+  const controllers = new GranvilleHttpControllers();
+
+  const result = await controllers.route("GET", "/admin/providers", {}, adminCtx);
+  assert.equal(result.statusCode, 200);
+  assert.ok(Array.isArray(result.body));
+  assert.ok((result.body as unknown[]).length >= 2);
+  const [first] = result.body as Array<Record<string, unknown>>;
+  assert.ok(first.adapterKey);
+  assert.ok(first.status);
+});
+
+test("M7: POST /admin/providers/:id/enable enables a disabled provider via HTTP", async () => {
+  const controllers = new GranvilleHttpControllers();
+  controllers.api.adminDisableProvider("mock-emi");
+
+  const result = await controllers.route("POST", "/admin/providers/mock-emi/enable", {}, adminCtx);
+  assert.equal(result.statusCode, 200);
+
+  const binding = controllers.api.store.getMockProviderBinding();
+  const health = controllers.api.store.providerHealth.get(binding.id);
+  assert.equal(health?.status, "healthy");
+});
+
+test("M7: POST /admin/providers/:id/disable and enable require admin:write", async () => {
+  const controllers = new GranvilleHttpControllers();
+  const readOnly = { principal: { id: "ro", roles: ["admin:read"] } };
+
+  await assert.rejects(
+    () => controllers.route("POST", "/admin/providers/mock-emi/disable", {}, readOnly),
+    /Missing role admin:write/,
+  );
+  await assert.rejects(
+    () => controllers.route("POST", "/admin/providers/mock-emi/enable", {}, readOnly),
+    /Missing role admin:write/,
+  );
+});

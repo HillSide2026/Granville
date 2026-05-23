@@ -415,6 +415,28 @@ export class InMemoryGranvilleStore {
     return clone(updated);
   }
 
+  // Transient infrastructure errors (429, 502, 503, 504) reset the command to pending
+  // without incrementing retryCount so rate-limit / gateway noise doesn't burn the retry budget.
+  markProviderCommandTransient(id: string, error: string): ProviderCommandQueueItem {
+    const command = this.require(this.providerCommandQueue, id, "provider_command");
+    const now = timestamp();
+    // Back off longer than a normal retry: at least 30 s to give the provider time to recover.
+    const backoffMs = Math.max(30_000, command.retryCount * 5_000);
+    const updated = {
+      ...command,
+      status: "pending" as const,
+      lastError: error,
+      availableAt: new Date(Date.now() + backoffMs).toISOString(),
+      updatedAt: now,
+    };
+    this.providerCommandQueue.set(id, updated);
+    this.audit("service", "provider_command.transient_error", "provider_command", id, {
+      retryCount: command.retryCount,
+      error,
+    });
+    return clone(updated);
+  }
+
   recordProviderRequestAttempt(
     input: Omit<ProviderRequestAttempt, "id" | "startedAt"> & {
       startedAt?: string;

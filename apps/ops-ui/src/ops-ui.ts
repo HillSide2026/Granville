@@ -72,6 +72,7 @@ function html(title: string, content: string): string {
   <nav>
     <span class="brand">Granville Ops</span>
     <a href="/">Dashboard</a>
+    <a href="/providers">Providers</a>
     <a href="/routing-rules">Routing Rules</a>
     <a href="/payments">Payments</a>
     <a href="/webhooks">Webhooks</a>
@@ -473,8 +474,48 @@ async function handleReports(): Promise<string> {
       <a href="${API_URL}/admin/reports/audit-export" target="_blank">Audit export (NDJSON)</a>
       &nbsp;·&nbsp;
       <a href="${API_URL}/admin/reports/settlement" target="_blank">Settlement summary (JSON)</a>
+      &nbsp;·&nbsp;
+      <a href="${API_URL}/admin/reports/compliance-payments" target="_blank">Compliance payments (JSON)</a>
     </p>
     <p style="font-size:11px;color:#888">Metrics as of ${ts(metrics.calculatedAt)}</p>`;
+}
+
+async function handleProviders(): Promise<string> {
+  const providers = (await adminFetch("/admin/providers")) as Array<Record<string, unknown>>;
+
+  if (providers.length === 0) {
+    return `<p class="empty">No provider bindings configured.</p>`;
+  }
+
+  const rows = providers.map((p) => {
+    const status = String(p.status ?? "unknown");
+    const failureCount = Number(p.failureCount ?? 0);
+    const isDisabled = status === "disabled";
+    const action = isDisabled
+      ? `<form class="action-form" method="POST" action="/admin/providers/${p.adapterKey}/enable">
+           <button class="btn btn-success" type="submit">Enable</button>
+         </form>`
+      : `<form class="action-form" method="POST" action="/admin/providers/${p.adapterKey}/disable">
+           <button class="btn btn-danger" type="submit">Disable</button>
+         </form>`;
+
+    return `<tr>
+      <td><strong>${p.adapterKey}</strong></td>
+      <td style="font-size:11px;word-break:break-all">${p.bindingId}</td>
+      <td>${p.currency ?? "—"}</td>
+      <td>${p.country ?? "—"}</td>
+      <td>${statusBadge(status)}</td>
+      <td style="color:${failureCount > 0 ? "#dc3545" : "#198754"}">${failureCount}</td>
+      <td style="font-size:11px">${p.reason ?? "—"}</td>
+      <td style="font-size:11px">${p.checkedAt ? ts(p.checkedAt) : "—"}</td>
+      <td>${action}</td>
+    </tr>`;
+  });
+
+  const head = ["Adapter", "Binding ID", "Currency", "Country", "Status", "Failures", "Reason", "Checked At", "Action"]
+    .map((c) => `<th>${c}</th>`)
+    .join("");
+  return `<table><thead><tr>${head}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
 }
 
 async function handleAudit(): Promise<string> {
@@ -534,6 +575,16 @@ async function handleAdminPost(path: string): Promise<string> {
     await adminPost(`/admin/routing-rules/${parts[2]}/deactivate`);
     return "ok";
   }
+  // POST /admin/providers/:adapterKey/disable
+  if (parts[0] === "admin" && parts[1] === "providers" && parts[3] === "disable") {
+    await adminPost(`/admin/providers/${parts[2]}/disable`);
+    return "ok";
+  }
+  // POST /admin/providers/:adapterKey/enable
+  if (parts[0] === "admin" && parts[1] === "providers" && parts[3] === "enable") {
+    await adminPost(`/admin/providers/${parts[2]}/enable`);
+    return "ok";
+  }
   throw new Error(`Unknown action: ${path}`);
 }
 
@@ -562,6 +613,9 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       const id = path.split("/")[2];
       title = `Payment ${id.slice(0, 8)}…`;
       content = await handlePaymentDetail(id);
+    } else if (path === "/providers") {
+      title = "Provider Health";
+      content = await handleProviders();
     } else if (path === "/routing-rules") {
       title = "Routing Rules";
       content = await handleRoutingRules();

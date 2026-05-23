@@ -276,3 +276,117 @@ test("M8: report routes require admin:read role", async () => {
     /Missing role admin:read/,
   );
 });
+
+// --- Metrics count fields (portal dashboard) ---
+
+test("M8: metricsSnapshot includes portal count fields", async () => {
+  const api = new GranvilleApi();
+  await makeFlow(api, "counts-a", "1000");
+  await makeFlow(api, "counts-b", "2000");
+
+  const metrics = api.metricsSnapshot();
+
+  assert.equal(metrics.totalCustomers, 2);
+  assert.equal(metrics.totalPaymentAccounts, 2);
+  assert.equal(metrics.totalPaymentOrders, 2);
+  assert.equal(metrics.completedPayments, 2);
+  assert.equal(metrics.failedPayments, 0);
+  assert.equal(metrics.pendingPayments, 0);
+  assert.equal(metrics.openReconciliationExceptions, 0);
+  assert.ok(typeof metrics.activeRoutingRules === "number");
+  assert.ok(typeof metrics.ledgerPostingQueueDepth === "number");
+});
+
+test("M8: metricsSnapshot pendingPayments counts non-terminal orders", async () => {
+  const api = new GranvilleApi();
+  const customer = api.postCustomer({ legalName: "Pending User", countryCode: "GB" });
+  const account = api.postPaymentAccount({ customerId: customer.id });
+  // Create two payments but do not submit — they remain in "pending" status
+  api.postPayment({ customerId: customer.id, paymentAccountId: account.id, amount: "100", asset: "GBP/2" });
+  api.postPayment({ customerId: customer.id, paymentAccountId: account.id, amount: "200", asset: "GBP/2" });
+
+  const metrics = api.metricsSnapshot();
+  assert.equal(metrics.pendingPayments, 2);
+  assert.equal(metrics.completedPayments, 0);
+});
+
+test("M8: GET /admin/metrics response includes count fields", async () => {
+  const controllers = new GranvilleHttpControllers();
+  await makeFlow(controllers.api, "counts-http");
+
+  const result = await controllers.route("GET", "/admin/metrics", {}, adminCtx);
+  assert.equal(result.statusCode, 200);
+  const body = result.body as Record<string, unknown>;
+  assert.ok(typeof body.totalCustomers === "number");
+  assert.ok(typeof body.completedPayments === "number");
+  assert.ok(typeof body.pendingPayments === "number");
+  assert.ok(typeof body.activeRoutingRules === "number");
+});
+
+// --- Compliance payments report ---
+
+test("M8: compliancePaymentsReport returns one record per payment with required fields", async () => {
+  const api = new GranvilleApi();
+  await makeFlow(api, "compliance-a", "3000");
+  await makeFlow(api, "compliance-b", "4000");
+
+  const records = api.reportCompliancePayments({});
+  assert.equal(records.length, 2);
+
+  for (const r of records) {
+    assert.ok(r.paymentOrderId);
+    assert.ok(r.customerId);
+    assert.ok(r.paymentAccountId);
+    assert.ok(r.amount);
+    assert.ok(r.asset);
+    assert.ok(r.status);
+    assert.ok(r.createdAt);
+    assert.ok(r.providerBindingId, "should include provider binding id after completion");
+    assert.ok(r.providerAdapterKey, "should include adapter key");
+  }
+});
+
+test("M8: compliancePaymentsReport respects date range filter", async () => {
+  const api = new GranvilleApi();
+  await makeFlow(api, "compliance-range");
+
+  const future = new Date(Date.now() + 60_000).toISOString();
+  const empty = api.reportCompliancePayments({ from: future });
+  assert.equal(empty.length, 0);
+
+  const past = new Date(Date.now() - 60_000).toISOString();
+  const all = api.reportCompliancePayments({ from: past });
+  assert.equal(all.length, 1);
+});
+
+test("M8: compliancePaymentsReport includes beneficiaryReference when set", async () => {
+  const api = new GranvilleApi();
+  const customer = api.postCustomer({ legalName: "Beneficiary User", countryCode: "GB" });
+  const account = api.postPaymentAccount({ customerId: customer.id });
+  const payment = api.postPayment({
+    customerId: customer.id,
+    paymentAccountId: account.id,
+    amount: "1000",
+    asset: "GBP/2",
+    beneficiaryReference: "ben-123",
+  });
+  await api.submitPayment(payment.id);
+
+  const [record] = api.reportCompliancePayments({});
+  assert.ok(record);
+  assert.equal(record.beneficiaryReference, "ben-123");
+});
+
+test("M8: GET /admin/reports/compliance-payments returns array with required fields", async () => {
+  const controllers = new GranvilleHttpControllers();
+  await makeFlow(controllers.api, "compliance-http");
+
+  const result = await controllers.route("GET", "/admin/reports/compliance-payments", {}, adminCtx);
+  assert.equal(result.statusCode, 200);
+  assert.ok(Array.isArray(result.body));
+  const [record] = result.body as Array<Record<string, unknown>>;
+  assert.ok(record);
+  assert.ok(record.paymentOrderId);
+  assert.ok(record.amount);
+  assert.ok(record.asset);
+});

@@ -27,6 +27,7 @@ import {
 import { verifyAirwallexWebhookSignature } from "../../../libs/provider-adapters/airwallex/index.ts";
 import { normalizeProviderWebhook } from "../../../libs/provider-adapters/webhook-normalizer.ts";
 import {
+  type CompliancePaymentRecord,
   type DateRangeFilter,
   type PaymentHistoryRecord,
   type PlatformMetrics,
@@ -367,10 +368,44 @@ export class GranvilleApi {
     return this.store.deactivateRoutingRule(id);
   }
 
+  adminListProviders(): Array<{
+    bindingId: string;
+    adapterKey: string;
+    currency?: string;
+    country?: string;
+    status: string;
+    failureCount: number;
+    reason?: string;
+    checkedAt?: string;
+  }> {
+    return [...this.store.providerBindings.values()].map((binding) => {
+      const health = this.store.providerHealth.get(binding.id);
+      return {
+        bindingId: binding.id,
+        adapterKey: binding.adapterKey,
+        currency: binding.currency,
+        country: binding.country,
+        status: health?.status ?? "unknown",
+        failureCount: health?.failureCount ?? 0,
+        reason: health?.reason,
+        checkedAt: health?.checkedAt,
+      };
+    });
+  }
+
   adminDisableProvider(adapterKey: string): ProviderBinding {
     const binding = this.store.getProviderBindingByAdapterKey(adapterKey);
     this.store.setProviderHealth(binding.id, "disabled", { reason: "disabled_by_admin" });
     this.store.audit("user", "admin.provider.disabled", "provider_binding", binding.id, {
+      adapterKey,
+    });
+    return binding;
+  }
+
+  adminEnableProvider(adapterKey: string): ProviderBinding {
+    const binding = this.store.getProviderBindingByAdapterKey(adapterKey);
+    this.store.setProviderHealth(binding.id, "healthy", { reason: "enabled_by_admin" });
+    this.store.audit("user", "admin.provider.enabled", "provider_binding", binding.id, {
       adapterKey,
     });
     return binding;
@@ -388,6 +423,10 @@ export class GranvilleApi {
 
   reportSettlement(filter: DateRangeFilter): SettlementLine[] {
     return this.reportEngine.settlementSummary(filter);
+  }
+
+  reportCompliancePayments(filter: DateRangeFilter): CompliancePaymentRecord[] {
+    return this.reportEngine.compliancePaymentsReport(filter);
   }
 
   metricsSnapshot(): PlatformMetrics {

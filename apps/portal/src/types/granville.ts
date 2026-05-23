@@ -206,7 +206,7 @@ export interface RoutingRule {
   updatedAt: string
 }
 
-// ── Beneficiary (local model — no API yet) ────────────────────────────────────
+// ── Beneficiary ───────────────────────────────────────────────────────────────
 
 export interface Beneficiary {
   id: string

@@ -42,6 +42,19 @@ export class GranvilleHttpControllers {
 
   async handle(request: IncomingMessage, response: ServerResponse): Promise<void> {
     try {
+      const urlParts = (request.url ?? "/").split("/").filter(Boolean);
+
+      // Webhook endpoints bypass token auth — identity is the provider signature, not a Bearer token.
+      // The raw body string must be preserved for HMAC verification; do not re-serialize parsed JSON.
+      if (request.method === "POST" && urlParts[0] === "webhooks" && urlParts[1]) {
+        const providerCode = urlParts[1];
+        const rawBody = await readRaw(request);
+        const headers = extractHeaders(request, ["x-timestamp", "x-signature", "content-type"]);
+        const result = this.api.postWebhook(providerCode, rawBody, { headers });
+        writeJson(response, 202, result);
+        return;
+      }
+
       const context = this.context(request);
       const body = await readJson(request);
       const result = await this.route(request.method ?? "GET", request.url ?? "/", body, context);
@@ -166,10 +179,6 @@ export class GranvilleHttpControllers {
       requireRole(context, "payment:read");
       return { statusCode: 200, body: required(this.api.getPaymentStatus(parts[1])) };
     }
-    if (method === "POST" && parts[0] === "webhooks" && parts[1]) {
-      requireRole(context, "webhook:write");
-      return { statusCode: 202, body: this.api.postWebhook(parts[1], JSON.stringify(body)) };
-    }
     if (method === "POST" && path === "/reconciliation/runs") {
       requireRole(context, "reconciliation:write");
       return {
@@ -206,6 +215,10 @@ export class GranvilleHttpControllers {
     if (method === "GET" && path === "/admin/payment-attempts") {
       requireRole(context, "admin:read");
       return { statusCode: 200, body: this.api.adminGetPaymentAttempts() };
+    }
+    if (method === "GET" && path === "/admin/providers") {
+      requireRole(context, "admin:read");
+      return { statusCode: 200, body: this.api.adminListProviders() };
     }
     if (method === "GET" && path === "/admin/provider-transactions") {
       requireRole(context, "admin:read");
@@ -297,6 +310,16 @@ export class GranvilleHttpControllers {
       requireRole(context, "admin:write");
       return { statusCode: 200, body: this.api.adminDisableProvider(parts[2]) };
     }
+    if (
+      method === "POST" &&
+      parts[0] === "admin" &&
+      parts[1] === "providers" &&
+      parts[2] &&
+      parts[3] === "enable"
+    ) {
+      requireRole(context, "admin:write");
+      return { statusCode: 200, body: this.api.adminEnableProvider(parts[2]) };
+    }
     if (method === "GET" && path === "/admin/metrics") {
       requireRole(context, "admin:read");
       return { statusCode: 200, body: this.api.metricsSnapshot() };
@@ -325,6 +348,16 @@ export class GranvilleHttpControllers {
       return {
         statusCode: 200,
         body: this.api.reportSettlement({
+          from: query.get("from") ?? undefined,
+          to: query.get("to") ?? undefined,
+        }),
+      };
+    }
+    if (method === "GET" && path === "/admin/reports/compliance-payments") {
+      requireRole(context, "admin:read");
+      return {
+        statusCode: 200,
+        body: this.api.reportCompliancePayments({
           from: query.get("from") ?? undefined,
           to: query.get("to") ?? undefined,
         }),
@@ -480,15 +513,27 @@ function requireRole(context: HttpContext, role: string): void {
   }
 }
 
-async function readJson(request: IncomingMessage): Promise<Record<string, unknown>> {
+async function readRaw(request: IncomingMessage): Promise<string> {
   const chunks: Buffer[] = [];
   for await (const chunk of request) {
     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   }
-  if (chunks.length === 0) {
-    return {};
+  return Buffer.concat(chunks).toString("utf8");
+}
+
+async function readJson(request: IncomingMessage): Promise<Record<string, unknown>> {
+  const raw = await readRaw(request);
+  if (!raw) return {};
+  return asObject(JSON.parse(raw));
+}
+
+function extractHeaders(request: IncomingMessage, names: string[]): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const name of names) {
+    const val = request.headers[name];
+    if (val) result[name] = Array.isArray(val) ? val[0] : val;
   }
-  return asObject(JSON.parse(Buffer.concat(chunks).toString("utf8")));
+  return result;
 }
 
 function writeJson(response: ServerResponse, statusCode: number, body: unknown): void {
