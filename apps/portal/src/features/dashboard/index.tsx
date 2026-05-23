@@ -1,17 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import {
-  AlertTriangle,
-  ArrowLeftRight,
-  CheckCircle2,
-  Clock,
-  Wallet,
-} from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import type {
+  AuditEvent,
+  PlatformMetrics,
+  PaymentOrder,
+  ReconciliationException,
+} from '@/types/granville'
 import { api } from '@/lib/api'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { ThemeSwitch } from '@/components/theme-switch'
 import {
   Card,
   CardContent,
@@ -19,18 +14,23 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import type { AuditEvent, PlatformMetrics, PaymentOrder, ReconciliationException } from '@/types/granville'
+import { Icon } from '@/components/ui/icon'
+import type { IconName } from '@/components/ui/icon-registry'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { ThemeSwitch } from '@/components/theme-switch'
 
 function MetricCard({
   title,
   value,
-  icon: Icon,
+  icon,
   alert,
   sub,
 }: {
   title: string
   value: number | string
-  icon: React.ElementType
+  icon: IconName
   alert?: boolean
   sub?: string
 }) {
@@ -38,10 +38,17 @@ function MetricCard({
     <Card>
       <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
         <CardTitle className='text-sm font-medium'>{title}</CardTitle>
-        <Icon className={`h-4 w-4 ${alert ? 'text-destructive' : 'text-muted-foreground'}`} />
+        <Icon
+          name={icon}
+          className={`size-4 ${alert ? 'text-destructive' : 'text-muted-foreground'}`}
+        />
       </CardHeader>
       <CardContent>
-        <div className={`text-2xl font-bold ${alert ? 'text-destructive' : ''}`}>{value}</div>
+        <div
+          className={`text-2xl font-bold ${alert ? 'text-destructive' : ''}`}
+        >
+          {value}
+        </div>
         {sub && <p className='mt-1 text-xs text-muted-foreground'>{sub}</p>}
       </CardContent>
     </Card>
@@ -61,7 +68,8 @@ export function Dashboard() {
 
   const { data: exceptions = [] } = useQuery<ReconciliationException[]>({
     queryKey: ['exceptions'],
-    queryFn: () => api.get('/admin/reconciliation/exceptions').then((r) => r.data),
+    queryFn: () =>
+      api.get('/admin/reconciliation/exceptions').then((r) => r.data),
   })
 
   const { data: auditEvents = [] } = useQuery<AuditEvent[]>({
@@ -69,7 +77,9 @@ export function Dashboard() {
     queryFn: () => api.get('/admin/audit-events').then((r) => r.data),
   })
 
-  const pendingApprovals = payments.filter((p) => p.status === 'pending_review').length
+  const pendingApprovals = payments.filter(
+    (p) => p.status === 'pending_review'
+  ).length
   const openExceptions = exceptions.filter((e) => e.status === 'open').length
   const recentActivity = [...auditEvents].reverse().slice(0, 10)
 
@@ -92,26 +102,26 @@ export function Dashboard() {
           <MetricCard
             title='Total Wallets'
             value={metrics?.totalPaymentAccounts ?? '—'}
-            icon={Wallet}
+            icon='wallet'
             sub='Payment accounts'
           />
           <MetricCard
             title='Transfers'
             value={metrics?.totalPaymentOrders ?? '—'}
-            icon={ArrowLeftRight}
+            icon='payment-flow'
             sub={`${metrics?.completedPayments ?? 0} completed`}
           />
           <MetricCard
             title='Pending Approvals'
             value={pendingApprovals}
-            icon={Clock}
+            icon='compliance'
             alert={pendingApprovals > 0}
             sub={pendingApprovals > 0 ? 'Requires action' : 'None pending'}
           />
           <MetricCard
             title='Open Exceptions'
             value={openExceptions}
-            icon={AlertTriangle}
+            icon='shield'
             alert={openExceptions > 0}
             sub={openExceptions > 0 ? 'Reconciliation issues' : 'All clear'}
           />
@@ -125,7 +135,9 @@ export function Dashboard() {
             </CardHeader>
             <CardContent className='space-y-0'>
               {recentActivity.length === 0 ? (
-                <p className='py-6 text-center text-sm text-muted-foreground'>No activity yet.</p>
+                <p className='py-6 text-center text-sm text-muted-foreground'>
+                  No activity yet.
+                </p>
               ) : (
                 recentActivity.map((e) => (
                   <div
@@ -133,7 +145,9 @@ export function Dashboard() {
                     className='flex items-start gap-3 border-b py-3 text-sm last:border-0'
                   >
                     <span className='mt-0.5 font-medium'>{e.actorType}</span>
-                    <span className='font-mono text-xs text-muted-foreground'>{e.action}</span>
+                    <span className='font-mono text-xs text-muted-foreground'>
+                      {e.action}
+                    </span>
                     <span className='ml-auto shrink-0 text-xs text-muted-foreground'>
                       {new Date(e.createdAt).toLocaleTimeString()}
                     </span>
@@ -150,28 +164,47 @@ export function Dashboard() {
             <CardContent className='space-y-3 text-sm'>
               <div className='flex items-center justify-between'>
                 <span className='text-muted-foreground'>Customers</span>
-                <span className='font-medium'>{metrics?.totalCustomers ?? '—'}</span>
+                <span className='font-medium'>
+                  {metrics?.totalCustomers ?? '—'}
+                </span>
               </div>
               <div className='flex items-center justify-between'>
                 <span className='text-muted-foreground'>Failed payments</span>
-                <span className={`font-medium ${(metrics?.failedPayments ?? 0) > 0 ? 'text-destructive' : ''}`}>
+                <span
+                  className={`font-medium ${(metrics?.failedPayments ?? 0) > 0 ? 'text-destructive' : ''}`}
+                >
                   {metrics?.failedPayments ?? '—'}
                 </span>
               </div>
               <div className='flex items-center justify-between'>
-                <span className='text-muted-foreground'>Active routing rules</span>
-                <span className='font-medium'>{metrics?.activeRoutingRules ?? '—'}</span>
+                <span className='text-muted-foreground'>
+                  Active routing rules
+                </span>
+                <span className='font-medium'>
+                  {metrics?.activeRoutingRules ?? '—'}
+                </span>
               </div>
               <div className='flex items-center justify-between'>
-                <span className='text-muted-foreground'>Ledger queue depth</span>
-                <span className='font-medium'>{metrics?.ledgerPostingQueueDepth ?? '—'}</span>
+                <span className='text-muted-foreground'>
+                  Ledger queue depth
+                </span>
+                <span className='font-medium'>
+                  {metrics?.ledgerPostingQueueDepth ?? '—'}
+                </span>
               </div>
               <div className='mt-4 space-y-2 border-t pt-4'>
-                <Link to='/transfers' className='flex items-center gap-1 text-xs text-primary hover:underline'>
-                  <ArrowLeftRight className='h-3 w-3' /> View all transfers →
+                <Link
+                  to='/transfers'
+                  className='flex items-center gap-1 text-xs text-primary hover:underline'
+                >
+                  <Icon name='payment-flow' className='size-3' /> View all
+                  transfers →
                 </Link>
-                <Link to='/approvals' className='flex items-center gap-1 text-xs text-primary hover:underline'>
-                  <CheckCircle2 className='h-3 w-3' /> View approvals →
+                <Link
+                  to='/approvals'
+                  className='flex items-center gap-1 text-xs text-primary hover:underline'
+                >
+                  <Icon name='compliance' className='size-3' /> View approvals →
                 </Link>
               </div>
             </CardContent>

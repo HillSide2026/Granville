@@ -1,18 +1,15 @@
-import {
-  ArrowLeftRight,
-  BarChart3,
-  CheckCircle2,
-  CreditCard,
-  LayoutDashboard,
-  Settings,
-  ShieldCheck,
-  TrendingUp,
-  Users,
-  Wallet,
-} from 'lucide-react'
+import { CreditCard, Settings, TrendingUp, Users } from 'lucide-react'
+import { createPortalIcon } from '@/components/ui/portal-icon'
 import { type SidebarData } from '../types'
 
 export type PortalRole = 'customer' | 'ops' | 'compliance' | 'admin'
+
+const AnalyticsIcon = createPortalIcon('analytics')
+const BankIcon = createPortalIcon('bank')
+const ComplianceIcon = createPortalIcon('compliance')
+const PaymentFlowIcon = createPortalIcon('payment-flow')
+const ShieldIcon = createPortalIcon('shield')
+const WalletIcon = createPortalIcon('wallet')
 
 export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
   const isOps = role === 'ops' || role === 'admin'
@@ -27,7 +24,7 @@ export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
     teams: [
       {
         name: 'Granville',
-        logo: Wallet,
+        logo: BankIcon,
         plan: 'Payments Platform',
       },
     ],
@@ -38,7 +35,7 @@ export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
           {
             title: 'Dashboard',
             url: '/',
-            icon: LayoutDashboard,
+            icon: AnalyticsIcon,
           },
         ],
       },
@@ -48,12 +45,12 @@ export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
           {
             title: 'Wallets',
             url: '/wallets',
-            icon: Wallet,
+            icon: WalletIcon,
           },
           {
             title: 'Balances',
             url: '/balances',
-            icon: BarChart3,
+            icon: AnalyticsIcon,
           },
         ],
       },
@@ -63,7 +60,7 @@ export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
           {
             title: 'Transfers',
             url: '/transfers',
-            icon: ArrowLeftRight,
+            icon: PaymentFlowIcon,
           },
           {
             title: 'Beneficiaries',
@@ -99,7 +96,7 @@ export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
                       {
                         title: 'Approvals',
                         url: '/approvals' as const,
-                        icon: CheckCircle2,
+                        icon: ComplianceIcon,
                       },
                     ]
                   : []),
@@ -108,7 +105,7 @@ export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
                       {
                         title: 'Compliance',
                         url: '/compliance' as const,
-                        icon: ShieldCheck,
+                        icon: ShieldIcon,
                       },
                     ]
                   : []),
