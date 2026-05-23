@@ -15,8 +15,10 @@ Scaffolding completed in this repo:
 Current implementation status:
 
 - Mock EMI Stage 1 flow is implemented and covered by `test/granville/e2e-stage1-payment-flow.test.ts`.
-- Granville HTTP controllers, client SDK tests, routing rules, provider runtime, ledger writer, webhook ingest, reconciliation, admin operations, and reporting tests pass in memory.
+- Granville HTTP controllers, client SDK tests, routing rules, provider runtime, ledger writer, webhook ingest, reconciliation, admin operations, reporting, and adapter contract tests pass in memory.
 - Postgres migrations, seed data, and `PostgresGranvilleStore` are wired for persistent acceptance testing.
+- The provider adapter boundary is locally complete for mock EMI, mock bank, native EMI, Airwallex, and Formance Payments wrapper adapter keys.
+- Airwallex is adapter-ready at the request-shape and authentication level, but live money movement remains gated behind canonical payment metadata mapping, sandbox credentials, and explicit live-mode controls.
 
 Next checkpoint:
 
@@ -24,51 +26,65 @@ Next checkpoint:
 - Use `npm run db:migrate` with `DATABASE_URL` to apply migrations and mock provider seeds.
 - Use `TEST_DATABASE_URL` to run the Postgres-backed tests.
 
-Remaining work to take Milestone 1 from mock-complete to local-operable:
+Milestone implementation state:
 
 1. Workspace migration
+   Pending.
    Move from the interim root-ledger layout to the target `third_party/formance-*` layout without losing local history or breaking CI.
 
 2. Granville Postgres schema
-   Keep migrations current for `payment_orders`, `payment_attempts`, `provider_bindings`, `idempotency_keys`, `webhook_events`, reconciliation, audit, routing, provider health, and queue tables.
+   Implemented for local testing.
+   Migrations cover `payment_orders`, `payment_attempts`, `provider_bindings`, `idempotency_keys`, `webhook_events`, reconciliation, audit, routing, provider health, and queue tables. The remaining proof is running the suite against a real migrated database.
 
 3. Canonical domain package
-   Implement the models described in `libs/domain` and keep them independent from Formance `connectorID`.
+   Implemented.
+   Models live in `libs/domain` and remain independent from Formance `connectorID`.
 
 4. Granville API
-   Build the first customer-facing endpoints from `apps/api` and make them write only to Granville operational storage.
+   Implemented for the current Stage 1 surface.
+   The next API task is local API plus Postgres acceptance.
 
 5. Orchestrator state machine
-   Implement the first attempt lifecycle in `apps/orchestrator`: requested, routed, submitted, provider_pending, succeeded, failed, reversed.
+   Implemented for the mock EMI Stage 1 path.
 
 6. Routing engine
-   Implement configuration-driven provider selection in `apps/router`, including deterministic fallback policy.
+   Implemented.
+   Routing rules and deterministic fallback behavior are covered by tests.
 
 7. Ledger writer
-   Implement normalized posting templates and idempotent writes into Formance Ledger.
+   Implemented for normalized, idempotent mock ledger posting.
 
 8. First provider path
    Stage 1 currently uses `mock-emi`.
    The first real provider path is a native Granville EMI adapter behind the existing adapter boundary.
    Use a Formance Payments wrapper for a later provider only when an upstream connector already covers that provider cleanly.
+   Airwallex is the first native EMI adapter key and is adapter-tested, but not yet Stage 1 live-money accepted.
 
 9. Webhook ingest and replay
-   Add a Granville-owned webhook event store, signature verification policy, replay tooling, and normalized event publication.
+   Implemented for current durable webhook storage, processing attempts, replay, and normalization tests.
 
 10. Reconciliation baseline
-    Build API-driven reconciliation for the first provider and link provider-side transactions to Granville payment attempts and ledger effects.
+    Implemented for transaction-level matching, exception generation, aging, ignore/resolve flows, and admin/reporting visibility.
 
 11. Local and staging environments
-    Wire secrets, config loading, migrations, and environment promotion rules around the wrapper compose and future deployment manifests.
+    Partially implemented.
+    Local compose, env example, migrations, observability stubs, and runbooks exist. Real local-operable proof with Postgres is next; staging promotion rules remain pending.
 
 12. Acceptance tests
-    Add end-to-end coverage for:
-    payment order creation
-    routing selection
-    provider execution
-    ledger posting
-    webhook processing
-    reconciliation match
+    Implemented for memory-backed execution.
+    The current suite covers payment order creation, routing selection, provider execution, ledger posting, webhook processing, reconciliation match, admin operations, reporting, and provider portability. Postgres-backed acceptance is the next checkpoint.
+
+Current unblocked plan:
+
+1. Update and keep roadmap docs aligned with the current implementation state.
+2. Run the local Postgres checkpoint:
+   - start local infra
+   - set `DATABASE_URL`
+   - run `npm run db:migrate`
+   - set `TEST_DATABASE_URL`
+   - run `npm run test:granville`
+3. Fix any Postgres-only issues surfaced by that run.
+4. Then choose between portal API integration, provider runtime hardening, or Airwallex sandbox readiness.
 
 Milestone 1 exit criteria:
 

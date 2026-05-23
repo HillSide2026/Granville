@@ -40,12 +40,21 @@ third_party/formance-stack
 As of May 22, 2026:
 
 - the public marketing and legal site is implemented under `apps/branded-domain/`
-- the customer-facing portal shell is implemented under `apps/portal/`
-- the portal is now a reduced browser-routed shell with `sign-in`, `sign-up`, `dashboard`, `accounts`, `activity`, and `settings`
-- the portal currently uses a local mock client boundary in `apps/portal/src/api/`
-- the next portal milestone is replacing mock reads with real `apps/api` integration and adding authentication/session enforcement
+- the customer-facing portal is implemented under `apps/portal/` as a Vite, React, TypeScript, TanStack Router, and shadcn/ui application
+- the portal includes Granville modules for wallets, balances, transfers, beneficiaries, approvals, cards, FX, compliance, settings, and auth screens
+- the mock EMI Stage 1 flow is implemented through Granville-owned API, orchestration, routing, provider runtime, ledger writer, webhook processing, reconciliation, audit, admin operations, and reporting boundaries
+- provider adapter contracts exist for mock EMI, mock bank, native EMI, Airwallex, and Formance Payments wrapper paths
+- `npm run test:granville` passes in local memory-backed execution
 
-This means the repo already has a usable customer application surface, but it is still pre-production and intentionally thin.
+This means the repo has moved beyond scaffold-only status. The next proof point is local operability: run the migrated Postgres schema, seed provider bindings, point the API/tests at that database, and prove the same Stage 1 flow outside the in-memory store.
+
+Current unblocked work:
+
+- prove Postgres-backed Stage 1 acceptance with `DATABASE_URL`, `npm run db:migrate`, and `TEST_DATABASE_URL`
+- wire `apps/portal` read paths to `apps/api`
+- harden provider runtime failure paths around retries, dead-letter handling, disabled providers, and duplicate provider references
+- finish Airwallex canonical payment metadata mapping and add env-gated sandbox tests
+- publish the rebased local branch once the desired checkpoint is complete
 
 ## Phase 0 — Repo Boundary Cleanup
 
