@@ -47,7 +47,7 @@ Stage 1 begins after MVP. Four tracks run in parallel. See [stage1-overview.md](
 | 2 | Design | **DS2b** — confirm button shape rule, fix unlabeled CardTitle sizes, fix `text-[1.3rem]`, audit sentence case on CTAs |
 | 3 | Design | **DS2c** — replace template copy on marketing site with institutional voice |
 | 4 | Design | **DS2d** — audit and fix icon usage against the Tabler/institutional governance rule |
-| 5 | Platform | **M7 portal approvals** — wire portal `/approvals` to `POST /payments/:id/approve` and `reject` |
+| 5 | Platform | **M7 ops-ui approvals** — wire `apps/ops-ui` approvals queue to `POST /payments/:id/approve` and `reject` (moved from customer portal — operators approve, customers submit) |
 
 ### Requires External Action
 
@@ -92,7 +92,7 @@ After registering a public webhook endpoint:
 
 1. Create a sandbox payment via the Granville API
 2. Wait for Airwallex to deliver the `PAID` event
-3. Confirm in the ops-ui: `signatureValid=true`, payment → `completed`, ledger posting → `posted`
+3. Confirm via API response or ops-ui (once built): `signatureValid=true`, payment → `completed`, ledger posting → `posted`
 4. All code is already in place — this step is environment configuration only
 
 ---
@@ -107,8 +107,8 @@ apps/
   ledger-writer/        Async Formance ledger posting
   webhook-ingest/       Durable webhook ingestion
   reconciler/           Reconciliation engine
-  ops-ui/               Internal operations console (server-rendered HTML)
-  portal/               Customer-facing Payments Platform (React/Vite/Shadcn)
+  ops-ui/               Internal operator console (React/Vite/Shadcn — stub)
+  portal/               End-customer portal — Budgets, Payments, Sales, Wallets, Balances, FX (React/Vite/Shadcn)
   branded-domain/       Public Granville Finance marketing site (Astro)
 
 libs/

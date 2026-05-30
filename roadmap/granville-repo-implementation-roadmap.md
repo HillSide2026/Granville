@@ -41,7 +41,7 @@ As of May 22, 2026:
 
 - the public marketing and legal site is implemented under `apps/branded-domain/`
 - the customer-facing portal is implemented under `apps/portal/` as a Vite, React, TypeScript, TanStack Router, and shadcn/ui application
-- the portal includes Granville modules for wallets, balances, transfers, beneficiaries, approvals, cards, FX, compliance, settings, and auth screens
+- the portal (Track 1 complete 2026-05-30) includes: Dashboard, Budgets, Wallets (mpcium stub), Balances, Payments (outbound), Sales (inbound), FX (access-request state), Settings; operator features (Compliance, Approvals, Cards) removed from the customer portal — see [roadmap/portal-roadmap.md](portal-roadmap.md)
 - the mock EMI Stage 1 flow is implemented through Granville-owned API, orchestration, routing, provider runtime, ledger writer, webhook processing, reconciliation, audit, admin operations, and reporting boundaries
 - provider adapter contracts exist for mock EMI, mock bank, native EMI, Airwallex, and Formance Payments wrapper paths
 - `npm run test:granville` passes in local memory-backed execution

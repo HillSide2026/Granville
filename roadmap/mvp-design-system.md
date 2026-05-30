@@ -42,8 +42,8 @@ Brand foundations and token rollout are done. `libs/brand/` holds the typed sour
 | Item | Action |
 |---|---|
 | Marketing template copy | Audit against voice guidelines in `brand-foundations.ts`; replace generic SaaS claims and placeholder text with institutional language |
-| Navigation labels | Review `apps/portal/src/components/layout/data/sidebar-data.ts`; confirm labels map to canonical capability vocabulary (Treasury, Payments, Operations, Compliance, Security) |
-| Portal dashboard labels | Review `apps/portal/src/features/dashboard/` for generic labels; replace with capability terms |
+| Navigation labels | Review `apps/portal/src/components/layout/data/sidebar-data.ts`; confirm labels match the canonical nav structure: General (Dashboard) · Finance (Budgets, Wallets, Balances) · Transactions (Payments, Sales) · Services (FX) · Other (Settings) |
+| Portal dashboard labels | Review `apps/portal/src/features/dashboard/` — current labels are Budgets, Payments, Pending, Recent Transactions, Quick Links; confirm these use institutional voice |
 | CTA voice | Audit CTA labels across both apps; preferred: "Send payment", "View transactions"; avoid: "Get started", "Unlock growth" |
 
 **Exit criteria:** Marketing site passes voice review — no generic SaaS claims, no template placeholder text; portal nav labels match capability vocabulary; all CTAs use institutional voice and sentence case.
