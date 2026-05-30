@@ -137,3 +137,45 @@ Separate app for internal Granville staff. Not visible to end-customers.
 | Track 2 — Feature Permission Model | Not started | Requires API endpoints + auth model decision |
 | Track 3 — mpcium Integration | Not started | mpcium repo readiness |
 | Track 4 — Operator Console | Not started | Track 2 (feature provisioning is the ops-ui → portal link) |
+| Track 5 — Repo Restructure | Not started | Best done when current tracks are stable |
+
+---
+
+## Track 5 — Repo Restructure (frontend / backend split)
+
+**Status: Not started — low urgency, do when current tracks are stable**
+
+Currently all apps (React frontends and Node.js backends) sit as siblings under `apps/`
+with no visual distinction. The fix is to split at the top level:
+
+```
+web/              ← frontend apps
+  portal/
+  ops-ui/
+  branded-domain/
+services/         ← backend services
+  api/
+  orchestrator/
+  provider-runtime/
+  ledger-writer/
+  reconciler/
+  webhook-ingest/
+libs/             ← shared (unchanged)
+```
+
+### Items
+
+| # | Item | Notes |
+|---|---|---|
+| 1 | Move `apps/portal`, `apps/ops-ui`, `apps/branded-domain` → `web/` | Update all internal import paths and tsconfig references |
+| 2 | Move backend services → `services/` | Update all internal import paths and tsconfig references |
+| 3 | Update pnpm workspace config | `pnpm-workspace.yaml` globs need updating |
+| 4 | Update Dockerfile and any CI/CD references | Ensure build paths resolve correctly |
+| 5 | Update `ARCHITECTURE.md` and `apps/README.md` | Reflect new layout |
+
+### Acceptance Criteria
+
+- `web/` contains only frontend apps; `services/` contains only backend services
+- All tests pass after the move
+- No broken import paths
+- Documentation reflects the new structure

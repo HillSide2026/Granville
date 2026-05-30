@@ -1,22 +1,53 @@
 # Granville Applications
 
-This folder is the Granville-owned application layer that sits around Formance.
+Granville is a full-stack product. This directory contains both the user-facing
+frontend applications and the backend services that power them.
 
-Target service split:
+---
 
-- `api`: customer-facing API and idempotency boundary
-- `portal/`: customer-facing authenticated Granville application
-- `orchestrator`: payment order lifecycle and control plane
-- `router`: provider and rail selection
-- `provider-runtime`: provider adapter execution layer
-- `ledger-writer`: normalized posting gateway into Formance Ledger
-- `reconciler`: provider and ledger matching plus break management
-- `ops-ui`: internal operational surface
+## Frontend
 
-Current state:
+| App | Purpose | Stack |
+|---|---|---|
+| `portal/` | End-customer self-serve portal (Budgets, Payments, Sales, FX, Wallets) | React · Vite · TanStack Router |
+| `ops-ui/` | Internal operator console (KYC, approvals, feature provisioning) | React · Vite · TanStack Router — stub |
+| `branded-domain/` | Public-facing marketing and legal site | — |
 
-- `portal/` is a standalone customer-facing React application.
-- `branded-domain/` contains the active public-facing marketing and legal site.
-- The remaining service directories are scaffolds only.
-- The root checkout is still the Formance Ledger codebase.
-- `vendor/formance-payments` and `vendor/formance-stack` remain the current upstream clones until the workspace is migrated into the target shape described in [third_party/README.md](/Users/matthewajlevinelaw/Repos/Granville/third_party/README.md).
+---
+
+## Backend
+
+| Service | Purpose |
+|---|---|
+| `api/` | HTTP entrypoint — all routes, auth, RBAC, idempotency boundary |
+| `orchestrator/` | Payment lifecycle — create, submit, cancel, retry |
+| `provider-runtime/` | Executes payment attempts against EMI/bank providers |
+| `ledger-writer/` | Asynchronous posting gateway into Formance Ledger |
+| `reconciler/` | Matches provider state against internal and ledger state |
+| `webhook-ingest/` | Receives and durably processes inbound provider webhooks |
+
+---
+
+## Shared libraries
+
+Shared code lives under `libs/` at the repo root:
+
+| Library | Purpose |
+|---|---|
+| `libs/contracts/` | All TypeScript domain types and interfaces |
+| `libs/persistence/` | In-memory store + Postgres repositories |
+| `libs/provider-adapters/` | Airwallex, mock-emi, mock-bank adapters |
+| `libs/router/` | Configuration-driven provider routing engine |
+| `libs/ledger-postings/` | Deterministic ledger posting templates |
+| `libs/reporting/` | Report engine — payment history, audit export, metrics |
+| `libs/db/` | Database migrations |
+
+---
+
+## External integrations
+
+| System | Role | Doc |
+|---|---|---|
+| mpcium | Crypto wallet backend (MPC threshold signing) | [docs/MPCIUM_INTEGRATION.md](../docs/MPCIUM_INTEGRATION.md) |
+| Formance Ledger | Immutable double-entry accounting | [ARCHITECTURE.md](../ARCHITECTURE.md) |
+| Airwallex | EMI payment provider | [roadmap/mvp-airwallex.md](../roadmap/mvp-airwallex.md) |

@@ -1,5 +1,41 @@
 # Architecture
 
+## Full-Stack Overview
+
+Granville is a full-stack payments platform. The repo contains both layers:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  Frontend (apps/)                                                   │
+│                                                                     │
+│  portal/          End-customer portal — Budgets, Payments,          │
+│                   Sales, Wallets, Balances, FX                      │
+│                   React · Vite · TanStack Router                    │
+│                                                                     │
+│  ops-ui/          Operator console — KYC, approvals,                │
+│                   feature provisioning  [stub]                      │
+└──────────────────────────┬──────────────────────────────────────────┘
+                           │ REST + JSON  (Granville JWT)
+┌──────────────────────────▼──────────────────────────────────────────┐
+│  Backend (apps/)                                                    │
+│                                                                     │
+│  api/             HTTP entrypoint, auth, RBAC, idempotency          │
+│  orchestrator/    Payment lifecycle state machine                   │
+│  provider-runtime/  EMI/bank adapter execution                      │
+│  ledger-writer/   Formance Ledger posting gateway                   │
+│  reconciler/      Provider ↔ ledger matching                        │
+│  webhook-ingest/  Inbound provider webhook processor                │
+└──────────────────────────┬──────────────────────────────────────────┘
+                           │
+          ┌────────────────┼────────────────┐
+          ▼                ▼                ▼
+   Formance Ledger    EMI/Bank rails    mpcium
+   (accounting)       (Airwallex        (crypto wallets —
+                       mock-emi/bank)    see docs/MPCIUM_INTEGRATION.md)
+```
+
+---
+
 ## Core Principle
 
 Granville is an orchestration-first platform built around clean boundaries:
