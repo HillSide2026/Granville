@@ -1,11 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import type {
-  AuditEvent,
-  PlatformMetrics,
-  PaymentOrder,
-  ReconciliationException,
-} from '@/types/granville'
+import type { PaymentOrder, PaymentAccount } from '@/types/granville'
 import { api } from '@/lib/api'
 import {
   Card,
@@ -14,74 +9,38 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Icon } from '@/components/ui/icon'
-import type { IconName } from '@/components/ui/icon-registry'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
 
-function MetricCard({
-  title,
-  value,
-  icon,
-  alert,
-  sub,
-}: {
-  title: string
-  value: number | string
-  icon: IconName
-  alert?: boolean
-  sub?: string
-}) {
-  return (
-    <Card>
-      <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-        <CardTitle className='text-sm font-medium'>{title}</CardTitle>
-        <Icon
-          name={icon}
-          className={`size-4 ${alert ? 'text-destructive' : 'text-muted-foreground'}`}
-        />
-      </CardHeader>
-      <CardContent>
-        <div
-          className={`text-2xl font-bold ${alert ? 'text-destructive' : ''}`}
-        >
-          {value}
-        </div>
-        {sub && <p className='mt-1 text-xs text-muted-foreground'>{sub}</p>}
-      </CardContent>
-    </Card>
-  )
+const statusVariant: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+  completed: 'default',
+  processing: 'secondary',
+  provider_accepted: 'secondary',
+  submitted_to_provider: 'secondary',
+  pending_review: 'outline',
+  created: 'outline',
+  failed: 'destructive',
+  returned: 'destructive',
+  cancelled: 'destructive',
 }
 
 export function Dashboard() {
-  const { data: metrics } = useQuery<PlatformMetrics>({
-    queryKey: ['metrics'],
-    queryFn: () => api.get('/admin/metrics').then((r) => r.data),
+  const { data: budgets = [] } = useQuery<PaymentAccount[]>({
+    queryKey: ['wallets'],
+    queryFn: () => api.get('/payment-accounts').then((r) => r.data),
   })
 
   const { data: payments = [] } = useQuery<PaymentOrder[]>({
-    queryKey: ['payments'],
-    queryFn: () => api.get('/admin/payments').then((r) => r.data),
+    queryKey: ['transfers'],
+    queryFn: () => api.get('/payments').then((r) => r.data),
   })
 
-  const { data: exceptions = [] } = useQuery<ReconciliationException[]>({
-    queryKey: ['exceptions'],
-    queryFn: () =>
-      api.get('/admin/reconciliation/exceptions').then((r) => r.data),
-  })
-
-  const { data: auditEvents = [] } = useQuery<AuditEvent[]>({
-    queryKey: ['audit-events'],
-    queryFn: () => api.get('/admin/audit-events').then((r) => r.data),
-  })
-
-  const pendingApprovals = payments.filter(
-    (p) => p.status === 'pending_review'
-  ).length
-  const openExceptions = exceptions.filter((e) => e.status === 'open').length
-  const recentActivity = [...auditEvents].reverse().slice(0, 10)
+  const recentPayments = [...payments].reverse().slice(0, 5)
+  const pendingPayments = payments.filter((p) => p.status === 'pending_review' || p.status === 'created')
 
   return (
     <>
@@ -95,61 +54,77 @@ export function Dashboard() {
       <Main>
         <div className='mb-6'>
           <h1 className='text-2xl font-bold tracking-tight'>Dashboard</h1>
-          <p className='text-muted-foreground'>Platform overview</p>
+          <p className='text-muted-foreground'>Your financial overview</p>
         </div>
 
-        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-          <MetricCard
-            title='Total Wallets'
-            value={metrics?.totalPaymentAccounts ?? '—'}
-            icon='wallet'
-            sub='Payment accounts'
-          />
-          <MetricCard
-            title='Transfers'
-            value={metrics?.totalPaymentOrders ?? '—'}
-            icon='payment-flow'
-            sub={`${metrics?.completedPayments ?? 0} completed`}
-          />
-          <MetricCard
-            title='Pending Approvals'
-            value={pendingApprovals}
-            icon='compliance'
-            alert={pendingApprovals > 0}
-            sub={pendingApprovals > 0 ? 'Requires action' : 'None pending'}
-          />
-          <MetricCard
-            title='Open Exceptions'
-            value={openExceptions}
-            icon='shield'
-            alert={openExceptions > 0}
-            sub={openExceptions > 0 ? 'Reconciliation issues' : 'All clear'}
-          />
+        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+          <Card>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <CardTitle className='text-sm font-medium'>Budgets</CardTitle>
+              <Icon name='wallet' className='size-4 text-muted-foreground' />
+            </CardHeader>
+            <CardContent>
+              <div className='text-2xl font-bold'>
+                {budgets.length === 0 ? '0' : budgets.length}
+              </div>
+              <p className='mt-1 text-xs text-muted-foreground'>Active budgets</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <CardTitle className='text-sm font-medium'>Payments</CardTitle>
+              <Icon name='payment-flow' className='size-4 text-muted-foreground' />
+            </CardHeader>
+            <CardContent>
+              <div className='text-2xl font-bold'>
+                {payments.filter((p) => p.direction === 'outbound').length}
+              </div>
+              <p className='mt-1 text-xs text-muted-foreground'>
+                {payments.filter((p) => p.direction === 'outbound' && p.status === 'completed').length} completed
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <CardTitle className='text-sm font-medium'>Pending</CardTitle>
+              <Icon name='compliance' className={`size-4 ${pendingPayments.length > 0 ? 'text-destructive' : 'text-muted-foreground'}`} />
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${pendingPayments.length > 0 ? 'text-destructive' : ''}`}>
+                {pendingPayments.length}
+              </div>
+              <p className='mt-1 text-xs text-muted-foreground'>
+                {pendingPayments.length > 0 ? 'Requires attention' : 'All clear'}
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
         <div className='mt-6 grid gap-4 lg:grid-cols-7'>
           <Card className='lg:col-span-4'>
             <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>Latest platform events</CardDescription>
+              <CardTitle>Recent Transactions</CardTitle>
+              <CardDescription>Your latest payments and sales</CardDescription>
             </CardHeader>
             <CardContent className='space-y-0'>
-              {recentActivity.length === 0 ? (
+              {recentPayments.length === 0 ? (
                 <p className='py-6 text-center text-sm text-muted-foreground'>
-                  No activity yet.
+                  No transactions yet.
                 </p>
               ) : (
-                recentActivity.map((e) => (
-                  <div
-                    key={e.id}
-                    className='flex items-start gap-3 border-b py-3 text-sm last:border-0'
-                  >
-                    <span className='mt-0.5 font-medium'>{e.actorType}</span>
-                    <span className='font-mono text-xs text-muted-foreground'>
-                      {e.action}
+                recentPayments.map((p) => (
+                  <div key={p.id} className='flex items-center gap-3 border-b py-3 text-sm last:border-0'>
+                    <span className='font-mono text-xs text-muted-foreground' title={p.id}>
+                      {p.id.slice(0, 8)}…
                     </span>
-                    <span className='ml-auto shrink-0 text-xs text-muted-foreground'>
-                      {new Date(e.createdAt).toLocaleTimeString()}
+                    <Badge variant={statusVariant[p.status] ?? 'secondary'} className='text-xs'>
+                      {p.status.replace(/_/g, ' ')}
+                    </Badge>
+                    <span className='text-xs text-muted-foreground capitalize'>{p.direction}</span>
+                    <span className='ml-auto shrink-0 font-medium'>
+                      {p.amount ? `${p.amount.amount} ${p.amount.asset}` : '—'}
                     </span>
                   </div>
                 ))
@@ -159,54 +134,29 @@ export function Dashboard() {
 
           <Card className='lg:col-span-3'>
             <CardHeader>
-              <CardTitle>Platform Status</CardTitle>
+              <CardTitle>Quick Links</CardTitle>
             </CardHeader>
             <CardContent className='space-y-3 text-sm'>
-              <div className='flex items-center justify-between'>
-                <span className='text-muted-foreground'>Customers</span>
-                <span className='font-medium'>
-                  {metrics?.totalCustomers ?? '—'}
-                </span>
-              </div>
-              <div className='flex items-center justify-between'>
-                <span className='text-muted-foreground'>Failed payments</span>
-                <span
-                  className={`font-medium ${(metrics?.failedPayments ?? 0) > 0 ? 'text-destructive' : ''}`}
-                >
-                  {metrics?.failedPayments ?? '—'}
-                </span>
-              </div>
-              <div className='flex items-center justify-between'>
-                <span className='text-muted-foreground'>
-                  Active routing rules
-                </span>
-                <span className='font-medium'>
-                  {metrics?.activeRoutingRules ?? '—'}
-                </span>
-              </div>
-              <div className='flex items-center justify-between'>
-                <span className='text-muted-foreground'>
-                  Ledger queue depth
-                </span>
-                <span className='font-medium'>
-                  {metrics?.ledgerPostingQueueDepth ?? '—'}
-                </span>
-              </div>
-              <div className='mt-4 space-y-2 border-t pt-4'>
-                <Link
-                  to='/transfers'
-                  className='flex items-center gap-1 text-xs text-primary hover:underline'
-                >
-                  <Icon name='payment-flow' className='size-3' /> View all
-                  transfers →
-                </Link>
-                <Link
-                  to='/approvals'
-                  className='flex items-center gap-1 text-xs text-primary hover:underline'
-                >
-                  <Icon name='compliance' className='size-3' /> View approvals →
-                </Link>
-              </div>
+              <Link to='/budgets' className='flex items-center gap-2 rounded-md p-2 hover:bg-muted'>
+                <Icon name='wallet' className='size-4 text-muted-foreground' />
+                <span>Manage budgets</span>
+                <span className='ml-auto text-muted-foreground'>→</span>
+              </Link>
+              <Link to='/payments' className='flex items-center gap-2 rounded-md p-2 hover:bg-muted'>
+                <Icon name='payment-flow' className='size-4 text-muted-foreground' />
+                <span>New payment</span>
+                <span className='ml-auto text-muted-foreground'>→</span>
+              </Link>
+              <Link to='/sales' className='flex items-center gap-2 rounded-md p-2 hover:bg-muted'>
+                <Icon name='payment-flow' className='size-4 text-muted-foreground' />
+                <span>View sales</span>
+                <span className='ml-auto text-muted-foreground'>→</span>
+              </Link>
+              <Link to='/balances' className='flex items-center gap-2 rounded-md p-2 hover:bg-muted'>
+                <Icon name='analytics' className='size-4 text-muted-foreground' />
+                <span>Check balances</span>
+                <span className='ml-auto text-muted-foreground'>→</span>
+              </Link>
             </CardContent>
           </Card>
         </div>

@@ -2,6 +2,8 @@
 
 Two phases: MVP establishes a working payment platform through a single provider. Stage 1 hardens it into deterministic, replay-safe, multi-provider financial infrastructure suitable for EMI onboarding.
 
+See [portal-roadmap.md](portal-roadmap.md) for the customer portal and operator console build-out (Tracks 1–4).
+
 ---
 
 ## Stage 1 — EMI-Compatible Financial Operations Infrastructure

@@ -1,15 +1,18 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Users } from 'lucide-react'
 import {
   useReactTable,
   getCoreRowModel,
+  getFilteredRowModel,
   flexRender,
 } from '@tanstack/react-table'
+import { Link } from '@tanstack/react-router'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -18,18 +21,24 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { useWallets } from './hooks/use-wallets'
-import { walletsColumns } from './components/wallets-columns'
-import { WalletsCreateDrawer } from './components/wallets-create-drawer'
+import { useTransfers } from '@/features/transfers/hooks/use-transfers'
+import { TransferCreateDrawer } from '@/features/transfers/components/transfer-create-drawer'
+import { paymentsColumns } from './components/payments-columns'
 
-export function Budgets() {
+export function Payments() {
   const [createOpen, setCreateOpen] = useState(false)
-  const { data = [], isLoading } = useWallets()
+  const [globalFilter, setGlobalFilter] = useState('')
+  const { data = [], isLoading } = useTransfers()
+
+  const outbound = data.filter((p) => p.direction === 'outbound')
 
   const table = useReactTable({
-    data,
-    columns: walletsColumns,
+    data: outbound,
+    columns: paymentsColumns,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    state: { globalFilter },
+    onGlobalFilterChange: setGlobalFilter,
   })
 
   return (
@@ -44,12 +53,28 @@ export function Budgets() {
       <Main>
         <div className='mb-4 flex items-center justify-between'>
           <div>
-            <h1 className='text-2xl font-bold tracking-tight'>Budgets</h1>
-            <p className='text-sm text-muted-foreground'>Your budgets</p>
+            <h1 className='text-2xl font-bold tracking-tight'>Payments</h1>
+            <p className='text-sm text-muted-foreground'>Outbound transfers</p>
           </div>
-          <Button onClick={() => setCreateOpen(true)} size='sm'>
-            <Plus className='mr-1 h-4 w-4' /> New Budget
-          </Button>
+          <div className='flex items-center gap-2'>
+            <Button variant='outline' size='sm' asChild>
+              <Link to='/beneficiaries'>
+                <Users className='mr-1 h-4 w-4' /> Beneficiaries
+              </Link>
+            </Button>
+            <Button onClick={() => setCreateOpen(true)} size='sm'>
+              <Plus className='mr-1 h-4 w-4' /> New Payment
+            </Button>
+          </div>
+        </div>
+
+        <div className='mb-3'>
+          <Input
+            placeholder='Filter by ID, status, beneficiary…'
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className='max-w-sm'
+          />
         </div>
 
         <div className='rounded-md border'>
@@ -68,14 +93,14 @@ export function Budgets() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={walletsColumns.length} className='py-10 text-center text-muted-foreground'>
+                  <TableCell colSpan={paymentsColumns.length} className='py-10 text-center text-muted-foreground'>
                     Loading…
                   </TableCell>
                 </TableRow>
               ) : table.getRowModel().rows.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={walletsColumns.length} className='py-10 text-center text-muted-foreground'>
-                    No budgets yet.
+                  <TableCell colSpan={paymentsColumns.length} className='py-10 text-center text-muted-foreground'>
+                    No payments yet.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -93,7 +118,7 @@ export function Budgets() {
           </Table>
         </div>
 
-        <WalletsCreateDrawer open={createOpen} onOpenChange={setCreateOpen} />
+        <TransferCreateDrawer open={createOpen} onOpenChange={setCreateOpen} />
       </Main>
     </>
   )

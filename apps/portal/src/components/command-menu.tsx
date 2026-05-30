@@ -12,7 +12,9 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command'
-import { sidebarData } from './layout/data/sidebar-data'
+import { getSidebarData } from './layout/data/sidebar-data'
+
+const sidebarData = getSidebarData()
 import { ScrollArea } from './ui/scroll-area'
 
 export function CommandMenu() {

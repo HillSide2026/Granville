@@ -52,11 +52,11 @@ export function WalletsCreateDrawer({ open, onOpenChange }: Props) {
   function onSubmit(values: FormValues) {
     create.mutate(values, {
       onSuccess: () => {
-        toast.success('Wallet created')
+        toast.success('Budget created')
         form.reset()
         onOpenChange(false)
       },
-      onError: () => toast.error('Failed to create wallet'),
+      onError: () => toast.error('Failed to create budget'),
     })
   }
 
@@ -64,7 +64,7 @@ export function WalletsCreateDrawer({ open, onOpenChange }: Props) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Create Wallet</SheetTitle>
+          <SheetTitle>Create Budget</SheetTitle>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='mt-4 space-y-4 px-1'>
@@ -133,7 +133,7 @@ export function WalletsCreateDrawer({ open, onOpenChange }: Props) {
               )}
             />
             <Button type='submit' className='w-full' disabled={create.isPending}>
-              {create.isPending ? 'Creating…' : 'Create Wallet'}
+              {create.isPending ? 'Creating…' : 'Create Budget'}
             </Button>
           </form>
         </Form>

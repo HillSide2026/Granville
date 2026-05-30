@@ -1,4 +1,4 @@
-import { CreditCard, Settings, TrendingUp, Users } from 'lucide-react'
+import { Settings, TrendingUp } from 'lucide-react'
 import { createPortalIcon } from '@/components/ui/portal-icon'
 import { type SidebarData } from '../types'
 
@@ -6,21 +6,12 @@ export type PortalRole = 'customer' | 'ops' | 'compliance' | 'admin'
 
 const AnalyticsIcon = createPortalIcon('analytics')
 const BankIcon = createPortalIcon('bank')
-const ComplianceIcon = createPortalIcon('compliance')
 const PaymentFlowIcon = createPortalIcon('payment-flow')
-const ShieldIcon = createPortalIcon('shield')
 const WalletIcon = createPortalIcon('wallet')
 
 export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
-  const isOps = role === 'ops' || role === 'admin'
-  const isCompliance = role === 'compliance' || role === 'admin'
-
   return {
-    user: {
-      name: 'Granville',
-      email: '',
-      avatar: '',
-    },
+    user: { name: '', email: '', avatar: '' },
     teams: [
       {
         name: 'Granville',
@@ -40,8 +31,13 @@ export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
         ],
       },
       {
-        title: 'Accounts',
+        title: 'Finance',
         items: [
+          {
+            title: 'Budgets',
+            url: '/budgets',
+            icon: WalletIcon,
+          },
           {
             title: 'Wallets',
             url: '/wallets',
@@ -55,64 +51,30 @@ export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
         ],
       },
       {
-        title: 'Payments',
+        title: 'Transactions',
         items: [
           {
-            title: 'Transfers',
-            url: '/transfers',
+            title: 'Payments',
+            url: '/payments',
             icon: PaymentFlowIcon,
           },
           {
-            title: 'Beneficiaries',
-            url: '/beneficiaries',
-            icon: Users,
+            title: 'Sales',
+            url: '/sales',
+            icon: PaymentFlowIcon,
           },
         ],
       },
       {
-        title: 'Products',
+        title: 'Services',
         items: [
           {
             title: 'FX',
             url: '/fx',
             icon: TrendingUp,
-            badge: 'Soon',
-          },
-          {
-            title: 'Cards',
-            url: '/cards',
-            icon: CreditCard,
-            badge: 'Soon',
           },
         ],
       },
-      ...(isOps || isCompliance
-        ? [
-            {
-              title: 'Operations',
-              items: [
-                ...(isOps
-                  ? [
-                      {
-                        title: 'Approvals',
-                        url: '/approvals' as const,
-                        icon: ComplianceIcon,
-                      },
-                    ]
-                  : []),
-                ...(isOps || isCompliance
-                  ? [
-                      {
-                        title: 'Compliance',
-                        url: '/compliance' as const,
-                        icon: ShieldIcon,
-                      },
-                    ]
-                  : []),
-              ],
-            },
-          ]
-        : []),
       {
         title: 'Other',
         items: [
@@ -126,5 +88,3 @@ export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
     ],
   }
 }
-
-export const sidebarData = getSidebarData('admin')

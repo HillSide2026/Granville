@@ -25,10 +25,13 @@ import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authen
 import { Route as AuthenticatedWalletsIndexRouteImport } from './routes/_authenticated/wallets/index'
 import { Route as AuthenticatedTransfersIndexRouteImport } from './routes/_authenticated/transfers/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedSalesIndexRouteImport } from './routes/_authenticated/sales/index'
+import { Route as AuthenticatedPaymentsIndexRouteImport } from './routes/_authenticated/payments/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedFxIndexRouteImport } from './routes/_authenticated/fx/index'
 import { Route as AuthenticatedComplianceIndexRouteImport } from './routes/_authenticated/compliance/index'
 import { Route as AuthenticatedCardsIndexRouteImport } from './routes/_authenticated/cards/index'
+import { Route as AuthenticatedBudgetsIndexRouteImport } from './routes/_authenticated/budgets/index'
 import { Route as AuthenticatedBeneficiariesIndexRouteImport } from './routes/_authenticated/beneficiaries/index'
 import { Route as AuthenticatedBalancesIndexRouteImport } from './routes/_authenticated/balances/index'
 import { Route as AuthenticatedApprovalsIndexRouteImport } from './routes/_authenticated/approvals/index'
@@ -121,6 +124,17 @@ const AuthenticatedSettingsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedSalesIndexRoute = AuthenticatedSalesIndexRouteImport.update({
+  id: '/sales/',
+  path: '/sales/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPaymentsIndexRoute =
+  AuthenticatedPaymentsIndexRouteImport.update({
+    id: '/payments/',
+    path: '/payments/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedHelpCenterIndexRoute =
   AuthenticatedHelpCenterIndexRouteImport.update({
     id: '/help-center/',
@@ -143,6 +157,12 @@ const AuthenticatedCardsIndexRoute = AuthenticatedCardsIndexRouteImport.update({
   path: '/cards/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBudgetsIndexRoute =
+  AuthenticatedBudgetsIndexRouteImport.update({
+    id: '/budgets/',
+    path: '/budgets/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedBeneficiariesIndexRoute =
   AuthenticatedBeneficiariesIndexRouteImport.update({
     id: '/beneficiaries/',
@@ -213,10 +233,13 @@ export interface FileRoutesByFullPath {
   '/approvals/': typeof AuthenticatedApprovalsIndexRoute
   '/balances/': typeof AuthenticatedBalancesIndexRoute
   '/beneficiaries/': typeof AuthenticatedBeneficiariesIndexRoute
+  '/budgets/': typeof AuthenticatedBudgetsIndexRoute
   '/cards/': typeof AuthenticatedCardsIndexRoute
   '/compliance/': typeof AuthenticatedComplianceIndexRoute
   '/fx/': typeof AuthenticatedFxIndexRoute
   '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
+  '/payments/': typeof AuthenticatedPaymentsIndexRoute
+  '/sales/': typeof AuthenticatedSalesIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/transfers/': typeof AuthenticatedTransfersIndexRoute
   '/wallets/': typeof AuthenticatedWalletsIndexRoute
@@ -241,10 +264,13 @@ export interface FileRoutesByTo {
   '/approvals': typeof AuthenticatedApprovalsIndexRoute
   '/balances': typeof AuthenticatedBalancesIndexRoute
   '/beneficiaries': typeof AuthenticatedBeneficiariesIndexRoute
+  '/budgets': typeof AuthenticatedBudgetsIndexRoute
   '/cards': typeof AuthenticatedCardsIndexRoute
   '/compliance': typeof AuthenticatedComplianceIndexRoute
   '/fx': typeof AuthenticatedFxIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/payments': typeof AuthenticatedPaymentsIndexRoute
+  '/sales': typeof AuthenticatedSalesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/transfers': typeof AuthenticatedTransfersIndexRoute
   '/wallets': typeof AuthenticatedWalletsIndexRoute
@@ -272,10 +298,13 @@ export interface FileRoutesById {
   '/_authenticated/approvals/': typeof AuthenticatedApprovalsIndexRoute
   '/_authenticated/balances/': typeof AuthenticatedBalancesIndexRoute
   '/_authenticated/beneficiaries/': typeof AuthenticatedBeneficiariesIndexRoute
+  '/_authenticated/budgets/': typeof AuthenticatedBudgetsIndexRoute
   '/_authenticated/cards/': typeof AuthenticatedCardsIndexRoute
   '/_authenticated/compliance/': typeof AuthenticatedComplianceIndexRoute
   '/_authenticated/fx/': typeof AuthenticatedFxIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
+  '/_authenticated/payments/': typeof AuthenticatedPaymentsIndexRoute
+  '/_authenticated/sales/': typeof AuthenticatedSalesIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/transfers/': typeof AuthenticatedTransfersIndexRoute
   '/_authenticated/wallets/': typeof AuthenticatedWalletsIndexRoute
@@ -303,10 +332,13 @@ export interface FileRouteTypes {
     | '/approvals/'
     | '/balances/'
     | '/beneficiaries/'
+    | '/budgets/'
     | '/cards/'
     | '/compliance/'
     | '/fx/'
     | '/help-center/'
+    | '/payments/'
+    | '/sales/'
     | '/settings/'
     | '/transfers/'
     | '/wallets/'
@@ -331,10 +363,13 @@ export interface FileRouteTypes {
     | '/approvals'
     | '/balances'
     | '/beneficiaries'
+    | '/budgets'
     | '/cards'
     | '/compliance'
     | '/fx'
     | '/help-center'
+    | '/payments'
+    | '/sales'
     | '/settings'
     | '/transfers'
     | '/wallets'
@@ -361,10 +396,13 @@ export interface FileRouteTypes {
     | '/_authenticated/approvals/'
     | '/_authenticated/balances/'
     | '/_authenticated/beneficiaries/'
+    | '/_authenticated/budgets/'
     | '/_authenticated/cards/'
     | '/_authenticated/compliance/'
     | '/_authenticated/fx/'
     | '/_authenticated/help-center/'
+    | '/_authenticated/payments/'
+    | '/_authenticated/sales/'
     | '/_authenticated/settings/'
     | '/_authenticated/transfers/'
     | '/_authenticated/wallets/'
@@ -498,6 +536,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/sales/': {
+      id: '/_authenticated/sales/'
+      path: '/sales'
+      fullPath: '/sales/'
+      preLoaderRoute: typeof AuthenticatedSalesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/payments/': {
+      id: '/_authenticated/payments/'
+      path: '/payments'
+      fullPath: '/payments/'
+      preLoaderRoute: typeof AuthenticatedPaymentsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/help-center/': {
       id: '/_authenticated/help-center/'
       path: '/help-center'
@@ -524,6 +576,13 @@ declare module '@tanstack/react-router' {
       path: '/cards'
       fullPath: '/cards/'
       preLoaderRoute: typeof AuthenticatedCardsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/budgets/': {
+      id: '/_authenticated/budgets/'
+      path: '/budgets'
+      fullPath: '/budgets/'
+      preLoaderRoute: typeof AuthenticatedBudgetsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/beneficiaries/': {
@@ -615,10 +674,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedApprovalsIndexRoute: typeof AuthenticatedApprovalsIndexRoute
   AuthenticatedBalancesIndexRoute: typeof AuthenticatedBalancesIndexRoute
   AuthenticatedBeneficiariesIndexRoute: typeof AuthenticatedBeneficiariesIndexRoute
+  AuthenticatedBudgetsIndexRoute: typeof AuthenticatedBudgetsIndexRoute
   AuthenticatedCardsIndexRoute: typeof AuthenticatedCardsIndexRoute
   AuthenticatedComplianceIndexRoute: typeof AuthenticatedComplianceIndexRoute
   AuthenticatedFxIndexRoute: typeof AuthenticatedFxIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
+  AuthenticatedPaymentsIndexRoute: typeof AuthenticatedPaymentsIndexRoute
+  AuthenticatedSalesIndexRoute: typeof AuthenticatedSalesIndexRoute
   AuthenticatedTransfersIndexRoute: typeof AuthenticatedTransfersIndexRoute
   AuthenticatedWalletsIndexRoute: typeof AuthenticatedWalletsIndexRoute
 }
@@ -630,10 +692,13 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedApprovalsIndexRoute: AuthenticatedApprovalsIndexRoute,
   AuthenticatedBalancesIndexRoute: AuthenticatedBalancesIndexRoute,
   AuthenticatedBeneficiariesIndexRoute: AuthenticatedBeneficiariesIndexRoute,
+  AuthenticatedBudgetsIndexRoute: AuthenticatedBudgetsIndexRoute,
   AuthenticatedCardsIndexRoute: AuthenticatedCardsIndexRoute,
   AuthenticatedComplianceIndexRoute: AuthenticatedComplianceIndexRoute,
   AuthenticatedFxIndexRoute: AuthenticatedFxIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
+  AuthenticatedPaymentsIndexRoute: AuthenticatedPaymentsIndexRoute,
+  AuthenticatedSalesIndexRoute: AuthenticatedSalesIndexRoute,
   AuthenticatedTransfersIndexRoute: AuthenticatedTransfersIndexRoute,
   AuthenticatedWalletsIndexRoute: AuthenticatedWalletsIndexRoute,
 }
