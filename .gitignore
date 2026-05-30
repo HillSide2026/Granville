@@ -13,3 +13,4 @@ dumps
 .envrc.*
 Pulumi.*.yaml
 coverage.txt
+_archive/
