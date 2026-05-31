@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import { Icon } from './ui/icon'
 import { cn } from '@/lib/utils'
 import { Button } from './ui/button'
 
@@ -35,7 +35,7 @@ export function PasswordInput({
         className='absolute inset-e-1 top-1/2 h-6 w-6 -translate-y-1/2 rounded-md text-muted-foreground'
         onClick={() => setShowPassword((prev) => !prev)}
       >
-        {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+        {showPassword ? <Icon name='eye' size={18} /> : <Icon name='eye-off' size={18} />}
         <span className='sr-only'>
           {showPassword ? 'Hide password' : 'Show password'}
         </span>

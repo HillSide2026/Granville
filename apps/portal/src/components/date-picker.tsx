@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import { Calendar as CalendarIcon } from 'lucide-react'
+import { Icon } from '@/components/ui/icon'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -32,7 +32,7 @@ export function DatePicker({
           ) : (
             <span>{placeholder}</span>
           )}
-          <CalendarIcon className='ms-auto h-4 w-4 opacity-50' />
+          <Icon name='calendar' className='ms-auto h-4 w-4 opacity-50' />
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-auto p-0'>

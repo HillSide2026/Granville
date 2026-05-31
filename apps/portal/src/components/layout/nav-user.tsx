@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Bell, ChevronsUpDown, LogOut, Settings } from 'lucide-react'
+import { Icon } from '@/components/ui/icon'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -53,7 +53,7 @@ export function NavUser({ user }: NavUserProps) {
                   <span className='truncate font-semibold'>{user.name}</span>
                   <span className='truncate text-xs'>{user.email}</span>
                 </div>
-                <ChevronsUpDown className='ms-auto size-4' />
+                <Icon name='chevrons-up-down' className='ms-auto size-4' />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -78,20 +78,20 @@ export function NavUser({ user }: NavUserProps) {
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
                   <Link to='/settings'>
-                    <Settings />
+                    <Icon name='settings' />
                     Settings
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to='/settings/notifications'>
-                    <Bell />
+                    <Icon name='bell' />
                     Notifications
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant='destructive' onClick={() => setOpen(true)}>
-                <LogOut />
+                <Icon name='logout' />
                 Sign out
               </DropdownMenuItem>
             </DropdownMenuContent>

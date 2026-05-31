@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons'
+import { Icon } from '@/components/ui/icon'
 import { type Column } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -42,7 +42,7 @@ export function DataTableFacetedFilter<TData, TValue>({
     <Popover>
       <PopoverTrigger asChild>
         <Button variant='outline' size='sm' className='h-8 border-dashed'>
-          <PlusCircledIcon className='size-4' />
+          <Icon name='plus-circle' className='size-4' />
           {title}
           {selectedValues?.size > 0 && (
             <>
@@ -110,7 +110,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                           : 'opacity-50 [&_svg]:invisible'
                       )}
                     >
-                      <CheckIcon className={cn('h-4 w-4 text-background')} />
+                      <Icon name='check' className={cn('h-4 w-4 text-background')} />
                     </div>
                     {option.icon && (
                       <option.icon className='size-4 text-muted-foreground' />

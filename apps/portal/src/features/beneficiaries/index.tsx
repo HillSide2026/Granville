@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Pencil, Trash2 } from 'lucide-react'
+import { Icon } from '@/components/ui/icon'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -105,7 +105,7 @@ export function Beneficiaries() {
             <p className='text-sm text-muted-foreground'>Saved payment recipients</p>
           </div>
           <Button size='sm' onClick={openCreate}>
-            <Plus className='mr-1 h-4 w-4' /> Add Beneficiary
+            <Icon name='plus' className='mr-1 h-4 w-4' /> Add Beneficiary
           </Button>
         </div>
 
@@ -143,10 +143,10 @@ export function Beneficiaries() {
                     <TableCell>
                       <div className='flex gap-1'>
                         <Button size='icon' variant='ghost' className='h-7 w-7' onClick={() => openEdit(b)}>
-                          <Pencil className='h-3 w-3' />
+                          <Icon name='edit' className='h-3 w-3' />
                         </Button>
                         <Button size='icon' variant='ghost' className='h-7 w-7 text-destructive' onClick={() => setDeleting(b.id)}>
-                          <Trash2 className='h-3 w-3' />
+                          <Icon name='delete' className='h-3 w-3' />
                         </Button>
                       </div>
                     </TableCell>

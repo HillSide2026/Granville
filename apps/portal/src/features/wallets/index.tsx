@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Icon } from '@/components/ui/icon'
 import {
   useReactTable,
   getCoreRowModel,
@@ -48,7 +48,7 @@ export function Budgets() {
             <p className='text-sm text-muted-foreground'>Your budgets</p>
           </div>
           <Button onClick={() => setCreateOpen(true)} size='sm'>
-            <Plus className='mr-1 h-4 w-4' /> New Budget
+            <Icon name='plus' className='mr-1 h-4 w-4' /> New Budget
           </Button>
         </div>
 

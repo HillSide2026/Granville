@@ -1,4 +1,3 @@
-import { Settings, TrendingUp } from 'lucide-react'
 import { createPortalIcon } from '@/components/ui/portal-icon'
 import { type SidebarData } from '../types'
 
@@ -8,6 +7,8 @@ const AnalyticsIcon = createPortalIcon('analytics')
 const BankIcon = createPortalIcon('bank')
 const PaymentFlowIcon = createPortalIcon('payment-flow')
 const WalletIcon = createPortalIcon('wallet')
+const SettingsIcon = createPortalIcon('settings')
+const TrendingUpIcon = createPortalIcon('trending-up')
 
 export function getSidebarData(_role: PortalRole = 'customer'): SidebarData {
   return {
@@ -73,7 +74,7 @@ export function getSidebarData(_role: PortalRole = 'customer'): SidebarData {
           {
             title: 'FX',
             url: '/fx',
-            icon: TrendingUp,
+            icon: TrendingUpIcon,
           },
         ],
       },
@@ -83,7 +84,7 @@ export function getSidebarData(_role: PortalRole = 'customer'): SidebarData {
           {
             title: 'Settings',
             url: '/settings',
-            icon: Settings,
+            icon: SettingsIcon,
           },
         ],
       },

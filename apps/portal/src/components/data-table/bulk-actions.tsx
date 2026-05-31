@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { type Table } from '@tanstack/react-table'
-import { X } from 'lucide-react'
+import { Icon } from '@/components/ui/icon'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -166,7 +166,7 @@ export function DataTableBulkActions<TData>({
                 aria-label='Clear selection'
                 title='Clear selection (Escape)'
               >
-                <X />
+                <Icon name='x' />
                 <span className='sr-only'>Clear selection</span>
               </Button>
             </TooltipTrigger>

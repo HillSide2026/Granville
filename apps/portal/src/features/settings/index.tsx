@@ -1,5 +1,5 @@
 import { Outlet } from '@tanstack/react-router'
-import { Bell, Palette, Shield, UserCog } from 'lucide-react'
+import { Icon } from '@/components/ui/icon'
 import { Separator } from '@/components/ui/separator'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -11,22 +11,22 @@ const sidebarNavItems = [
   {
     title: 'Account',
     href: '/settings',
-    icon: <UserCog size={18} />,
+    icon: <Icon name='user-settings' size={18} />,
   },
   {
     title: 'Security',
     href: '/settings/account',
-    icon: <Shield size={18} />,
+    icon: <Icon name='shield' size={18} />,
   },
   {
     title: 'Appearance',
     href: '/settings/appearance',
-    icon: <Palette size={18} />,
+    icon: <Icon name='palette' size={18} />,
   },
   {
     title: 'Notifications',
     href: '/settings/notifications',
-    icon: <Bell size={18} />,
+    icon: <Icon name='bell' size={18} />,
   },
 ]
 

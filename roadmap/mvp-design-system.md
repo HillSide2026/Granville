@@ -10,7 +10,7 @@ This plan belongs to Granville MVP. It standardizes the product/platform design 
 | DS2a — Token foundation | **Complete** |
 | DS2b — Component standardization | Not started |
 | DS2c — Voice and content audit | Not started |
-| DS2d — Icon governance | Blocked on authenticated Figma asset access |
+| DS2d — Icon governance | Not started |
 
 ---
 
@@ -54,7 +54,7 @@ Brand foundations and token rollout are done. `libs/brand/` holds the typed sour
 
 ## DS2d — Icon Governance
 
-**Blocked note (2026-05-31):** The original FinPack icon source was identified in Figma Community, but the repo does not currently contain confirmed raw FinPack SVG exports. Do not replace portal or marketing domain icons until authenticated Figma access is connected or the original exported SVG assets are checked into the repo.
+**Source:** FinPack – 560 Fintech Line Icons (Figma Community). 562 SVGs exported to `libs/brand/icons/` on 2026-05-31, organized by category subfolder (banking, payment, security, analytics, arrow, etc.).
 
 **Rule:** Tabler icons for generic UI controls only (chevrons, close, search, arrows). Granville institutional icons (`libs/brand/`) required for domain navigation items, dashboard metric cards, and marketing product cards.
 

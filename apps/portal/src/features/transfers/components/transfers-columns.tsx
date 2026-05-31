@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { MoreHorizontal } from 'lucide-react'
+import { Icon } from '@/components/ui/icon'
 import type { CanonicalPaymentStatus, PaymentOrder } from '@/types/granville'
 import { useSubmitTransfer, useCancelTransfer, useRetryTransfer } from '../hooks/use-transfers'
 
@@ -39,7 +39,7 @@ function RowActions({ payment }: { payment: PaymentOrder }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant='ghost' size='icon' className='h-7 w-7'>
-          <MoreHorizontal className='h-4 w-4' />
+          <Icon name='more-horizontal' className='h-4 w-4' />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>

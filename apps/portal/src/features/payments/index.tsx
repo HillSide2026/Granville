@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Users } from 'lucide-react'
+import { Icon } from '@/components/ui/icon'
 import {
   useReactTable,
   getCoreRowModel,
@@ -59,11 +59,11 @@ export function Payments() {
           <div className='flex items-center gap-2'>
             <Button variant='outline' size='sm' asChild>
               <Link to='/beneficiaries'>
-                <Users className='mr-1 h-4 w-4' /> Beneficiaries
+                <Icon name='users' className='mr-1 h-4 w-4' /> Beneficiaries
               </Link>
             </Button>
             <Button onClick={() => setCreateOpen(true)} size='sm'>
-              <Plus className='mr-1 h-4 w-4' /> New Payment
+              <Icon name='plus' className='mr-1 h-4 w-4' /> New Payment
             </Button>
           </div>
         </div>

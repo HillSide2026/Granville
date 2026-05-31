@@ -1,4 +1,4 @@
-import { CreditCard } from 'lucide-react'
+import { Icon } from '@/components/ui/icon'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -16,7 +16,7 @@ export function Cards() {
       </Header>
       <Main>
         <EmptyState
-          icon={<CreditCard className='h-8 w-8' />}
+          icon={<Icon name='credit-card' className='h-8 w-8' />}
           title='Cards — Coming Soon'
           description='Virtual and physical card issuance, spending controls, and transaction history will be available in a future release.'
           badge='Planned'

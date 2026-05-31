@@ -1,4 +1,4 @@
-import { Wallet } from 'lucide-react'
+import { Icon } from '@/components/ui/icon'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -16,7 +16,7 @@ export function CryptoWallets() {
       </Header>
       <Main>
         <EmptyState
-          icon={<Wallet className='h-8 w-8' />}
+          icon={<Icon name='wallet' className='h-8 w-8' />}
           title='Wallets'
           description='Wallet functionality is not yet available.'
           badge='Coming Soon'

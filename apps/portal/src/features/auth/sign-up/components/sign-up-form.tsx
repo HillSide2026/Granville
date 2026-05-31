@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, UserPlus } from 'lucide-react'
+import { Icon } from '@/components/ui/icon'
 import { toast } from 'sonner'
 import { IconFacebook, IconGoogle } from '@/assets/brand-icons'
 import { sleep, cn } from '@/lib/utils'
@@ -110,7 +110,7 @@ export function SignUpForm({
           )}
         />
         <Button className='mt-2' disabled={isLoading}>
-          {isLoading ? <Loader2 className='animate-spin' /> : <UserPlus />}
+          {isLoading ? <Icon name='loader' className='animate-spin' /> : <Icon name='user-add' />}
           Create Account
         </Button>
 

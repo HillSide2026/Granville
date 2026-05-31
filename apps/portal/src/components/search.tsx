@@ -1,4 +1,4 @@
-import { SearchIcon } from 'lucide-react'
+import { Icon } from './ui/icon'
 import { cn } from '@/lib/utils'
 import { useSearch } from '@/context/search-provider'
 import { Button } from './ui/button'
@@ -20,7 +20,8 @@ export function Search({
       aria-keyshortcuts='Meta+K Control+K'
       onClick={() => setOpen(true)}
     >
-      <SearchIcon
+      <Icon
+        name='search'
         aria-hidden='true'
         className='absolute inset-s-1.5 top-1/2 -translate-y-1/2'
         size={16}
