@@ -9,7 +9,7 @@ const BankIcon = createPortalIcon('bank')
 const PaymentFlowIcon = createPortalIcon('payment-flow')
 const WalletIcon = createPortalIcon('wallet')
 
-export function getSidebarData(role: PortalRole = 'customer'): SidebarData {
+export function getSidebarData(_role: PortalRole = 'customer'): SidebarData {
   return {
     user: { name: '', email: '', avatar: '' },
     teams: [
