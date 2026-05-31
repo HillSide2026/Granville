@@ -17,9 +17,9 @@ export function CryptoWallets() {
       <Main>
         <EmptyState
           icon={<Wallet className='h-8 w-8' />}
-          title='Crypto Wallets'
-          description='Your crypto wallets are managed via mpcium. Contact support to connect your mpcium account.'
-          badge='Powered by mpcium'
+          title='Wallets'
+          description='Wallet functionality is not yet available.'
+          badge='Coming Soon'
         />
       </Main>
     </>

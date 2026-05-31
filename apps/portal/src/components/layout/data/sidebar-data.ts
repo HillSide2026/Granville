@@ -41,6 +41,8 @@ export function getSidebarData(_role: PortalRole = 'customer'): SidebarData {
           {
             title: 'Wallets',
             url: '/wallets',
+            badge: 'Coming Soon',
+            disabled: true,
             icon: WalletIcon,
           },
           {
