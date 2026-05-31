@@ -1,4 +1,6 @@
-# MVP — Airwallex
+# Airwallex MVP — First-Provider Proof
+
+Airwallex MVP proves Granville's first external payment rail before the broader Granville MVP. The release is provider-specific: it validates Airwallex payout creation, webhook delivery, status transitions, ledger posting, and basic reconciliation/audit evidence.
 
 ## Status Summary
 
@@ -6,7 +8,9 @@
 |---|---|
 | AW1 — Sandbox integration | **Complete** |
 | AW2 — Production readiness | In progress — webhook endpoint and compliance review outstanding |
-| AW3 — Go-live | Planned — blocked on AW2 + M9 |
+| AW3 — Go-live | Planned — blocked on AW2 + Granville MVP M9 staging readiness |
+
+**Release exit criterion:** one Airwallex sandbox payment completes end to end: Granville API request → Airwallex transfer → `PAID` webhook → completed payment → ledger posting → basic reconciliation/audit evidence.
 
 ---
 
@@ -19,6 +23,51 @@ Full payout flow proven in sandbox: auth → beneficiary create → transfer cre
 ## AW2 — Production Readiness
 
 **Code is complete. Open items are external actions and a compliance document.**
+
+### Concrete Next Steps
+
+These are the steps required to finish Airwallex MVP.
+
+1. **Register the sandbox webhook endpoint**
+   - In the Airwallex sandbox portal, go to Developers → Webhooks → Add endpoint.
+   - Register a public HTTPS endpoint that points to `POST https://<public-url>/webhooks/airwallex`.
+   - Use ngrok or a staging deploy for the public URL.
+   - Store the signing secret as `AIRWALLEX_WEBHOOK_SECRET`.
+
+2. **Add Balances read scope**
+   - In the Airwallex sandbox portal, go to API Keys → Edit key.
+   - Add the Balances read scope.
+   - Verify with `node --experimental-strip-types scripts/airwallex-auth-probe.ts`.
+   - Success means the probe reports `GET /balances` as OK instead of `401`.
+
+3. **Run sandbox validation**
+   - Set the sandbox environment:
+     ```sh
+     export AIRWALLEX_SANDBOX_TEST=1
+     export AIRWALLEX_BASE_URL=https://api-demo.airwallex.com
+     export AIRWALLEX_CLIENT_ID=...
+     export AIRWALLEX_API_KEY=...
+     export AIRWALLEX_WEBHOOK_SECRET=...
+     export AIRWALLEX_DRY_RUN=false
+     ```
+   - Run:
+     ```sh
+     node --test --experimental-strip-types test/granville/airwallex-sandbox.test.ts
+     node --test --experimental-strip-types test/granville/airwallex-aw1-orchestration.test.ts
+     ```
+
+4. **Validate the real `PAID` webhook path**
+   - Create a sandbox payment through Granville.
+   - Wait for Airwallex to deliver `payout.transfer.paid`.
+   - Confirm `signatureValid=true`.
+   - Confirm the payment reaches `completed`.
+   - Confirm the ledger posting is enqueued and posted.
+   - Confirm reconciliation has `0` exceptions for the completed payment.
+
+5. **Resolve signing and replay documentation before certification**
+   - Verify Airwallex's exact HMAC signing formula against the implementation before relying on certification results.
+   - Current implementation signs `x-timestamp + raw_body`; the signature mismatch runbook says `x-timestamp + "." + raw_body`.
+   - Align the manual replay payload example with the Airwallex webhook normalizer before using break-glass replay.
 
 ### External Actions (Airwallex Portal)
 
@@ -58,7 +107,7 @@ The complete code path is already implemented — this is environment configurat
 
 ## AW3 — Go-Live
 
-**Planned. Blocked on AW2 completion and M9 staging environment.**
+**Planned. Blocked on AW2 completion and Granville MVP M9 staging environment.**
 
 First end-to-end real-money payment:
 

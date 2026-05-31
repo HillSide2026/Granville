@@ -9,7 +9,7 @@ Granville must remain:
 - orchestration-first
 - ledger-centric
 - provider-agnostic
-- EMI-led for Stage 1
+- EMI-led for Version 1
 - bank-ready for Stage 2
 - thin infrastructure, not core banking
 
@@ -42,15 +42,15 @@ As of May 22, 2026:
 - the public marketing and legal site is implemented under `apps/branded-domain/`
 - the customer-facing portal is implemented under `apps/portal/` as a Vite, React, TypeScript, TanStack Router, and shadcn/ui application
 - the portal (Track 1 complete 2026-05-30) includes: Dashboard, Budgets, Wallets (mpcium stub), Balances, Payments (outbound), Sales (inbound), FX (access-request state), Settings; operator features (Compliance, Approvals, Cards) removed from the customer portal — see [roadmap/portal-roadmap.md](portal-roadmap.md)
-- the mock EMI Stage 1 flow is implemented through Granville-owned API, orchestration, routing, provider runtime, ledger writer, webhook processing, reconciliation, audit, admin operations, and reporting boundaries
+- the mock EMI Version 1 flow is implemented through Granville-owned API, orchestration, routing, provider runtime, ledger writer, webhook processing, reconciliation, audit, admin operations, and reporting boundaries
 - provider adapter contracts exist for mock EMI, mock bank, native EMI, Airwallex, and Formance Payments wrapper paths
 - `npm run test:granville` passes in local memory-backed execution
 
-This means the repo has moved beyond scaffold-only status. The next proof point is local operability: run the migrated Postgres schema, seed provider bindings, point the API/tests at that database, and prove the same Stage 1 flow outside the in-memory store.
+This means the repo has moved beyond scaffold-only status. The next proof point is local operability: run the migrated Postgres schema, seed provider bindings, point the API/tests at that database, and prove the same Version 1 flow outside the in-memory store.
 
 Current unblocked work:
 
-- prove Postgres-backed Stage 1 acceptance with `DATABASE_URL`, `npm run db:migrate`, and `TEST_DATABASE_URL`
+- prove Postgres-backed Version 1 acceptance with `DATABASE_URL`, `npm run db:migrate`, and `TEST_DATABASE_URL`
 - wire `apps/portal` read paths to `apps/api`
 - harden provider runtime failure paths around retries, dead-letter handling, disabled providers, and duplicate provider references
 - finish Airwallex canonical payment metadata mapping and add env-gated sandbox tests
@@ -318,11 +318,11 @@ Path:
 
 - `libs/router/`
 
-Stage 1 behavior:
+Version 1 behavior:
 
 - all payment activity routes to the EMI provider
 
-Stage 2 readiness:
+Post-Version 1 readiness:
 
 - support routing by currency, country, rail, transaction type, customer segment, amount, provider health, provider capability, and risk flag
 
@@ -555,7 +555,7 @@ Runbooks:
 - `reconciliation-exception.md`
 - `payment-stuck-processing.md`
 
-## MVP Acceptance Test
+## Granville MVP Acceptance Test
 
 Create one end-to-end test proving:
 

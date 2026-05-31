@@ -81,12 +81,12 @@ Recommendation:
 - add:
   - `providers:emi:{id}:settlement`
 
-### 5. Treat Milestone 8 as optional to Stage 1 launch unless compliance timing forces it
+### 5. Treat Milestone 8 as optional to Version 1 launch unless compliance timing forces it
 
 Why:
 
 - reporting and audit export support are valuable
-- but if Stage 1 is focused on one EMI-backed production path, Milestone 8 can partially overlap Milestone 7 and Milestone 9
+- but if Version 1 is focused on one EMI-backed production path, Milestone 8 can partially overlap Milestone 7 and Milestone 9
 
 Recommendation:
 
@@ -155,7 +155,7 @@ Maps to:
 
 - later-stage slices of Phase 11 and Phase 12
 
-### Milestone 9 — Stage 1 Production Readiness
+### Milestone 9 — Version 1 Production Readiness
 
 Maps to:
 

@@ -1,6 +1,6 @@
 # Milestone MP5 — Multi-Provider Production Readiness
 
-**Status: Not started — blocked on MP1 (second live provider) and M9.**
+**Status: Not started — blocked on MP1 (second live provider) and Granville MVP M9.**
 **Track: Multi-Provider Orchestration**
 
 ---

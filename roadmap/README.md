@@ -1,14 +1,62 @@
 # Granville Roadmap
 
-Two phases: MVP establishes a working payment platform through a single provider. Stage 1 hardens it into deterministic, replay-safe, multi-provider financial infrastructure suitable for EMI onboarding.
+Granville ships in three sequential releases:
+
+1. **Airwallex MVP** proves the first payment rail.
+2. **Granville MVP** turns that proof into a usable product/platform.
+3. **Version 1** hardens the system into broader provider-ready financial infrastructure.
 
 See [portal-roadmap.md](portal-roadmap.md) for the customer portal and operator console build-out (Tracks 1–4).
 
+## Release Glossary
+
+| Release | Meaning | Primary docs |
+|---|---|---|
+| Airwallex MVP | First-provider proof. Validates one external payment rail end to end before broadening the platform. | [mvp-airwallex.md](mvp-airwallex.md) |
+| Granville MVP | Product/platform milestone. Wraps the proven Airwallex rail in persistent, repeatable Granville workflows. | [mvp-platform.md](mvp-platform.md), [mvp-design-system.md](mvp-design-system.md), [portal-roadmap.md](portal-roadmap.md) |
+| Version 1 | Hardened, broader release. Moves beyond Airwallex MVP into provider-ready financial infrastructure. | [stage1-overview.md](stage1-overview.md) |
+
+## Dependency Chain
+
+Airwallex MVP blocks Granville MVP because the product/platform milestone depends on a proven first provider path.
+
+Granville MVP blocks Version 1 because the hardened release assumes staging readiness, persistence, operator workflows, reporting, and durable event handling are already in place.
+
+Version 1 includes the multi-provider and EMI-readiness work: resilience, stronger approvals, incident recovery, monitoring, data protection, provider abstraction, and second-provider readiness.
+
 ---
 
-## Stage 1 — EMI-Compatible Financial Operations Infrastructure
+## Airwallex MVP — First-Provider Proof
 
-Stage 1 begins after MVP. Four tracks run in parallel. See [stage1-overview.md](stage1-overview.md) for the full objective and exit criteria.
+Airwallex MVP proves the first external payment rail end to end. See [mvp-airwallex.md](mvp-airwallex.md) for the provider-specific plan.
+
+**Exit criterion:** one Airwallex sandbox payment completes end to end: Granville API request → Airwallex transfer → `PAID` webhook → completed payment → ledger posting → basic reconciliation/audit evidence.
+
+| Milestone | Objective | Status | Doc |
+|---|---|---|---|
+| AW1 | Sandbox integration | Complete | [mvp-airwallex.md](mvp-airwallex.md) |
+| AW2 | Production readiness | In progress — webhook endpoint and compliance review outstanding | [mvp-airwallex.md](mvp-airwallex.md) |
+| AW3 | Go-live | Planned — blocked on AW2 + Granville MVP staging readiness | [mvp-airwallex.md](mvp-airwallex.md) |
+
+---
+
+## Granville MVP — Product/Platform Milestone
+
+Granville MVP wraps the proven first provider in the minimum complete Granville platform: persistence, orchestration, portal/operator workflows, reporting, durable events, and staging readiness.
+
+| Track | Doc |
+|---|---|
+| Platform (M0–M9) | [mvp-platform.md](mvp-platform.md) |
+| Design System (DS1–DS2d) | [mvp-design-system.md](mvp-design-system.md) |
+| Portal and operator console | [portal-roadmap.md](portal-roadmap.md) |
+
+**Exit criterion:** the core payment workflow can be run repeatedly in a staging-like environment with Postgres persistence, portal/operator workflows, reporting, durable events, and Airwallex configured as the first provider.
+
+---
+
+## Version 1 — Hardened Provider-Ready Infrastructure
+
+Version 1 follows Granville MVP. Four tracks run in parallel. See [stage1-overview.md](stage1-overview.md) for the full objective and exit criteria.
 
 | Milestone | Objective | Status | Doc |
 |---|---|---|---|
@@ -17,7 +65,7 @@ Stage 1 begins after MVP. Four tracks run in parallel. See [stage1-overview.md](
 | FI5 | Audit Trail & Traceability | Partial — event capture done; state diffs, approval chain, operator context pending | [milestone-fi5.md](milestone-fi5.md) |
 | MP1 | EMI Provider Integration | Partial — AW1 done; AW2 in progress; second provider not started | [milestone-mp1.md](milestone-mp1.md) |
 | MP4 | Provider Resilience & Failover | Partial — primitives done; circuit breaker + mid-flight failover pending | [milestone-mp4.md](milestone-mp4.md) |
-| MP5 | Multi-Provider Production Readiness | Not started — blocked on MP1 + M9 | [milestone-mp5.md](milestone-mp5.md) |
+| MP5 | Multi-Provider Production Readiness | Not started — blocked on MP1 + Granville MVP M9 | [milestone-mp5.md](milestone-mp5.md) |
 | OG1 | Access Control & Approval Workflows | Partial — enforcement + endpoints done; institutional roles + maker/checker pending | [milestone-og1.md](milestone-og1.md) |
 | OG4 | Incident & Recovery Operations | Partial — retry tooling done; rollback + formal incidents pending | [milestone-og4.md](milestone-og4.md) |
 | OG5 | Operational Monitoring & Alerting | Not started — metrics endpoint exists; no automated alerting | [milestone-og5.md](milestone-og5.md) |
@@ -27,43 +75,41 @@ Stage 1 begins after MVP. Four tracks run in parallel. See [stage1-overview.md](
 
 ---
 
-## MVP — Foundation
-
-| Track | Doc |
-|---|---|
-| Platform (M0–M9) | [mvp-platform.md](mvp-platform.md) |
-| Airwallex (AW1–AW3) | [mvp-airwallex.md](mvp-airwallex.md) |
-| Design System (DS1–DS2d) | [mvp-design-system.md](mvp-design-system.md) |
-
----
-
 ## Current Priority
 
-### Actionable Now (no external dependencies)
+### Now — Airwallex MVP And Required Granville MVP Blockers
 
 | Priority | Track | Task |
 |---|---|---|
-| 1 | Platform | **M1 Postgres checkpoint** — start Docker, `npm run db:migrate`, `TEST_DATABASE_URL`, `npm run test:granville`. This is the primary platform blocker. |
-| 2 | Design | **DS2b** — confirm button shape rule, fix unlabeled CardTitle sizes, fix `text-[1.3rem]`, audit sentence case on CTAs |
-| 3 | Design | **DS2c** — replace template copy on marketing site with institutional voice |
-| 4 | Design | **DS2d** — audit and fix icon usage against the Tabler/institutional governance rule |
-| 5 | Platform | **M7 ops-ui approvals** — wire `apps/ops-ui` approvals queue to `POST /payments/:id/approve` and `reject` (moved from customer portal — operators approve, customers submit) |
+| 1 | Airwallex MVP | **AW2 webhook endpoint** — register a public HTTPS endpoint in the Airwallex sandbox portal (use ngrok or staging deploy) |
+| 2 | Airwallex MVP | **AW2 balance API scope** — add Balances read scope to the sandbox API key in the Airwallex portal |
+| 3 | Airwallex MVP | **AW2 compliance review** — outbound payment flow document for legal/compliance sign-off |
+| 4 | Granville MVP | **M1 Postgres checkpoint** — start Docker, `npm run db:migrate`, `TEST_DATABASE_URL`, `npm run test:granville`. This is the primary platform blocker. |
 
-### Requires External Action
+### Next — Granville MVP Completion
 
-| Priority | Track | Task | Who |
-|---|---|---|---|
-| 1 | Provider | **AW2 webhook endpoint** — register a public HTTPS endpoint in the Airwallex sandbox portal (use ngrok or staging deploy) | Matthew |
-| 2 | Provider | **AW2 balance API scope** — add Balances read scope to the sandbox API key in the Airwallex portal | Matthew |
-| 3 | Provider | **AW2 compliance review** — outbound payment flow document for legal/compliance sign-off | Matthew + legal |
+| Priority | Track | Task |
+|---|---|---|
+| 1 | Design | **DS2b** — confirm button shape rule, fix unlabeled CardTitle sizes, fix `text-[1.3rem]`, audit sentence case on CTAs |
+| 2 | Design | **DS2c** — replace template copy on marketing site with institutional voice |
+| 3 | Design | **DS2d** — audit and fix icon usage against the Tabler/institutional governance rule |
+| 4 | Granville MVP | **M7 ops-ui approvals** — wire `apps/ops-ui` approvals queue to `POST /payments/:id/approve` and `reject` (moved from customer portal — operators approve, customers submit) |
+
+### Later — Version 1 Hardening
+
+| Priority | Track | Task |
+|---|---|---|
+| 1 | Version 1 | Real Formance Ledger proof after M1 Postgres passes |
+| 2 | Version 1 | Provider resilience, failover, and multi-provider readiness |
+| 3 | Version 1 | Monitoring, incident recovery, data protection, and institutional controls |
 
 ### Blocked
 
 | Item | Blocked by |
 |---|---|
 | M4 real Formance Ledger proof | M1 Postgres |
-| M9 staging environment | M1 Postgres + AW2 + M7 + M8 |
-| AW3 go-live | AW2 + M9 |
+| Granville MVP M9 staging environment | M1 Postgres + AW2 + M7 + M8 |
+| AW3 go-live | AW2 + Granville MVP M9 staging readiness |
 
 ---
 
@@ -87,6 +133,8 @@ Expected: 101 tests pass. Any failures indicate gaps in `PostgresGranvilleStore`
 ---
 
 ## AW2 Webhook Certification (Next Provider Step)
+
+See [mvp-airwallex.md](mvp-airwallex.md#concrete-next-steps) for the full Airwallex MVP action checklist.
 
 After registering a public webhook endpoint:
 

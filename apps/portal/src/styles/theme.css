@@ -35,20 +35,20 @@
 }
 
 .dark {
-  --background: var(--granville-color-navy-900);
-  --foreground: var(--granville-color-slate-50);
-  --card: var(--granville-color-navy-800);
-  --card-foreground: var(--granville-color-slate-50);
+  --background: var(--granville-color-product-background);
+  --foreground: var(--granville-color-product-text);
+  --card: var(--granville-color-product-card);
+  --card-foreground: var(--granville-color-product-text);
   --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: var(--granville-color-slate-50);
-  --primary: var(--granville-color-gold-300);
-  --primary-foreground: var(--granville-color-navy-950);
+  --popover-foreground: var(--granville-color-product-text);
+  --primary: var(--granville-color-product-primary-action);
+  --primary-foreground: var(--granville-color-product-background-deep);
   --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: var(--granville-color-slate-50);
+  --secondary-foreground: var(--granville-color-product-text);
   --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: var(--granville-color-slate-400);
+  --muted-foreground: var(--granville-color-product-text-muted);
   --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: var(--granville-color-slate-50);
+  --accent-foreground: var(--granville-color-product-text);
   --destructive: var(--granville-color-danger);
   --border: var(--granville-color-border-subtle);
   --input: var(--granville-color-border-strong);
@@ -58,7 +58,7 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: var(--granville-color-navy-950);
+  --sidebar: var(--granville-color-product-background-deep);
 }
 
 @theme inline {

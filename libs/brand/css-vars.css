@@ -7,6 +7,7 @@
   --granville-color-slate-300: #b8c6d6;
   --granville-color-slate-400: #94a3b8;
   --granville-color-slate-500: #64748b;
+  --granville-color-blue-400: #38bdf8;
   --granville-color-gold-300: #d5bf9b;
   --granville-color-gold-400: #c8ad7f;
   --granville-color-border-subtle: rgba(184, 198, 214, 0.12);
@@ -16,6 +17,25 @@
   --granville-color-danger: #dc2626;
   --granville-color-success: #16a34a;
   --granville-color-warning: #d97706;
+
+  --granville-color-brand-primary: var(--granville-color-navy-900);
+  --granville-color-brand-secondary: var(--granville-color-blue-400);
+  --granville-color-brand-premium: var(--granville-color-gold-300);
+  --granville-color-brand-surface: var(--granville-color-slate-50);
+
+  --granville-color-product-background: var(--granville-color-navy-900);
+  --granville-color-product-background-deep: var(--granville-color-navy-950);
+  --granville-color-product-card: var(--granville-color-navy-800);
+  --granville-color-product-text: var(--granville-color-slate-50);
+  --granville-color-product-text-muted: var(--granville-color-slate-400);
+  --granville-color-product-primary-action: var(--granville-color-gold-300);
+  --granville-color-product-info-accent: var(--granville-color-blue-400);
+
+  --granville-color-marketing-background: var(--granville-color-navy-900);
+  --granville-color-marketing-text: var(--granville-color-slate-50);
+  --granville-color-marketing-accent: var(--granville-color-blue-400);
+  --granville-color-marketing-premium: var(--granville-color-gold-300);
+  --granville-color-marketing-light-surface: var(--granville-color-slate-50);
 
   --granville-font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
   --granville-font-heading: Manrope, Inter, ui-sans-serif, system-ui, sans-serif;
@@ -39,4 +59,3 @@
   --granville-width-focused: 1024px;
   --granville-width-narrow: 768px;
 }
-

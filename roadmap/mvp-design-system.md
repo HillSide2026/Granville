@@ -1,4 +1,6 @@
-# MVP — Design System
+# Granville MVP — Design System
+
+This plan belongs to Granville MVP. It standardizes the product/platform design layer after the Airwallex first-provider proof and before Version 1 hardening.
 
 ## Status Summary
 

@@ -47,6 +47,7 @@ export const granvilleBrand = {
     "brand-slate-300": "#b8c6d6",
     "brand-slate-400": "#94a3b8",
     "brand-slate-500": "#64748b",
+    "brand-blue-400": "#38bdf8",
     "brand-gold-300": "#d5bf9b",
     "brand-gold-400": "#c8ad7f",
     "brand-border-subtle": "rgba(184, 198, 214, 0.12)",
@@ -56,6 +57,55 @@ export const granvilleBrand = {
     "brand-danger": "#dc2626",
     "brand-success": "#16a34a",
     "brand-warning": "#d97706",
+  },
+
+  colorRoles: {
+    brand: {
+      primary: "brand-navy-900",
+      secondary: "brand-blue-400",
+      premiumAccent: "brand-gold-300",
+      primarySurface: "brand-slate-50",
+      rule: "Brand assets, logos, Canva templates, and public identity systems should start from navy, blue, gold, and slate.",
+    },
+    productUi: {
+      background: "brand-navy-900",
+      backgroundDeep: "brand-navy-950",
+      card: "brand-navy-800",
+      foreground: "brand-slate-50",
+      mutedForeground: "brand-slate-400",
+      primaryAction: "brand-gold-300",
+      informationalAccent: "brand-blue-400",
+      rule: "Product UI keeps the institutional navy, slate, and gold aesthetic; blue is reserved for informational accents, charts, data flow, and system activity.",
+    },
+    marketing: {
+      background: "brand-navy-900",
+      foreground: "brand-slate-50",
+      primaryAccent: "brand-blue-400",
+      premiumAccent: "brand-gold-300",
+      lightSurface: "brand-slate-50",
+      rule: "Marketing can use blue more visibly than the product UI, while gold remains premium and selective.",
+    },
+  },
+
+  colorUsage: {
+    productUiPercentages: {
+      navy: "60-70%",
+      slate: "20-30%",
+      gold: "5-8%",
+      blue: "2-5%",
+    },
+    marketingPercentages: {
+      navy: "45-60%",
+      slate: "20-30%",
+      blue: "10-20%",
+      gold: "5-10%",
+    },
+    rules: [
+      "Navy is the dominant institutional field; use navy-900 as the canonical brand color, navy-950 for depth, and navy-800 for product surfaces.",
+      "Blue is the secondary brand color for Canva assets, logo variants, links, infrastructure visuals, integrations, data movement, and informational UI accents.",
+      "Gold is a restrained premium accent for primary product actions, selected states, trust cues, and high-value marketing details.",
+      "Slate carries readability through text, light surfaces, quiet borders, muted metadata, and inverse foreground treatments.",
+    ],
   },
 
   typography: {

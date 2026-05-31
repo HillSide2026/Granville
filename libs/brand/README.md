@@ -19,7 +19,37 @@ It does not render UI and should not depend on Astro, React, Shadcn, Tailwind, o
 - Core mark: treasury/bank icon
 - Public favicon state: light background
 - Portal favicon state: dark navy background
+- Primary brand color: `brand-navy-900` / `#07111f`
+- Secondary brand color: `brand-blue-400` / `#38bdf8`
+- Premium accent: `brand-gold-300` / `#d5bf9b`
+- Primary surface: `brand-slate-50` / `#f8fafc`
 - Tone: institutional, treasury-oriented, precise, restrained
+
+## Color System
+
+The canonical Granville brand system has three layers:
+
+- Brand colors: navy, blue, gold, and slate. These govern Canva assets, logo variants, public brand expression, and identity-level decisions.
+- Product UI colors: navy, slate, and gold remain the dominant application aesthetic. Blue is available as a controlled informational accent for charts, data movement, integration states, and infrastructure visuals.
+- Marketing site colors: navy remains the primary field, slate carries text and light surfaces, blue can appear more visibly as the secondary brand signal, and gold stays premium and selective.
+
+Recommended product UI usage:
+
+| Family | Share | Rule |
+| --- | ---: | --- |
+| Navy | 60-70% | Dominant shell, background, and card environment. |
+| Slate | 20-30% | Text, borders, muted metadata, and light surfaces. |
+| Gold | 5-8% | Primary actions, selected states, and premium emphasis. |
+| Blue | 2-5% | Informational accents, charts, integrations, and data flow. |
+
+Recommended marketing and Canva usage:
+
+| Family | Share | Rule |
+| --- | ---: | --- |
+| Navy | 45-60% | Brand grounding and high-confidence fields. |
+| Slate | 20-30% | Light surfaces, inverse text, and readability. |
+| Blue | 10-20% | Secondary brand recognition, infrastructure energy, and links. |
+| Gold | 5-10% | Premium restraint, trust cues, and high-value highlights. |
 
 ## How To Use In Stage 2
 

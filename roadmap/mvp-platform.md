@@ -1,4 +1,6 @@
-# MVP — Platform
+# Granville MVP — Product/Platform Milestone
+
+Granville MVP turns the Airwallex first-provider proof into a usable product/platform milestone. It covers the provider-agnostic core: persistence, API orchestration, ledger integration, durable events, reconciliation, operator workflows, reporting, and staging readiness.
 
 ## Status Summary
 
@@ -10,10 +12,12 @@
 | M3 | EMI adapter and provider runtime | **Complete** |
 | M4 | Ledger integration | Mock complete — real Formance blocked on M1 |
 | M5 | Webhooks and event durability | **Complete** |
-| M6 | Reconciliation engine | **Complete** (MVP scope) |
+| M6 | Reconciliation engine | **Complete** (Granville MVP scope) |
 | M7 | Admin and ops console | **Complete** |
 | M8 | Reporting and compliance | **Complete** |
 | M9 | Production readiness | Not started — blocked on M1, AW2, M7, M8 |
+
+**Release exit criterion:** the core payment workflow can be run repeatedly in a staging-like environment with Postgres persistence, portal/operator workflows, reporting, durable events, and Airwallex configured as the first provider.
 
 ---
 

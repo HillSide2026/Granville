@@ -1,14 +1,14 @@
-# Granville Stage 1 — EMI-Compatible Financial Operations Infrastructure
+# Version 1 — Hardened Provider-Ready Infrastructure
 
 ## Objective
 
-Stage 1 begins after MVP. MVP demonstrates reliable payment orchestration through a single provider. Stage 1 demonstrates deterministic, replay-safe, and operationally auditable payment orchestration across multiple EMI providers with reconciliation-native financial controls.
+Version 1 follows Granville MVP. Airwallex MVP proves the first payment rail, and Granville MVP turns that proof into a usable product/platform. Version 1 hardens Granville into deterministic, replay-safe, and operationally auditable payment orchestration across multiple EMI providers with reconciliation-native financial controls.
 
 ---
 
 ## Strategic Outcomes
 
-By the end of Stage 1, Granville demonstrates:
+By the end of Version 1, Granville demonstrates:
 
 - Immutable double-entry financial records
 - Provider-agnostic payment orchestration

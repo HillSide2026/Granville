@@ -15,13 +15,13 @@ Establish the ledger as the canonical financial source of truth, and implement a
 - Immutable double-entry journal entries
 - Compensating entries for reversals and corrections
 - Derived balances only (no stored balance fields)
-- Canonical Stage 1 payment states with valid transition enforcement
+- Canonical Version 1 payment states with valid transition enforcement
 - `compliance_review` gate before routing
 - `reversed` state with compensating ledger entry
 
 ---
 
-## Canonical Stage 1 States
+## Canonical Version 1 States
 
 | State | Meaning |
 |---|---|
@@ -59,7 +59,7 @@ Establish the ledger as the canonical financial source of truth, and implement a
 | Real Formance Ledger proof | Swap mock client for live `FORMANCE_LEDGER_URL` once M1 Postgres checkpoint passes |
 | Compensating entries | No reversal/correction posting template — corrections require manual Formance intervention |
 | Balance derivation from ledger | `PaymentAccount.balance` is a stored field updated by the orchestrator, not derived from journal entries |
-| Canonical state migration | MVP states (`created`, `processing`, `provider_accepted`, `completed`) need to map to Stage 1 states (`initiated`, `submitted`, `pending_settlement`, `settled`) |
+| Canonical state migration | Granville MVP states (`created`, `processing`, `provider_accepted`, `completed`) need to map to Version 1 states (`initiated`, `submitted`, `pending_settlement`, `settled`) |
 | `compliance_review` gate | `pending_review` exists but is not wired to a KYC/AML step; payments can bypass it |
 | `reversed` state and posting | No reversal flow; no compensating posting template |
 
