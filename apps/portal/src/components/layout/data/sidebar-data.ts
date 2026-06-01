@@ -58,11 +58,11 @@ export function getSidebarData(
     organisation: deriveOrganisation(role, email, organizationName),
     navGroups: [
       {
-        title: 'Dashboard',
+        title: 'My KPIs',
         items: [
-          { title: 'Live Report 1', url: '/reports/1', icon: AnalyticsIcon },
-          { title: 'Live Report 2', url: '/reports/2', icon: AnalyticsIcon },
-          { title: 'Live Report 3', url: '/reports/3', icon: AnalyticsIcon },
+          { title: 'KPI 1', url: '/kpis/1', icon: AnalyticsIcon },
+          { title: 'KPI 2', url: '/kpis/2', icon: AnalyticsIcon },
+          { title: 'KPI 3', url: '/kpis/3', icon: AnalyticsIcon },
         ],
       },
       {
