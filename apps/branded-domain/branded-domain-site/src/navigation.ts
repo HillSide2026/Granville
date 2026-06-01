@@ -8,6 +8,10 @@ export const headerData = {
       href: getPermalink("/#platform"),
     },
     {
+      text: "Blog",
+      href: getPermalink("/blog"),
+    },
+    {
       text: "Contact",
       href: getPermalink("/contact"),
     },
@@ -24,6 +28,7 @@ export const footerData = {
         { text: "Payments", href: getPermalink("/#payments") },
         { text: "Company", href: getPermalink("/#company") },
         { text: "Careers", href: getPermalink("/#company") },
+        { text: "Blog", href: getPermalink("/blog") },
         { text: "Contact", href: getPermalink("/contact") },
       ],
     },
