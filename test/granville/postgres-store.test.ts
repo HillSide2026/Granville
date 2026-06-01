@@ -27,6 +27,22 @@ async function ensureMigrated(): Promise<void> {
   if (migrated) return;
   const client = createPool(TEST_DB);
   try {
+    // Create tables if they don't exist yet (first run on a fresh DB)
+    await runGranvilleMigrations(client);
+    // Truncate all data so each test run starts from a known clean state.
+    // Without this, seeded providers/routing rules from previous runs (e.g. Airwallex)
+    // persist across invocations and break tests that expect only the mock providers.
+    await client.query(`
+      TRUNCATE TABLE
+        providers, provider_bindings, provider_capabilities, provider_health,
+        routing_rules, customers, kyc_records, payment_accounts, provider_accounts,
+        idempotency_keys, payment_orders, payment_attempts, provider_transactions,
+        webhook_events, webhook_processing_attempts, internal_transactions,
+        ledger_posting_queue, ledger_posting_attempts, reconciliation_runs,
+        reconciliation_records, reconciliation_exceptions, audit_events,
+        provider_command_queue, provider_request_attempts
+      CASCADE
+    `);
     await runGranvilleMigrations(client, { includeSeeds: true });
   } finally {
     await client.close();

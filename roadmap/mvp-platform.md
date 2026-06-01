@@ -7,7 +7,7 @@ Granville MVP turns the Airwallex first-provider proof into a usable product/pla
 | Milestone | Description | Status |
 |---|---|---|
 | M0 | Foundation and repo control | Partial — docs and workspace migration outstanding |
-| M1 | Operational core | In memory — Postgres proof pending |
+| M1 | Operational core | **Complete** — 123/123 tests pass against live Postgres |
 | M2 | API and orchestration | Complete pending M1 Postgres acceptance |
 | M3 | EMI adapter and provider runtime | **Complete** |
 | M4 | Ledger integration | Mock complete — real Formance blocked on M1 |
@@ -38,13 +38,15 @@ All doc work is unblocked. The workspace migration can wait until after M1.
 
 ---
 
-## M1 — Operational Core (Primary Platform Blocker)
+## M1 — Operational Core
 
-**All 115 tests pass against `InMemoryGranvilleStore`. The Postgres acceptance run is the only remaining step.**
+**Complete.** 123/123 tests pass against a live migrated Postgres instance.
 
-`PostgresGranvilleStore` implements the core write path. Migrations cover all required tables. The acceptance run will surface any gaps.
+Two fixes were required to complete the acceptance run:
+- `libs/db/client.ts`: configured `pg` to return timestamps as ISO strings (not `Date` objects) to match the in-memory store's string-based timestamps.
+- `test/granville/postgres-store.test.ts`: `ensureMigrated()` now truncates all tables before re-seeding, preventing cross-run contamination (a seeded Airwallex provider with `fallbackPriority: 1` was persisting between runs and hijacking mock-EMI routing).
 
-**To unblock:**
+**To run the Postgres acceptance suite:**
 
 ```sh
 # Requires Docker Desktop running
@@ -57,9 +59,7 @@ export TEST_DATABASE_URL=$DATABASE_URL
 npm run test:granville
 ```
 
-Expected: all tests pass. Any failures indicate gaps in `PostgresGranvilleStore` to fix.
-
-**Exit criteria:** `npm run test:granville` passes against a live migrated Postgres instance, and a complete payment lifecycle completes with data persisted to Postgres.
+**Exit criteria met:** `npm run test:granville` passes 123/123 tests against a live migrated Postgres instance.
 
 ---
 

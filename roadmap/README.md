@@ -84,7 +84,7 @@ Version 1 follows Granville MVP. Four tracks run in parallel. See [stage1-overvi
 | 1 | Airwallex MVP | **AW2 webhook endpoint** — register a public HTTPS endpoint in the Airwallex sandbox portal (use ngrok or staging deploy) |
 | 2 | Airwallex MVP | **AW2 balance API scope** — add Balances read scope to the sandbox API key in the Airwallex portal |
 | 3 | Airwallex MVP | **AW2 compliance review** — outbound payment flow document for legal/compliance sign-off |
-| 4 | Granville MVP | **M1 Postgres checkpoint** — start Docker, `npm run db:migrate`, `TEST_DATABASE_URL`, `npm run test:granville`. This is the primary platform blocker. |
+| 4 | Granville MVP | ~~**M1 Postgres checkpoint**~~ — **Done.** 123/123 tests pass against live Postgres. |
 
 ### Next — Granville MVP Completion
 
@@ -107,15 +107,15 @@ Version 1 follows Granville MVP. Four tracks run in parallel. See [stage1-overvi
 
 | Item | Blocked by |
 |---|---|
-| M4 real Formance Ledger proof | M1 Postgres |
-| Granville MVP M9 staging environment | M1 Postgres + AW2 + M7 + M8 |
+| M4 real Formance Ledger proof | ~~M1 Postgres~~ AW2 (M1 now done) |
+| Granville MVP M9 staging environment | ~~M1 Postgres~~ + AW2 + M7 + M8 |
 | AW3 go-live | AW2 + Granville MVP M9 staging readiness |
 
 ---
 
 ## M1 Postgres Checkpoint
 
-The single most important next action. Run this:
+**Complete.** 123/123 tests pass against live Postgres. M1 is no longer a blocker.
 
 ```sh
 # Requires Docker Desktop running
@@ -127,8 +127,6 @@ npm run db:migrate
 export TEST_DATABASE_URL=$DATABASE_URL
 npm run test:granville
 ```
-
-Expected: 101 tests pass. Any failures indicate gaps in `PostgresGranvilleStore` to fix.
 
 ---
 
