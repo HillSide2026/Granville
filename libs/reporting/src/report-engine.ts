@@ -195,7 +195,14 @@ export class ReportEngine {
       providerOutageStatus[binding.adapterKey] = health?.status ?? "unknown";
     }
 
-    const pendingStatuses = new Set(["created", "pending", "submitted", "processing", "provider_accepted", "pending_review"]);
+    const pendingStatuses = new Set([
+      "created",
+      "pending",
+      "submitted",
+      "processing",
+      "provider_accepted",
+      "pending_review",
+    ]);
 
     return {
       paymentFailureRate: Math.round(paymentFailureRate * 10000) / 10000,

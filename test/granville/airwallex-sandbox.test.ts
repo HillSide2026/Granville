@@ -15,7 +15,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { AirwallexClient, AirwallexEmiProvider } from "../../libs/provider-adapters/airwallex/index.ts";
+import {
+  AirwallexClient,
+  AirwallexEmiProvider,
+} from "../../libs/provider-adapters/airwallex/index.ts";
 
 const SKIP = !process.env.AIRWALLEX_SANDBOX_TEST;
 
@@ -42,7 +45,9 @@ test("AW1 sandbox: list transfers returns without error", { skip: SKIP }, async 
   assert.ok(Array.isArray(transfers), "syncTransactions should return an array");
 });
 
-test("AW1 sandbox: createCustomer pass-through returns stable reference", { skip: SKIP }, async () => {
+test("AW1 sandbox: createCustomer pass-through returns stable reference", {
+  skip: SKIP,
+}, async () => {
   const provider = new AirwallexEmiProvider(new AirwallexClient(sandboxConfig));
   const result = await provider.createCustomer({
     granvilleCustomerId: "sandbox-customer-001",
@@ -53,7 +58,9 @@ test("AW1 sandbox: createCustomer pass-through returns stable reference", { skip
   assert.ok(result.providerCustomerId.includes("sandbox-customer-001"));
 });
 
-test("AW1 sandbox: openPaymentAccount encodes currency in providerAccountId", { skip: SKIP }, async () => {
+test("AW1 sandbox: openPaymentAccount encodes currency in providerAccountId", {
+  skip: SKIP,
+}, async () => {
   const provider = new AirwallexEmiProvider(new AirwallexClient(sandboxConfig));
   const result = await provider.openPaymentAccount({
     granvilleCustomerId: "sandbox-customer-001",
@@ -68,7 +75,9 @@ test("AW1 sandbox: openPaymentAccount encodes currency in providerAccountId", { 
   );
 });
 
-test("AW1 sandbox: getBalance returns a ProviderBalance (permissions permitting)", { skip: SKIP }, async () => {
+test("AW1 sandbox: getBalance returns a ProviderBalance (permissions permitting)", {
+  skip: SKIP,
+}, async () => {
   const provider = new AirwallexEmiProvider(new AirwallexClient(sandboxConfig));
   const accountId = "airwallex:wallet:GBP:sandbox-account-001";
   try {
@@ -114,6 +123,9 @@ test("AW1 sandbox: initiate payout creates beneficiary and transfer", { skip: SK
   });
 
   assert.ok(result.providerTransactionId, "should return a provider transaction ID");
-  assert.ok(["accepted", "processing", "completed"].includes(result.status), `unexpected status: ${result.status}`);
+  assert.ok(
+    ["accepted", "processing", "completed"].includes(result.status),
+    `unexpected status: ${result.status}`,
+  );
   console.log(`  Transfer created: ${result.providerTransactionId} status=${result.status}`);
 });

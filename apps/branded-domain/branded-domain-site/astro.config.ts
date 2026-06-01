@@ -1,19 +1,15 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-import { defineConfig } from 'astro/config';
-
-import sitemap from '@astrojs/sitemap';
-import tailwindcss from '@tailwindcss/vite';
-import mdx from '@astrojs/mdx';
-import partytown from '@astrojs/partytown';
-import icon from 'astro-icon';
-import compress from 'astro-compress';
-import type { AstroIntegration } from 'astro';
-
-import astrowind from './vendor/integration/index.ts';
-
-import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin } from './src/utils/frontmatter';
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import mdx from "@astrojs/mdx";
+import partytown from "@astrojs/partytown";
+import sitemap from "@astrojs/sitemap";
+import tailwindcss from "@tailwindcss/vite";
+import type { AstroIntegration } from "astro";
+import { defineConfig } from "astro/config";
+import compress from "astro-compress";
+import icon from "astro-icon";
+import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin } from "./src/utils/frontmatter";
+import astrowind from "./vendor/integration/index.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -22,38 +18,38 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
   hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
 
 export default defineConfig({
-  output: 'static',
+  output: "static",
 
   integrations: [
     sitemap(),
     mdx(),
     icon({
       include: {
-        tabler: ['*'],
-        'flat-color-icons': [
-          'template',
-          'gallery',
-          'approval',
-          'document',
-          'advertising',
-          'currency-exchange',
-          'voice-presentation',
-          'business-contact',
-          'database',
+        tabler: ["*"],
+        "flat-color-icons": [
+          "template",
+          "gallery",
+          "approval",
+          "document",
+          "advertising",
+          "currency-exchange",
+          "voice-presentation",
+          "business-contact",
+          "database",
         ],
       },
     }),
 
     ...whenExternalScripts(() =>
       partytown({
-        config: { forward: ['dataLayer.push'] },
-      })
+        config: { forward: ["dataLayer.push"] },
+      }),
     ),
 
     compress({
       CSS: true,
       HTML: {
-        'html-minifier-terser': {
+        "html-minifier-terser": {
           removeAttributeQuotes: false,
         },
       },
@@ -64,7 +60,7 @@ export default defineConfig({
     }),
 
     astrowind({
-      config: './src/config.yaml',
+      config: "./src/config.yaml",
     }),
   ],
 
@@ -79,7 +75,7 @@ export default defineConfig({
     // `domains` only matters for remote URLs that fall through to Astro's
     // native <Image /> (i.e. providers Unpic can't detect, like Pixabay).
     // Listed entries are authorized to be processed by Sharp.
-    domains: ['cdn.pixabay.com'],
+    domains: ["cdn.pixabay.com"],
   },
 
   markdown: {
@@ -91,7 +87,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
     resolve: {
       alias: {
-        '~': path.resolve(__dirname, './src'),
+        "~": path.resolve(__dirname, "./src"),
       },
     },
   },

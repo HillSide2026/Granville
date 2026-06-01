@@ -1,9 +1,16 @@
-import type { PaginateFunction } from 'astro';
-import { getCollection, render } from 'astro:content';
-import type { CollectionEntry } from 'astro:content';
-import type { Post } from '~/types';
-import { APP_BLOG } from 'astrowind:config';
-import { cleanSlug, trimSlash, BLOG_BASE, POST_PERMALINK_PATTERN, CATEGORY_BASE, TAG_BASE } from './permalinks';
+import type { CollectionEntry } from "astro:content";
+import { getCollection, render } from "astro:content";
+import { APP_BLOG } from "astrowind:config";
+import type { PaginateFunction } from "astro";
+import type { Post } from "~/types";
+import {
+  BLOG_BASE,
+  CATEGORY_BASE,
+  cleanSlug,
+  POST_PERMALINK_PATTERN,
+  TAG_BASE,
+  trimSlash,
+} from "./permalinks";
 
 const generatePermalink = async ({
   id,
@@ -16,31 +23,31 @@ const generatePermalink = async ({
   publishDate: Date;
   category: string | undefined;
 }) => {
-  const year = String(publishDate.getFullYear()).padStart(4, '0');
-  const month = String(publishDate.getMonth() + 1).padStart(2, '0');
-  const day = String(publishDate.getDate()).padStart(2, '0');
-  const hour = String(publishDate.getHours()).padStart(2, '0');
-  const minute = String(publishDate.getMinutes()).padStart(2, '0');
-  const second = String(publishDate.getSeconds()).padStart(2, '0');
+  const year = String(publishDate.getFullYear()).padStart(4, "0");
+  const month = String(publishDate.getMonth() + 1).padStart(2, "0");
+  const day = String(publishDate.getDate()).padStart(2, "0");
+  const hour = String(publishDate.getHours()).padStart(2, "0");
+  const minute = String(publishDate.getMinutes()).padStart(2, "0");
+  const second = String(publishDate.getSeconds()).padStart(2, "0");
 
-  const permalink = POST_PERMALINK_PATTERN.replace('%slug%', slug)
-    .replace('%id%', id)
-    .replace('%category%', category || '')
-    .replace('%year%', year)
-    .replace('%month%', month)
-    .replace('%day%', day)
-    .replace('%hour%', hour)
-    .replace('%minute%', minute)
-    .replace('%second%', second);
+  const permalink = POST_PERMALINK_PATTERN.replace("%slug%", slug)
+    .replace("%id%", id)
+    .replace("%category%", category || "")
+    .replace("%year%", year)
+    .replace("%month%", month)
+    .replace("%day%", day)
+    .replace("%hour%", hour)
+    .replace("%minute%", minute)
+    .replace("%second%", second);
 
   return permalink
-    .split('/')
+    .split("/")
     .map((el) => trimSlash(el))
     .filter((el) => !!el)
-    .join('/');
+    .join("/");
 };
 
-const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> => {
+const getNormalizedPost = async (post: CollectionEntry<"post">): Promise<Post> => {
   const { id, data } = post;
   const { Content, remarkPluginFrontmatter } = await render(post);
 
@@ -100,8 +107,8 @@ const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> =
   };
 };
 
-const load = async function (): Promise<Array<Post>> {
-  const posts = await getCollection('post');
+const load = async (): Promise<Array<Post>> => {
+  const posts = await getCollection("post");
   const normalizedPosts = posts.map(async (post) => await getNormalizedPost(post));
 
   const results = (await Promise.all(normalizedPosts))
@@ -143,10 +150,8 @@ export const findPostsBySlugs = async (slugs: Array<string>): Promise<Array<Post
 
   const posts = await fetchPosts();
 
-  return slugs.reduce(function (r: Array<Post>, slug: string) {
-    posts.some(function (post: Post) {
-      return slug === post.slug && r.push(post);
-    });
+  return slugs.reduce((r: Array<Post>, slug: string) => {
+    posts.some((post: Post) => slug === post.slug && r.push(post));
     return r;
   }, []);
 };
@@ -157,10 +162,8 @@ export const findPostsByIds = async (ids: Array<string>): Promise<Array<Post>> =
 
   const posts = await fetchPosts();
 
-  return ids.reduce(function (r: Array<Post>, id: string) {
-    posts.some(function (post: Post) {
-      return id === post.id && r.push(post);
-    });
+  return ids.reduce((r: Array<Post>, id: string) => {
+    posts.some((post: Post) => id === post.id && r.push(post));
     return r;
   }, []);
 };
@@ -199,7 +202,7 @@ export const getStaticPathsBlogCategory = async ({ paginate }: { paginate: Pagin
 
   const posts = await fetchPosts();
   const categories = {};
-  posts.map((post) => {
+  posts.forEach((post) => {
     if (post.category?.slug) {
       categories[post.category?.slug] = post.category;
     }
@@ -212,8 +215,8 @@ export const getStaticPathsBlogCategory = async ({ paginate }: { paginate: Pagin
         params: { category: categorySlug, blog: CATEGORY_BASE || undefined },
         pageSize: blogPostsPerPage,
         props: { category: categories[categorySlug] },
-      }
-    )
+      },
+    ),
   );
 };
 
@@ -223,9 +226,9 @@ export const getStaticPathsBlogTag = async ({ paginate }: { paginate: PaginateFu
 
   const posts = await fetchPosts();
   const tags = {};
-  posts.map((post) => {
+  posts.forEach((post) => {
     if (Array.isArray(post.tags)) {
-      post.tags.map((tag) => {
+      post.tags.forEach((tag) => {
         tags[tag?.slug] = tag;
       });
     }
@@ -233,40 +236,51 @@ export const getStaticPathsBlogTag = async ({ paginate }: { paginate: PaginateFu
 
   return Array.from(Object.keys(tags)).flatMap((tagSlug) =>
     paginate(
-      posts.filter((post) => Array.isArray(post.tags) && post.tags.find((elem) => elem.slug === tagSlug)),
+      posts.filter(
+        (post) => Array.isArray(post.tags) && post.tags.find((elem) => elem.slug === tagSlug),
+      ),
       {
         params: { tag: tagSlug, blog: TAG_BASE || undefined },
         pageSize: blogPostsPerPage,
         props: { tag: tags[tagSlug] },
-      }
-    )
+      },
+    ),
   );
 };
 
 /** */
 export async function getRelatedPosts(originalPost: Post, maxResults: number = 4): Promise<Post[]> {
   const allPosts = await fetchPosts();
-  const originalTagsSet = new Set(originalPost.tags ? originalPost.tags.map((tag) => tag.slug) : []);
+  const originalTagsSet = new Set(
+    originalPost.tags ? originalPost.tags.map((tag) => tag.slug) : [],
+  );
 
-  const postsWithScores = allPosts.reduce((acc: { post: Post; score: number }[], iteratedPost: Post) => {
-    if (iteratedPost.slug === originalPost.slug) return acc;
+  const postsWithScores = allPosts.reduce(
+    (acc: { post: Post; score: number }[], iteratedPost: Post) => {
+      if (iteratedPost.slug === originalPost.slug) return acc;
 
-    let score = 0;
-    if (iteratedPost.category && originalPost.category && iteratedPost.category.slug === originalPost.category.slug) {
-      score += 5;
-    }
+      let score = 0;
+      if (
+        iteratedPost.category &&
+        originalPost.category &&
+        iteratedPost.category.slug === originalPost.category.slug
+      ) {
+        score += 5;
+      }
 
-    if (iteratedPost.tags) {
-      iteratedPost.tags.forEach((tag) => {
-        if (originalTagsSet.has(tag.slug)) {
-          score += 1;
-        }
-      });
-    }
+      if (iteratedPost.tags) {
+        iteratedPost.tags.forEach((tag) => {
+          if (originalTagsSet.has(tag.slug)) {
+            score += 1;
+          }
+        });
+      }
 
-    acc.push({ post: iteratedPost, score });
-    return acc;
-  }, []);
+      acc.push({ post: iteratedPost, score });
+      return acc;
+    },
+    [],
+  );
 
   postsWithScores.sort((a, b) => b.score - a.score);
 

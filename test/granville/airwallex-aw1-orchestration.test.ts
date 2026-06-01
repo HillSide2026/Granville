@@ -16,8 +16,12 @@ import { randomUUID } from "node:crypto";
 import test from "node:test";
 
 import { GranvilleApi } from "../../apps/api/src/granville-api.ts";
+import type {
+  Provider,
+  ProviderBinding,
+  ProviderCapability,
+} from "../../libs/contracts/provider.ts";
 import { InMemoryGranvilleStore } from "../../libs/persistence/src/in-memory-store.ts";
-import type { Provider, ProviderBinding, ProviderCapability } from "../../libs/contracts/provider.ts";
 
 const SKIP = !process.env.AIRWALLEX_SANDBOX_TEST;
 
@@ -59,7 +63,7 @@ function seedAirwallexBinding(store: InMemoryGranvilleStore): ProviderBinding {
       assets: ["GBP/2"],
       rails: ["local", "faster_payments"],
       countries: ["GB"],
-      fallbackPriority: 1,  // beats mock-emi(10) and mock-bank(20)
+      fallbackPriority: 1, // beats mock-emi(10) and mock-bank(20)
     },
     createdAt: now,
     updatedAt: now,
@@ -90,7 +94,9 @@ const SANDBOX_BENEFICIARY_METADATA = {
   airwallexTransferMethod: "LOCAL",
 };
 
-test("AW1 orchestration: full sandbox payment flow via Granville stack", { skip: SKIP }, async () => {
+test("AW1 orchestration: full sandbox payment flow via Granville stack", {
+  skip: SKIP,
+}, async () => {
   const store = new InMemoryGranvilleStore();
   seedAirwallexBinding(store);
   const api = new GranvilleApi(store);
@@ -181,7 +187,11 @@ test("AW1 orchestration: full sandbox payment flow via Granville stack", { skip:
     assert.ok(posting.result?.formanceTransactionId);
     console.log(`  Ledger tx   : ${posting.result?.formanceTransactionId}`);
   } else {
-    assert.equal(store.ledgerQueue.size, 0, "non-completed payment must not enqueue a ledger posting");
+    assert.equal(
+      store.ledgerQueue.size,
+      0,
+      "non-completed payment must not enqueue a ledger posting",
+    );
     console.log(`  Note: status=${status} — ledger posting deferred until PAID webhook arrives`);
   }
 
@@ -210,7 +220,9 @@ test("AW1 orchestration: full sandbox payment flow via Granville stack", { skip:
   console.log("  AW1 orchestration flow complete ✓");
 });
 
-test("AW1 orchestration: Airwallex provider reference is idempotent on retry", { skip: SKIP }, async () => {
+test("AW1 orchestration: Airwallex provider reference is idempotent on retry", {
+  skip: SKIP,
+}, async () => {
   const store = new InMemoryGranvilleStore();
   const binding = seedAirwallexBinding(store);
   const api = new GranvilleApi(store);
@@ -230,9 +242,7 @@ test("AW1 orchestration: Airwallex provider reference is idempotent on retry", {
   api.orchestrator.submitPayment(payment.id);
   await api.providerRuntime.drain();
 
-  const attempt1 = [...store.paymentAttempts.values()].find(
-    (a) => a.paymentOrderId === payment.id,
-  );
+  const attempt1 = [...store.paymentAttempts.values()].find((a) => a.paymentOrderId === payment.id);
   assert.ok(attempt1?.providerTransactionId, "first attempt must get a provider transaction ID");
   console.log(`  First transfer: ${attempt1?.providerTransactionId}`);
 

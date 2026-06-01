@@ -36,11 +36,15 @@ async function ensureMigrated(): Promise<void> {
 
 async function freshStore(): Promise<PostgresGranvilleStore> {
   await ensureMigrated();
-  return PostgresGranvilleStore.initialize(createPool(TEST_DB));
+  return PostgresGranvilleStore.initialize(createPool(TEST_DB, { max: 1 }));
 }
 
 async function flush(store: PostgresGranvilleStore): Promise<void> {
   await store.flushPersistence();
+}
+
+async function closeStore(store: PostgresGranvilleStore): Promise<void> {
+  await store.close();
 }
 
 test("mock provider seed data present on first init", async () => {
@@ -80,9 +84,11 @@ test("payment order survives store restart", async () => {
     asset: "GBP/2",
   });
   await flush(store1);
+  await closeStore(store1);
 
   const store2 = await freshStore();
   const reloaded = store2.paymentOrders.get(order.id);
+  await closeStore(store2);
   assert.ok(reloaded, "payment order reloaded from DB");
   assert.equal(reloaded.status, "created");
   assert.equal(reloaded.amount.amount, "10000");
@@ -143,9 +149,11 @@ test("ledger queue item survives store restart", async () => {
     metadata: {},
   });
   await flush(store1);
+  await closeStore(store1);
 
   const store2 = await freshStore();
   const item = [...store2.ledgerQueue.values()].find((i) => i.idempotencyKey === idemKey);
+  await closeStore(store2);
   assert.ok(item, "ledger queue item reloaded from DB");
   assert.equal(item.status, "pending");
   assert.equal(item.description, "test posting");
@@ -168,9 +176,11 @@ test("webhook event survives store restart", async () => {
     metadata: {},
   });
   await flush(store1);
+  await closeStore(store1);
 
   const store2 = await freshStore();
   const event = store2.webhooks.get(eventId);
+  await closeStore(store2);
   assert.ok(event, "webhook event reloaded from DB");
   assert.equal(event.providerCode, "mock-emi");
   assert.equal(event.body, '{"test":true}');
@@ -181,9 +191,11 @@ test("provider health update survives restart", async () => {
   const binding = store1.getMockProviderBinding();
   store1.setProviderHealth(binding.id, "degraded", { reason: "test degraded", failureCount: 3 });
   await flush(store1);
+  await closeStore(store1);
 
   const store2 = await freshStore();
   const health = store2.providerHealth.get(binding.id);
+  await closeStore(store2);
   assert.ok(health, "provider health reloaded");
   assert.equal(health.status, "degraded");
   assert.equal(health.failureCount, 3);

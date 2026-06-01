@@ -1,37 +1,37 @@
-import { type LinkProps } from '@tanstack/react-router'
+import type { LinkProps } from "@tanstack/react-router";
 
 type Organisation = {
-  name: string
-  workspaceName: string
-}
+  name: string;
+  workspaceName: string;
+};
 
 type BaseNavItem = {
-  title: string
-  badge?: string
-  disabled?: boolean
-  icon?: React.ElementType
-}
+  title: string;
+  badge?: string;
+  disabled?: boolean;
+  icon?: React.ElementType;
+};
 
 type NavLink = BaseNavItem & {
-  url: LinkProps['to'] | (string & {})
-  items?: never
-}
+  url: LinkProps["to"] | (string & {});
+  items?: never;
+};
 
 type NavCollapsible = BaseNavItem & {
-  items: (BaseNavItem & { url: LinkProps['to'] | (string & {}) })[]
-  url?: never
-}
+  items: (BaseNavItem & { url: LinkProps["to"] | (string & {}) })[];
+  url?: never;
+};
 
-type NavItem = NavCollapsible | NavLink
+type NavItem = NavCollapsible | NavLink;
 
 type NavGroup = {
-  title: string
-  items: NavItem[]
-}
+  title: string;
+  items: NavItem[];
+};
 
 type SidebarData = {
-  organisation: Organisation
-  navGroups: NavGroup[]
-}
+  organisation: Organisation;
+  navGroups: NavGroup[];
+};
 
-export type { SidebarData, Organisation, NavGroup, NavItem, NavCollapsible, NavLink }
+export type { NavCollapsible, NavGroup, NavItem, NavLink, Organisation, SidebarData };

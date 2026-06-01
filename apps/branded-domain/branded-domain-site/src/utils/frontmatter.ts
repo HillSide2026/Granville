@@ -1,31 +1,31 @@
-import getReadingTime from 'reading-time';
-import { toString } from 'mdast-util-to-string';
-import type { RehypePlugin, RemarkPlugin } from '@astrojs/markdown-remark';
+import type { RehypePlugin, RemarkPlugin } from "@astrojs/markdown-remark";
+import { toString as markdownToString } from "mdast-util-to-string";
+import getReadingTime from "reading-time";
 
 export const readingTimeRemarkPlugin: RemarkPlugin = () => {
-  return function (tree, file) {
-    const textOnPage = toString(tree);
+  return (tree, file) => {
+    const textOnPage = markdownToString(tree);
     const readingTime = Math.ceil(getReadingTime(textOnPage).minutes);
 
-    if (typeof file?.data?.astro?.frontmatter !== 'undefined') {
+    if (typeof file?.data?.astro?.frontmatter !== "undefined") {
       file.data.astro.frontmatter.readingTime = readingTime;
     }
   };
 };
 
 export const responsiveTablesRehypePlugin: RehypePlugin = () => {
-  return function (tree) {
+  return (tree) => {
     if (!tree.children) return;
 
     for (let i = 0; i < tree.children.length; i++) {
       const child = tree.children[i];
 
-      if (child.type === 'element' && child.tagName === 'table') {
+      if (child.type === "element" && child.tagName === "table") {
         tree.children[i] = {
-          type: 'element',
-          tagName: 'div',
+          type: "element",
+          tagName: "div",
           properties: {
-            style: 'overflow:auto',
+            style: "overflow:auto",
           },
           children: [child],
         };

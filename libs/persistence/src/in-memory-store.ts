@@ -984,7 +984,7 @@ export class InMemoryGranvilleStore {
     return clone(health);
   }
 
-  private seedMockProvider(): void {
+  protected seedMockProvider(): void {
     const now = timestamp();
     const provider: Provider = {
       id: randomUUID(),

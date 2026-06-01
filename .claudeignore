@@ -1,0 +1,47 @@
+# Local dependency and build artifacts
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+coverage/
+**/coverage/
+.vite/
+**/.vite/
+.vitest-attachments/
+**/__screenshots__/
+playwright-report/
+**/playwright-report/
+
+# Generated client and API surfaces
+pkg/client/docs/
+pkg/client/models/
+pkg/client/internal/
+pkg/client/v1.go
+pkg/client/v2.go
+pkg/client/ledger.go
+pkg/client/.speakeasy/
+openapi/
+openapi.yaml
+apps/api/openapi.yaml
+
+# Generated parser and route files
+internal/machine/script/parser/
+apps/portal/src/routeTree.gen.ts
+
+# Lockfiles and binary/image assets that are rarely useful as context
+*.lock
+package-lock.json
+pnpm-lock.yaml
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# Runtime/local files
+.env
+.env.*
+!.env.example
+*.log
+cover.out
+coverage.txt

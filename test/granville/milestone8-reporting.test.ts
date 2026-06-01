@@ -302,8 +302,18 @@ test("M8: metricsSnapshot pendingPayments counts non-terminal orders", async () 
   const customer = api.postCustomer({ legalName: "Pending User", countryCode: "GB" });
   const account = api.postPaymentAccount({ customerId: customer.id });
   // Create two payments but do not submit — they remain in "pending" status
-  api.postPayment({ customerId: customer.id, paymentAccountId: account.id, amount: "100", asset: "GBP/2" });
-  api.postPayment({ customerId: customer.id, paymentAccountId: account.id, amount: "200", asset: "GBP/2" });
+  api.postPayment({
+    customerId: customer.id,
+    paymentAccountId: account.id,
+    amount: "100",
+    asset: "GBP/2",
+  });
+  api.postPayment({
+    customerId: customer.id,
+    paymentAccountId: account.id,
+    amount: "200",
+    asset: "GBP/2",
+  });
 
   const metrics = api.metricsSnapshot();
   assert.equal(metrics.pendingPayments, 2);

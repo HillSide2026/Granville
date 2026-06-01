@@ -1,5 +1,5 @@
-import { createHmac, randomUUID } from "node:crypto";
 import assert from "node:assert/strict";
+import { createHmac, randomUUID } from "node:crypto";
 import test from "node:test";
 
 import { createGranvilleServer, GranvilleHttpControllers } from "../../apps/api/src/http.ts";
@@ -176,18 +176,34 @@ test("POST /webhooks/:provider bypasses Bearer auth and returns 202", async () =
   }
 });
 
-function seedAirwallexBinding(store: GranvilleHttpControllers["api"]["store"], webhookSecret?: string) {
+function seedAirwallexBinding(
+  store: GranvilleHttpControllers["api"]["store"],
+  webhookSecret?: string,
+) {
   const id = randomUUID();
   const providerId = randomUUID();
   const now = new Date().toISOString();
   store.providers.set(providerId, {
-    id: providerId, code: "airwallex", displayName: "Airwallex", kind: "emi",
-    stage: "aw1", active: true, metadata: {}, createdAt: now, updatedAt: now,
+    id: providerId,
+    code: "airwallex",
+    displayName: "Airwallex",
+    kind: "emi",
+    stage: "aw1",
+    active: true,
+    metadata: {},
+    createdAt: now,
+    updatedAt: now,
   });
   store.providerBindings.set(id, {
-    id, providerId, bindingKind: "native_emi", adapterKey: "airwallex", active: true,
+    id,
+    providerId,
+    bindingKind: "native_emi",
+    adapterKey: "airwallex",
+    active: true,
     config: webhookSecret ? { webhookSecret } : {},
-    metadata: {}, createdAt: now, updatedAt: now,
+    metadata: {},
+    createdAt: now,
+    updatedAt: now,
   });
   store.setProviderHealth(id, "healthy");
 }
@@ -224,7 +240,11 @@ test("POST /webhooks/airwallex accepts valid HMAC signature without Bearer token
     const event = [...controllers.api.store.webhooks.values()].at(-1);
     assert.ok(event, "webhook event should be stored");
     assert.equal(event?.signatureValid, true, "signature should be marked valid");
-    assert.equal(event?.processingStatus, "queued", "valid webhook should be queued for processing");
+    assert.equal(
+      event?.processingStatus,
+      "queued",
+      "valid webhook should be queued for processing",
+    );
   } finally {
     await new Promise<void>((resolve, reject) =>
       server.close((err) => (err ? reject(err) : resolve())),

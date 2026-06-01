@@ -172,9 +172,7 @@ export class AirwallexEmiProvider implements PaymentAccountProvider {
     if (!this.client.config.dryRun) {
       const currency = parseCurrencyFromAccountId(accountId) ?? "GBP";
       const balances = await this.client.getBalances();
-      const match = balances.find(
-        (b) => b.currency.toUpperCase() === currency.toUpperCase(),
-      );
+      const match = balances.find((b) => b.currency.toUpperCase() === currency.toUpperCase());
       const asset = `${currency}/2`;
       const rawAmount = match?.available_amount ?? "0";
       return {

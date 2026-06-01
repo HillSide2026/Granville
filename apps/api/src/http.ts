@@ -440,7 +440,12 @@ export class GranvilleHttpControllers {
     }
     if (method === "POST" && path === "/beneficiaries") {
       requireRole(context, "payment:write");
-      return { statusCode: 201, body: this.api.createBeneficiary(asObject(body) as Parameters<typeof this.api.createBeneficiary>[0]) };
+      return {
+        statusCode: 201,
+        body: this.api.createBeneficiary(
+          asObject(body) as Parameters<typeof this.api.createBeneficiary>[0],
+        ),
+      };
     }
     if (method === "PATCH" && parts[0] === "beneficiaries" && parts[1] && !parts[2]) {
       requireRole(context, "payment:write");

@@ -71,14 +71,14 @@ export class PostgresGranvilleStore extends InMemoryGranvilleStore {
   readonly #client: SqlClient;
   readonly #pendingWrites = new Set<Promise<void>>();
   readonly #writeErrors: Error[] = [];
+  // Sequential write chain — ensures FK-dependent writes don't race each other
+  #writeChain: Promise<void> = Promise.resolve();
+
+  // Suppress in-memory mock seeding — loadFromDatabase() populates state from Postgres
+  protected override seedMockProvider(): void {}
 
   private constructor(client: SqlClient) {
     super();
-    // Clear in-memory seed data; loadFromDatabase() replaces it with DB state
-    this.providers.clear();
-    this.providerBindings.clear();
-    this.providerCapabilities.clear();
-    this.providerHealth.clear();
     this.#client = client;
   }
 
@@ -381,14 +381,24 @@ export class PostgresGranvilleStore extends InMemoryGranvilleStore {
   }
 
   #persist(label: string, fn: () => Promise<void>): void {
-    const write = fn()
+    // Chain writes sequentially so FK-dependent inserts never race
+    const write = this.#writeChain
+      .then(fn)
       .catch((err) => {
         const error = err instanceof Error ? err : new Error(String(err));
         this.#writeErrors.push(error);
         process.stderr.write(`[postgres-store] ${label}: ${error}\n`);
       })
       .finally(() => this.#pendingWrites.delete(write));
+    this.#writeChain = write.catch(() => {}); // advance chain regardless of errors
     this.#pendingWrites.add(write);
+  }
+
+  async close(): Promise<void> {
+    await this.flushPersistence();
+    if ("close" in this.#client) {
+      await (this.#client as { close(): Promise<void> }).close();
+    }
   }
 
   async flushPersistence(): Promise<void> {

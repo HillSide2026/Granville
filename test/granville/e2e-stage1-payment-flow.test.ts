@@ -12,9 +12,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { GranvilleApi } from "../../apps/api/src/granville-api.ts";
-import { AirwallexApiError } from "../../libs/provider-adapters/airwallex/index.ts";
-import { ProviderAdapterRegistry } from "../../libs/provider-adapters/adapter-registry.ts";
 import { ProviderRuntime } from "../../apps/provider-runtime/src/provider-runtime.ts";
+import { ProviderAdapterRegistry } from "../../libs/provider-adapters/adapter-registry.ts";
+import { AirwallexApiError } from "../../libs/provider-adapters/airwallex/index.ts";
 
 test("Stage 1 acceptance: full mock EMI payment flow via webhook path", async () => {
   const api = new GranvilleApi();
@@ -262,7 +262,9 @@ test("provider runtime: disabled binding fails command without burning retry slo
   assert.equal(command?.retryCount, 1, "one retry consumed by the disabled-binding check");
 
   // The payment attempt should NOT be marked failed yet (command not dead-lettered)
-  assert.notEqual(api.getPayment(payment.id)?.status, "failed",
+  assert.notEqual(
+    api.getPayment(payment.id)?.status,
+    "failed",
     "attempt should not be failed until command is dead-lettered",
   );
 
@@ -272,7 +274,11 @@ test("provider runtime: disabled binding fails command without burning retry slo
     const cmd = [...api.store.providerCommandQueue.values()].find(
       (c) => c.paymentAttemptId === attempt.id,
     );
-    if (cmd) api.store.providerCommandQueue.set(cmd.id, { ...cmd, availableAt: new Date(0).toISOString() });
+    if (cmd)
+      api.store.providerCommandQueue.set(cmd.id, {
+        ...cmd,
+        availableAt: new Date(0).toISOString(),
+      });
     await api.providerRuntime.runOnce();
   }
 
@@ -280,7 +286,9 @@ test("provider runtime: disabled binding fails command without burning retry slo
     (c) => c.paymentAttemptId === attempt.id,
   );
   assert.equal(deadCommand?.status, "dead_lettered");
-  assert.equal(api.getPayment(payment.id)?.status, "failed",
+  assert.equal(
+    api.getPayment(payment.id)?.status,
+    "failed",
     "payment should be failed once command is dead-lettered",
   );
 });
@@ -306,11 +314,32 @@ test("provider runtime: transient AirwallexApiError resets command without incre
         initiatePayment: async () => {
           throw new AirwallexApiError(429, "rate limited", "rate_limit");
         },
-        getTransaction: async () => { throw new AirwallexApiError(429, "rate limited"); },
-        createCustomer: async () => ({ providerCustomerId: "x", granvilleCustomerId: "x", status: "active" as const, metadata: {} }),
-        openPaymentAccount: async () => ({ providerAccountId: "x", granvillePaymentAccountId: "x", status: "active" as const, metadata: {} }),
-        getAccount: async () => ({ providerAccountId: "x", status: "active" as const, metadata: {} }),
-        getBalance: async () => ({ providerAccountId: "x", amount: "0", asset: "GBP/2", asOf: new Date() }),
+        getTransaction: async () => {
+          throw new AirwallexApiError(429, "rate limited");
+        },
+        createCustomer: async () => ({
+          providerCustomerId: "x",
+          granvilleCustomerId: "x",
+          status: "active" as const,
+          metadata: {},
+        }),
+        openPaymentAccount: async () => ({
+          providerAccountId: "x",
+          granvillePaymentAccountId: "x",
+          status: "active" as const,
+          metadata: {},
+        }),
+        getAccount: async () => ({
+          providerAccountId: "x",
+          status: "active" as const,
+          metadata: {},
+        }),
+        getBalance: async () => ({
+          providerAccountId: "x",
+          amount: "0",
+          asset: "GBP/2",
+          asOf: new Date(),
+        }),
         listTransactions: async () => [],
         handleWebhook: () => ({ providerCode: "test", rawPayload: {} }),
       };
@@ -336,7 +365,9 @@ test("provider runtime: transient AirwallexApiError resets command without incre
     "transient error must not increment retryCount",
   );
   assert.equal(commandAfter?.status, "pending", "command should remain pending for retry");
-  assert.notEqual(api.getPayment(payment.id)?.status, "failed",
+  assert.notEqual(
+    api.getPayment(payment.id)?.status,
+    "failed",
     "payment should not be failed after a transient error",
   );
 });
@@ -358,12 +389,35 @@ test("provider runtime: permanent error dead-letters command and marks payment f
   class PermanentFailRegistry extends ProviderAdapterRegistry {
     resolve() {
       return {
-        initiatePayment: async () => { throw new Error("hard provider rejection"); },
-        getTransaction: async () => { throw new Error("hard provider rejection"); },
-        createCustomer: async () => ({ providerCustomerId: "x", granvilleCustomerId: "x", status: "active" as const, metadata: {} }),
-        openPaymentAccount: async () => ({ providerAccountId: "x", granvillePaymentAccountId: "x", status: "active" as const, metadata: {} }),
-        getAccount: async () => ({ providerAccountId: "x", status: "active" as const, metadata: {} }),
-        getBalance: async () => ({ providerAccountId: "x", amount: "0", asset: "GBP/2", asOf: new Date() }),
+        initiatePayment: async () => {
+          throw new Error("hard provider rejection");
+        },
+        getTransaction: async () => {
+          throw new Error("hard provider rejection");
+        },
+        createCustomer: async () => ({
+          providerCustomerId: "x",
+          granvilleCustomerId: "x",
+          status: "active" as const,
+          metadata: {},
+        }),
+        openPaymentAccount: async () => ({
+          providerAccountId: "x",
+          granvillePaymentAccountId: "x",
+          status: "active" as const,
+          metadata: {},
+        }),
+        getAccount: async () => ({
+          providerAccountId: "x",
+          status: "active" as const,
+          metadata: {},
+        }),
+        getBalance: async () => ({
+          providerAccountId: "x",
+          amount: "0",
+          asset: "GBP/2",
+          asOf: new Date(),
+        }),
         listTransactions: async () => [],
         handleWebhook: () => ({ providerCode: "test", rawPayload: {} }),
       };
@@ -378,16 +432,26 @@ test("provider runtime: permanent error dead-letters command and marks payment f
     const cmd = [...api.store.providerCommandQueue.values()].find(
       (c) => c.paymentAttemptId === attempt.id,
     );
-    if (cmd) api.store.providerCommandQueue.set(cmd.id, { ...cmd, availableAt: new Date(0).toISOString() });
+    if (cmd)
+      api.store.providerCommandQueue.set(cmd.id, {
+        ...cmd,
+        availableAt: new Date(0).toISOString(),
+      });
     await runtime.runOnce();
   }
 
   const command = [...api.store.providerCommandQueue.values()].find(
     (c) => c.paymentAttemptId === attempt.id,
   );
-  assert.equal(command?.status, "dead_lettered", "command should be dead-lettered after 3 failures");
+  assert.equal(
+    command?.status,
+    "dead_lettered",
+    "command should be dead-lettered after 3 failures",
+  );
   assert.equal(command?.retryCount, 3);
-  assert.equal(api.getPayment(payment.id)?.status, "failed",
+  assert.equal(
+    api.getPayment(payment.id)?.status,
+    "failed",
     "payment should be failed once command is dead-lettered",
   );
 });

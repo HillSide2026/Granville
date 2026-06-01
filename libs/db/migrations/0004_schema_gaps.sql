@@ -5,5 +5,15 @@
 ALTER TABLE ledger_posting_attempts
     ALTER COLUMN formance_transaction_id TYPE TEXT USING formance_transaction_id::TEXT;
 
-ALTER TABLE webhook_events
-    ALTER COLUMN body TYPE TEXT USING convert_from(body, 'UTF-8');
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'webhook_events'
+          AND column_name = 'body'
+          AND data_type = 'bytea'
+    ) THEN
+        ALTER TABLE webhook_events
+            ALTER COLUMN body TYPE TEXT USING convert_from(body, 'UTF-8');
+    END IF;
+END $$;

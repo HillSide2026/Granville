@@ -512,7 +512,17 @@ async function handleProviders(): Promise<string> {
     </tr>`;
   });
 
-  const head = ["Adapter", "Binding ID", "Currency", "Country", "Status", "Failures", "Reason", "Checked At", "Action"]
+  const head = [
+    "Adapter",
+    "Binding ID",
+    "Currency",
+    "Country",
+    "Status",
+    "Failures",
+    "Reason",
+    "Checked At",
+    "Action",
+  ]
     .map((c) => `<th>${c}</th>`)
     .join("");
   return `<table><thead><tr>${head}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
