@@ -1,4 +1,5 @@
 import { createPortalIcon } from '@/components/ui/portal-icon'
+// SettingsIcon removed — Settings is accessible via the ProfileDropdown (⌘S)
 import { type SidebarData, type Organisation } from '../types'
 
 export type PortalRole = 'customer' | 'ops' | 'compliance' | 'admin'
@@ -9,8 +10,7 @@ const BudgetIcon            = createPortalIcon('budget')
 const ConversionExchangeIcon = createPortalIcon('conversion-exchange')
 const CreditCardIcon        = createPortalIcon('credit-card')
 const PaymentFlowIcon       = createPortalIcon('payment-flow')
-const SettingsIcon    = createPortalIcon('settings')
-const WalletIcon      = createPortalIcon('wallet')
+const WalletIcon             = createPortalIcon('wallet')
 
 export function roleLabel(role: PortalRole): string {
   switch (role) {
@@ -84,12 +84,6 @@ export function getSidebarData(
         title: 'Services',
         items: [
           { title: 'FX', url: '/fx', icon: ConversionExchangeIcon },
-        ],
-      },
-      {
-        title: 'Other',
-        items: [
-          { title: 'Settings', url: '/settings', icon: SettingsIcon },
         ],
       },
     ],

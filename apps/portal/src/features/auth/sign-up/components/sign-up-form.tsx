@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Icon } from '@/components/ui/icon'
 import { toast } from 'sonner'
-import { IconFacebook, IconGoogle } from '@/assets/brand-icons'
+import { IconFacebook, IconGithub } from '@/assets/brand-icons'
 import { sleep, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -101,7 +101,7 @@ export function SignUpForm({
           name='confirmPassword'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel>Confirm password</FormLabel>
               <FormControl>
                 <PasswordInput placeholder='********' {...field} />
               </FormControl>
@@ -110,8 +110,12 @@ export function SignUpForm({
           )}
         />
         <Button className='mt-2' disabled={isLoading}>
-          {isLoading ? <Icon name='loader' className='animate-spin' /> : <Icon name='user-add' />}
-          Create Account
+          {isLoading ? (
+            <Icon name='loader' className='animate-spin' />
+          ) : (
+            <Icon name='user-add' />
+          )}
+          Create account
         </Button>
 
         <div className='relative my-2'>
@@ -125,21 +129,11 @@ export function SignUpForm({
           </div>
         </div>
 
-        <div className='grid gap-2'>
-          <Button
-            variant='outline'
-            className='w-full'
-            type='button'
-            disabled={isLoading}
-          >
-            <IconGoogle className='h-4 w-4' /> Google
+        <div className='grid grid-cols-2 gap-2'>
+          <Button variant='outline' type='button' disabled={isLoading}>
+            <IconGithub className='h-4 w-4' /> GitHub
           </Button>
-          <Button
-            variant='outline'
-            className='w-full'
-            type='button'
-            disabled={isLoading}
-          >
+          <Button variant='outline' type='button' disabled={isLoading}>
             <IconFacebook className='h-4 w-4' /> Facebook
           </Button>
         </div>

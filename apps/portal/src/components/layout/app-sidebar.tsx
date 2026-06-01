@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/sidebar'
 import { getSidebarData } from './data/sidebar-data'
 import { NavGroup } from './nav-group'
+import { IntegrationStatus } from './integration-status'
 import { OrgSwitcher } from './org-switcher'
 import { PlatformFooter } from './platform-footer'
 import { SidebarCollapseButton } from './sidebar-collapse-button'
@@ -28,6 +29,7 @@ export function AppSidebar() {
         {data.navGroups.map((props) => (
           <NavGroup key={props.title} {...props} />
         ))}
+        <IntegrationStatus />
       </SidebarContent>
       <SidebarFooter>
         <SidebarCollapseButton />
