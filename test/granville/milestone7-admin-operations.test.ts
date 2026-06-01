@@ -101,7 +101,7 @@ test("M7: adminRetryLedgerPosting replays a dead-lettered posting and emits audi
   });
 
   const auditsBefore = api.getAuditEvents().length;
-  const result = api.adminRetryLedgerPosting(posting.id);
+  const result = await api.adminRetryLedgerPosting(posting.id);
   assert.equal(result.status, "posted", "retry should successfully re-post");
 
   const auditsAfter = api.getAuditEvents().length;
@@ -212,7 +212,7 @@ test("M7: all privileged admin actions are audited", async () => {
   const posting = [...api.store.ledgerQueue.values()][0];
   assert.ok(posting);
   api.store.ledgerQueue.set(posting.id, { ...posting, status: "dead_lettered", retryCount: 3 });
-  api.adminRetryLedgerPosting(posting.id);
+  await api.adminRetryLedgerPosting(posting.id);
 
   // Disable provider
   api.adminDisableProvider("mock-emi");

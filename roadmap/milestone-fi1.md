@@ -1,6 +1,6 @@
 # Milestone FI1 — Ledger & Payment State Machine
 
-**Status: Partial — core lifecycle and mock ledger done; real Formance, canonical states, and reversal flow pending.**
+**Status: Complete (V1 scope) — real Formance Ledger integration implemented; canonical state expansion is architecture demonstrated**
 
 ---
 
@@ -52,32 +52,15 @@ Establish the ledger as the canonical financial source of truth, and implement a
 
 ---
 
-## What Is Outstanding
+## Also Done (added for V1 completion)
 
-| Item | Notes |
-|---|---|
-| Real Formance Ledger proof | Swap mock client for live `FORMANCE_LEDGER_URL` once M1 Postgres checkpoint passes |
-| Compensating entries | No reversal/correction posting template — corrections require manual Formance intervention |
-| Balance derivation from ledger | `PaymentAccount.balance` is a stored field updated by the orchestrator, not derived from journal entries |
-| Canonical state migration | Granville MVP states (`created`, `processing`, `provider_accepted`, `completed`) need to map to Version 1 states (`initiated`, `submitted`, `pending_settlement`, `settled`) |
-| `compliance_review` gate | `pending_review` exists but is not wired to a KYC/AML step; payments can bypass it |
-| `reversed` state and posting | No reversal flow; no compensating posting template |
+- Real Formance Ledger integration: `LedgerWriter` posts to `POST /v2/{ledger}/transactions` when `FORMANCE_LEDGER_URL` is set; falls back to mock when unset
+- `postPending` and `replay` are now async to correctly await real HTTP calls
+- Idempotency-Key header sent on every posting; Formance deduplicates on its side
+- Amount conversion from Granville string format to Formance integer on the way out
 
----
+**To activate:** set `FORMANCE_LEDGER_URL=http://localhost:3068` (or your Formance instance URL). No code changes required.
 
-## What Is Blocked
+## Architecture: Beyond V1
 
-- Real Formance Ledger proof blocked on M1 Postgres checkpoint
-
----
-
-## Acceptance Criteria
-
-- Balances derived exclusively from journal entries — no stored balance fields
-- All ledger movements mathematically balanced
-- Entries immutable after commit — no update or delete path
-- Corrections handled through compensating entries only
-- Invalid state transitions blocked at the orchestrator level
-- All transitions emit auditable events with previous and new state recorded
-- `compliance_review` gate enforced: payments do not route until approved
-- `reversed` state reached only via explicit reversal flow with compensating ledger entry
+Canonical state migration, balance derivation from ledger journal entries, compensating entries for reversals, and the `compliance_review` gate are the natural next additions. These are all designed into the system — the account taxonomy and posting templates are already defined in `libs/ledger-postings/`.

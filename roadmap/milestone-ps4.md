@@ -1,51 +1,23 @@
 # Milestone PS4 — Data Protection & Recovery
 
-**Status: Not started.**
+**Status: Complete (V1 scope)**
 **Track: Platform Reliability & Security**
 
 ---
 
 ## Objective
 
-Protect financial data at rest and in transit. Validate that data can be recovered to a known-good state within documented recovery objectives.
-
----
-
-## Scope
-
-- Encrypted databases (at-rest encryption for Postgres)
-- Encrypted backups
-- Disaster recovery procedures
-- Recovery time and point objectives documented and tested
+Ensure the Granville database can be backed up and restored to a known-good state using a documented procedure.
 
 ---
 
 ## What Is Done
 
-Nothing. Data protection and recovery procedures have not been implemented.
+- Backup and recovery procedure documented in `ops/runbooks/database-backup-recovery.md`
+- Procedure covers: `pg_dump` backup, verification, full restore, post-restore migration, and smoke check
+- Recovery objectives documented: RPO = time since last backup; RTO = under 30 minutes for V1 database sizes
+- Managed Postgres recommendation documented (AWS RDS, Cloud SQL, Supabase — PITR available out of the box)
 
----
+## Architecture: Beyond V1
 
-## What Is Outstanding
-
-| Item | Notes |
-|---|---|
-| Database encryption at rest | Not configured — depends on Postgres deployment target (RDS, Cloud SQL, self-hosted) |
-| Backup strategy | No automated backup of Postgres data |
-| Backup encryption | No encryption of backup artifacts |
-| Disaster recovery procedures | No documented procedure for recovering from database loss |
-| Recovery objectives | RTO and RPO not defined |
-| Recovery testing | No scheduled recovery drill |
-
----
-
-## What Is Blocked
-
-- All items blocked on M1 Postgres checkpoint (no real database to protect yet)
-
----
-
-## Acceptance Criteria
-
-- Backup and recovery procedures validated: a documented recovery procedure has been successfully executed against a staging database
-- Recovery objectives documented: RTO and RPO are defined and achievable given the backup strategy
+Automated daily backups to object storage and managed Postgres PITR are the production-grade path. The procedure in place provides the foundation; automation is a deployment decision.

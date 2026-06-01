@@ -317,6 +317,28 @@ export class PostgresGranvilleStore extends InMemoryGranvilleStore {
     if (this.providers.size === 0) {
       await this.#seedMockProviders();
     }
+
+    // Recover items stuck in 'processing' state from an unclean shutdown.
+    // claimProviderCommand and claimWebhookForProcessing only pick up 'pending'/'queued'
+    // items, so anything left mid-flight after a crash must be reset to be retried.
+    const now = new Date().toISOString();
+    for (const [id, cmd] of this.providerCommandQueue) {
+      if (cmd.status === "processing") {
+        this.providerCommandQueue.set(id, { ...cmd, status: "pending", lockedAt: undefined, updatedAt: now });
+      }
+    }
+    for (const [id, event] of this.webhooks) {
+      if (event.processingStatus === "processing") {
+        this.webhooks.set(id, { ...event, processingStatus: "queued" });
+      }
+    }
+    await this.#client.query(
+      `UPDATE provider_command_queue SET status = 'pending', locked_at = NULL, updated_at = $1 WHERE status = 'processing'`,
+      [now],
+    );
+    await this.#client.query(
+      `UPDATE webhook_events SET processing_status = 'queued' WHERE processing_status = 'processing'`,
+    );
   }
 
   async #seedMockProviders(): Promise<void> {

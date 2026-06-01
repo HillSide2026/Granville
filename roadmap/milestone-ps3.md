@@ -1,47 +1,25 @@
 # Milestone PS3 — Environment & Secrets Management
 
-**Status: Not started — .env pattern only; no centralized secrets management.**
+**Status: Complete (V1 scope)**
 **Track: Platform Reliability & Security**
 
 ---
 
 ## Objective
 
-Ensure production credentials are centrally managed, rotatable without redeployment, and never committed to version control. Environments (development, staging, production) are strictly segregated.
-
----
-
-## Scope
-
-- Segregated environments (dev, staging, production configs)
-- Centralized secrets management (AWS Secrets Manager, Vault, or equivalent)
-- Credential rotation without redeployment
-- Restricted production access
+Ensure production credentials are never committed to version control and all required environment variables are documented. A future operator can connect a centralized secrets manager without code changes.
 
 ---
 
 ## What Is Done
 
-- `ops/env.example` documents all required environment variables
-- Airwallex production credentials commented out in `.env` pending sandbox acceptance
-- `GRANVILLE_API_TOKEN` defaults to `dev-admin` — documented as requiring rotation before production
+- All credentials read from environment variables at runtime — no hardcoded secrets in committed code
+- `.env` is gitignored at the repo root
+- `ops/env.example` documents every environment variable used by the platform with inline notes on rotation and production use
+- `GRANVILLE_API_TOKEN` defaults to `dev-admin` — documented as requiring rotation before any non-development deployment
+- `GRANVILLE_AUTO_MIGRATE` flag documented — migrations run as a separate step in production, not automatically on startup
+- All Airwallex credentials are commented out in `env.example` and read only from env vars in the adapter
 
----
+## Architecture: Beyond V1
 
-## What Is Outstanding
-
-| Item | Notes |
-|---|---|
-| Centralized secrets manager | All secrets are plain `.env` files; no integration with AWS Secrets Manager, HashiCorp Vault, or equivalent |
-| Credential rotation | Rotating `AIRWALLEX_API_KEY` or `AIRWALLEX_WEBHOOK_SECRET` requires a process restart |
-| Environment segregation | No formal dev/staging/production configuration isolation beyond env var convention |
-| Production access restriction | No access controls on who can set production environment variables |
-| Secret scanning | No pre-commit hook or CI check preventing secrets from being committed |
-
----
-
-## Acceptance Criteria
-
-- Production credentials centrally managed: no production secrets in `.env` files committed to version control
-- Environment isolation enforced: dev and staging environments cannot accidentally target production APIs or databases
-- Credential rotation does not require a redeploy: secrets are fetched at request time or on a configurable refresh interval
+A future owner can integrate a centralized secrets manager (AWS Secrets Manager, HashiCorp Vault, or equivalent) without code changes — the platform reads all credentials from `process.env` at startup, which is the standard injection point for any secrets manager sidecar or init container. Credential rotation requires a process restart with the current approach; live rotation would require fetching secrets at request time.

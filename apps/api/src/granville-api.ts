@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { PaymentAccount } from "../../../libs/contracts/account.ts";
 import type { Customer } from "../../../libs/contracts/customer.ts";
+import type { LedgerPostingResult } from "../../../libs/contracts/ledger.ts";
 import type { PaymentAttempt, PaymentOrder } from "../../../libs/contracts/payment.ts";
 import type { ProviderBinding } from "../../../libs/contracts/provider.ts";
 import type {
@@ -57,7 +58,7 @@ export class GranvilleApi {
     this.store = store;
     this.orchestrator = new GranvilleOrchestrator(store);
     this.providerRuntime = new ProviderRuntime(store);
-    this.ledgerWriter = new LedgerWriter(store);
+    this.ledgerWriter = new LedgerWriter(store, process.env.FORMANCE_LEDGER_URL);
     this.reconciler = new Reconciler(store);
     this.webhookProcessor = new WebhookProcessor(store);
     this.reportEngine = new ReportEngine(store);
@@ -95,7 +96,7 @@ export class GranvilleApi {
   async submitPayment(id: string): Promise<PaymentOrder> {
     const submission = this.orchestrator.submitPayment(id);
     await this.providerRuntime.drain();
-    this.ledgerWriter.postPending();
+    await this.ledgerWriter.postPending();
     return this.getPayment(id) ?? submission.order;
   }
 
@@ -202,7 +203,7 @@ export class GranvilleApi {
     return this.providerRuntime.drain();
   }
 
-  postPendingLedger() {
+  postPendingLedger(): Promise<LedgerPostingResult[]> {
     return this.ledgerWriter.postPending();
   }
 
@@ -314,12 +315,12 @@ export class GranvilleApi {
     return { id: webhookId, status: updated.processingStatus };
   }
 
-  adminRetryLedgerPosting(postingId: string): { id: string; status: string } {
+  async adminRetryLedgerPosting(postingId: string): Promise<{ id: string; status: string }> {
     const posting = this.store.ledgerQueue.get(postingId);
     if (!posting) {
       throw new Error(`Unknown ledger_posting: ${postingId}`);
     }
-    this.ledgerWriter.replay(postingId);
+    await this.ledgerWriter.replay(postingId);
     this.store.audit(
       "user",
       "admin.ledger_posting.retry_requested",

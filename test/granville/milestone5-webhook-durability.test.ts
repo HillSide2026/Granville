@@ -111,7 +111,7 @@ test("M5: completed-via-webhook payment enqueues ledger posting", async () => {
   api.drainWebhooks();
 
   assert.equal(api.store.ledgerQueue.size, 1, "webhook completion should enqueue a ledger posting");
-  api.ledgerWriter.postPending();
+  await api.ledgerWriter.postPending();
   const posting = [...api.store.ledgerQueue.values()][0];
   assert.equal(posting.status, "posted");
 });

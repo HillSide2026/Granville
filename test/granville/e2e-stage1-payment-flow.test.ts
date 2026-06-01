@@ -90,7 +90,7 @@ test("Stage 1 acceptance: full mock EMI payment flow via webhook path", async ()
   assert.equal(api.store.ledgerQueue.size, 1, "one ledger posting enqueued");
   assert.equal([...api.store.ledgerQueue.values()][0].status, "pending");
 
-  api.ledgerWriter.postPending();
+  await api.ledgerWriter.postPending();
   const posting = [...api.store.ledgerQueue.values()][0];
   assert.equal(posting.status, "posted", "ledger posting must be posted");
   assert.ok(posting.result?.formanceTransactionId, "must have a Formance transaction id");

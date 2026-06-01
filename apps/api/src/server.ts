@@ -6,6 +6,14 @@ import { createGranvilleServer, GranvilleHttpControllers } from "./http.ts";
 
 const port = Number(process.env.PORT ?? 8080);
 
+// Reconciliation runs on a schedule to surface exceptions automatically.
+// Set GRANVILLE_RECONCILE_INTERVAL_MS=0 to disable background reconciliation.
+const reconcileIntervalMs = Number(process.env.GRANVILLE_RECONCILE_INTERVAL_MS ?? 3_600_000); // 1 hour
+
+// Aging pass escalates stale reconciliation exceptions (info → warning → critical).
+// Set GRANVILLE_AGING_INTERVAL_MS=0 to disable.
+const agingIntervalMs = Number(process.env.GRANVILLE_AGING_INTERVAL_MS ?? 900_000); // 15 minutes
+
 async function main() {
   const databaseUrl = process.env.DATABASE_URL;
   const client = databaseUrl ? createPool(databaseUrl) : undefined;
@@ -15,9 +23,38 @@ async function main() {
   const store = client ? await PostgresGranvilleStore.initialize(client) : undefined;
   const api = new GranvilleApi(store);
   const server = createGranvilleServer(new GranvilleHttpControllers(api));
+
+  if (reconcileIntervalMs > 0) {
+    setInterval(() => {
+      try {
+        const result = api.postReconciliationRun();
+        process.stdout.write(
+          `[reconciler] run complete — ${result.exceptionCount} exception(s)\n`,
+        );
+      } catch (err) {
+        process.stderr.write(`[reconciler] run failed: ${err}\n`);
+      }
+    }, reconcileIntervalMs);
+  }
+
+  if (agingIntervalMs > 0) {
+    setInterval(() => {
+      try {
+        api.adminRunAgingPass();
+      } catch (err) {
+        process.stderr.write(`[reconciler] aging pass failed: ${err}\n`);
+      }
+    }, agingIntervalMs);
+  }
+
   server.listen(port, () => {
     const mode = databaseUrl ? "postgres" : "in-memory";
     process.stdout.write(`granville-api listening on port ${port} [${mode}]\n`);
+    if (reconcileIntervalMs > 0) {
+      process.stdout.write(
+        `[reconciler] scheduled every ${reconcileIntervalMs / 60_000} min\n`,
+      );
+    }
   });
 }
 

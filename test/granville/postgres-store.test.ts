@@ -389,12 +389,12 @@ test("Milestone 1B: Postgres-backed Airwallex sandbox payout flow", async () => 
   const webhook = api3.postWebhook("airwallex", webhookBody, { headers: webhookHeaders });
   assert.equal(webhook.status, "queued");
   assert.equal(api3.drainWebhooks(), 1);
-  api3.postPendingLedger();
+  await api3.postPendingLedger();
 
   const duplicateWebhook = api3.postWebhook("airwallex", webhookBody, { headers: webhookHeaders });
   assert.equal(duplicateWebhook.id, webhook.id);
   assert.equal(api3.drainWebhooks(), 0);
-  api3.postPendingLedger();
+  await api3.postPendingLedger();
 
   const completed = api3.getPayment(payment.id);
   assert.equal(completed?.status, "completed");

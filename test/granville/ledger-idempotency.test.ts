@@ -17,8 +17,8 @@ test("duplicate provider results do not create duplicate ledger postings", async
   const submission = api.orchestrator.submitPayment(payment.id);
   await api.providerRuntime.executePaymentAttempt(submission.attempt.id);
   await api.providerRuntime.executePaymentAttempt(submission.attempt.id);
-  api.ledgerWriter.postPending();
-  api.ledgerWriter.postPending();
+  await api.ledgerWriter.postPending();
+  await api.ledgerWriter.postPending();
 
   assert.equal(api.store.providerTransactions.size, 1);
   assert.equal(api.store.ledgerQueue.size, 1);
@@ -44,10 +44,10 @@ test("ledger writer can replay failed postings with deterministic transaction id
   const writer = new LedgerWriter(api.store);
   const item = [...api.store.ledgerQueue.values()][0];
   api.store.resetLedgerPosting(item.id);
-  writer.postPending({ failIds: new Set([item.id]) });
+  await writer.postPending({ failIds: new Set([item.id]) });
   assert.equal(api.store.ledgerQueue.get(item.id)?.status, "failed");
 
-  const replayed = writer.replay(item.id);
+  const replayed = await writer.replay(item.id);
   assert.equal(api.store.ledgerQueue.get(item.id)?.status, "posted");
   assert.equal(replayed[0]?.formanceTransactionId, item.result?.formanceTransactionId);
 });

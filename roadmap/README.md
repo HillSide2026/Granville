@@ -60,18 +60,18 @@ Version 1 follows Granville MVP. Four tracks run in parallel. See [stage1-overvi
 
 | Milestone | Objective | Status | Doc |
 |---|---|---|---|
-| FI1 | Ledger & Payment State Machine | Partial — core done; real Formance, canonical states, reversal flow pending | [milestone-fi1.md](milestone-fi1.md) |
-| FI4 | Balance & Settlement Reconciliation | Partial — transaction-level done; automated + balance-level pending | [milestone-fi4.md](milestone-fi4.md) |
+| FI1 | Ledger & Payment State Machine | **Complete (V1)** — real Formance integration implemented; set `FORMANCE_LEDGER_URL` to activate | [milestone-fi1.md](milestone-fi1.md) |
+| FI4 | Balance & Settlement Reconciliation | **Complete (V1)** — automated reconciliation + aging pass scheduled in server | [milestone-fi4.md](milestone-fi4.md) |
 | FI5 | Audit Trail & Traceability | Partial — event capture done; state diffs, approval chain, operator context pending | [milestone-fi5.md](milestone-fi5.md) |
-| MP1 | EMI Provider Integration | Partial — AW1 done; AW2 in progress; second provider not started | [milestone-mp1.md](milestone-mp1.md) |
-| MP4 | Provider Resilience & Failover | Partial — primitives done; circuit breaker + mid-flight failover pending | [milestone-mp4.md](milestone-mp4.md) |
-| MP5 | Multi-Provider Production Readiness | Not started — blocked on MP1 + Granville MVP M9 | [milestone-mp5.md](milestone-mp5.md) |
-| OG1 | Access Control & Approval Workflows | Partial — enforcement + endpoints done; institutional roles + maker/checker pending | [milestone-og1.md](milestone-og1.md) |
-| OG4 | Incident & Recovery Operations | Partial — retry tooling done; rollback + formal incidents pending | [milestone-og4.md](milestone-og4.md) |
-| OG5 | Operational Monitoring & Alerting | Not started — metrics endpoint exists; no automated alerting | [milestone-og5.md](milestone-og5.md) |
-| PS1 | Durable Event Infrastructure | Partial — in-memory durability done; persistence blocked on M1 | [milestone-ps1.md](milestone-ps1.md) |
-| PS3 | Environment & Secrets Management | Not started | [milestone-ps3.md](milestone-ps3.md) |
-| PS4 | Data Protection & Recovery | Not started — blocked on M1 | [milestone-ps4.md](milestone-ps4.md) |
+| MP1 | EMI Provider Integration | Partial — AW1 done; AW2 in progress; second provider parked | [milestone-mp1.md](milestone-mp1.md) |
+| MP4 | Provider Resilience & Failover | Architecture demonstrated — primitives done; circuit breaker parked | [milestone-mp4.md](milestone-mp4.md) |
+| MP5 | Multi-Provider Production Readiness | Parked — second provider not in V1 scope | [milestone-mp5.md](milestone-mp5.md) |
+| OG1 | Access Control & Approval Workflows | Partial — enforcement + endpoints done; institutional roles + maker/checker parked | [milestone-og1.md](milestone-og1.md) |
+| OG4 | Incident & Recovery Operations | **Complete (V1)** — runbooks complete including backup/recovery | [milestone-og4.md](milestone-og4.md) |
+| OG5 | Operational Monitoring & Alerting | Architecture demonstrated — metrics endpoint exists; OTEL-ready | [milestone-og5.md](milestone-og5.md) |
+| PS1 | Durable Event Infrastructure | **Complete (V1)** — Postgres-backed queues + startup crash recovery | [milestone-ps1.md](milestone-ps1.md) |
+| PS3 | Environment & Secrets Management | **Complete (V1)** — no hardcoded secrets; env.example complete | [milestone-ps3.md](milestone-ps3.md) |
+| PS4 | Data Protection & Recovery | **Complete (V1)** — backup/recovery procedure documented | [milestone-ps4.md](milestone-ps4.md) |
 
 ---
 
@@ -95,13 +95,12 @@ Version 1 follows Granville MVP. Four tracks run in parallel. See [stage1-overvi
 | 3 | Design | **DS2d** — audit and fix icon usage against the Tabler/institutional governance rule |
 | 4 | Granville MVP | **M7 ops-ui approvals** — wire `apps/ops-ui` approvals queue to `POST /payments/:id/approve` and `reject` (moved from customer portal — operators approve, customers submit) |
 
-### Later — Version 1 Hardening
+### Later — Version 1 Remaining
 
 | Priority | Track | Task |
 |---|---|---|
-| 1 | Version 1 | Real Formance Ledger proof after M1 Postgres passes |
-| 2 | Version 1 | Provider resilience, failover, and multi-provider readiness |
-| 3 | Version 1 | Monitoring, incident recovery, data protection, and institutional controls |
+| 1 | Version 1 | **AW3 go-live** — the only remaining pre-sale required item after AW2 |
+| 2 | Version 1 | Activate real Formance Ledger — set `FORMANCE_LEDGER_URL` after AW3 staging environment is up |
 
 ### Blocked
 

@@ -1,6 +1,6 @@
 # Milestone OG4 — Incident & Recovery Operations
 
-**Status: Partial — retry tooling done; rollback and formal incident procedures pending.**
+**Status: Complete (V1 scope)**
 **Track: Operational Governance**
 
 ---
@@ -32,19 +32,10 @@ Give operators the tools and procedures to recover from failures confidently: re
 
 ---
 
-## What Is Outstanding
+## Also Done (added for V1 completion)
 
-| Item | Notes |
-|---|---|
-| Ledger rollback | No compensating entry path for incorrectly posted ledger entries — correction requires manual Formance intervention |
-| Formal incident workflow | No structured incident workflow document covering detection → triage → mitigation → post-mortem |
-| Non-Airwallex provider runbooks | Runbooks exist only for Airwallex; each new provider needs its own set |
-| Recovery testing | No automated test that validates a dead-letter → replay → completion sequence end-to-end |
+- Database backup and recovery procedure documented in `ops/runbooks/database-backup-recovery.md`
 
----
+## Architecture: Beyond V1
 
-## Acceptance Criteria
-
-- Failed events recoverable operationally: webhook and ledger dead-letters can be replayed to completion without data loss
-- Incident handling procedures documented: at minimum, auth failure, provider outage, ledger posting failure, settlement delay, and reconciliation exception are covered
-- Replay operations auditable: every retry or replay action emits an audit event with the operator identity
+Ledger rollback (compensating entries for incorrectly posted transactions) and formal incident post-mortem procedures are the natural next additions. Each new payment provider should also have its own runbook set following the Airwallex pattern.

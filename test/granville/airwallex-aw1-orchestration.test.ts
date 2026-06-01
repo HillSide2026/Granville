@@ -181,7 +181,7 @@ test("AW1 orchestration: full sandbox payment flow via Granville stack", {
   const status = orderAfterProvider?.status;
   if (status === "completed") {
     assert.equal(store.ledgerQueue.size, 1, "completed payment must enqueue a ledger posting");
-    api.ledgerWriter.postPending();
+    await api.ledgerWriter.postPending();
     const posting = [...store.ledgerQueue.values()][0];
     assert.equal(posting.status, "posted");
     assert.ok(posting.result?.formanceTransactionId);

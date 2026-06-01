@@ -285,7 +285,7 @@ export class GranvilleHttpControllers {
       parts[3] === "retry"
     ) {
       requireRole(context, "admin:write");
-      return { statusCode: 200, body: this.api.adminRetryLedgerPosting(parts[2]) };
+      return { statusCode: 200, body: await this.api.adminRetryLedgerPosting(parts[2]) };
     }
     if (
       method === "POST" &&
