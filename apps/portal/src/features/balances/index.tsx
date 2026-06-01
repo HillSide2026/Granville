@@ -95,7 +95,7 @@ export function Balances() {
               <CardTitle className='text-sm font-medium'>Completed Payments</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold text-green-600'>{metrics?.completedPayments ?? '—'}</div>
+              <div className='text-2xl font-bold text-[var(--granville-color-success)]'>{metrics?.completedPayments ?? '—'}</div>
             </CardContent>
           </Card>
           <Card>

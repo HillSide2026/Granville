@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-const BRAND_VERSION = '20260523'
+const BRAND_VERSION = '20260531'
 
 const brandHead = {
   public: {

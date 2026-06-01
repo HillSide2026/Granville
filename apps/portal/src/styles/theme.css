@@ -1,37 +1,37 @@
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  --background: var(--granville-color-surface-public);
+  --foreground: var(--granville-color-navy-900);
+  --card: #ffffff;
+  --card-foreground: var(--granville-color-navy-900);
+  --popover: #ffffff;
+  --popover-foreground: var(--granville-color-navy-900);
+  --primary: var(--granville-color-navy-900);
+  --primary-foreground: var(--granville-color-slate-50);
+  --secondary: var(--granville-color-slate-100);
+  --secondary-foreground: var(--granville-color-navy-900);
+  --muted: var(--granville-color-slate-100);
+  --muted-foreground: var(--granville-color-slate-500);
+  --accent: var(--granville-color-slate-100);
+  --accent-foreground: var(--granville-color-navy-900);
+  --destructive: var(--granville-color-danger);
+  --border: var(--granville-color-slate-300);
+  --input: var(--granville-color-slate-300);
+  --ring: var(--granville-color-gold-400);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
 
-  --sidebar: var(--background);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--accent);
-  --sidebar-accent-foreground: var(--accent-foreground);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
+  --sidebar: var(--granville-color-navy-900);
+  --sidebar-foreground: var(--granville-color-slate-50);
+  --sidebar-primary: var(--granville-color-gold-300);
+  --sidebar-primary-foreground: var(--granville-color-navy-950);
+  --sidebar-accent: var(--granville-color-navy-800);
+  --sidebar-accent-foreground: var(--granville-color-slate-50);
+  --sidebar-border: var(--granville-color-border-subtle);
+  --sidebar-ring: var(--granville-color-gold-300);
 }
 
 .dark {

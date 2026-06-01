@@ -1,4 +1,7 @@
 export const iconRegistry = {
+  // --- Brand ---
+  'brand-mark': '/icons/brand/mark.svg',
+
   // --- Domain icons (FinPack: Banking & Finance / Analytics) ---
   wallet: '/icons/banking/wallet.svg',
   bank: '/icons/banking/bank.svg',
@@ -26,7 +29,10 @@ export const iconRegistry = {
   loader: '/icons/arrow/refresh-rotate-arrows.svg',
 
   // --- Finance features ---
+  budget: '/icons/payment/credit-card-check-done.svg',
   'credit-card': '/icons/payment/credit-card-pos.svg',
+  'credit-cards': '/icons/payment/credit-cards.svg',
+  'conversion-exchange': '/icons/banking/conversion-exchange.svg',
   'trending-up': '/icons/analytics/business-chart-line.svg',
 
   // --- Actions ---

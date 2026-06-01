@@ -9,20 +9,20 @@ export const granvilleBrand = {
 
   favicon: {
     publicState: {
-      description: "Light background treasury/bank icon for marketing and unauthenticated pages.",
+      description: "Light background Granville arrow mark for marketing and unauthenticated pages.",
       background: "brand-surface-public",
       foreground: "brand-navy-950",
     },
     portalState: {
-      description: "Dark navy background treasury/bank icon for authenticated portal pages.",
+      description: "Dark navy background Granville arrow mark for authenticated portal pages.",
       background: "brand-surface-portal",
       foreground: "brand-slate-50",
     },
-    rule: "Use identical treasury/bank geometry. Only background and foreground treatment changes.",
+    rule: "Use identical mark geometry across all favicon variants. Only background and foreground color treatment changes.",
   },
 
   iconography: {
-    coreMark: "treasury-bank",
+    coreMark: "granville-arrow",
     style: "monochrome stroke-based line icon",
     sizesPx: {
       compact: 16,

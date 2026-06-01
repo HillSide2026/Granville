@@ -9,21 +9,20 @@ import {
 } from '@/components/ui/sidebar'
 import { getSidebarData } from './data/sidebar-data'
 import { NavGroup } from './nav-group'
-import { NavUser } from './nav-user'
-import { TeamSwitcher } from './team-switcher'
+import { OrgSwitcher } from './org-switcher'
+import { PlatformFooter } from './platform-footer'
+import { SidebarCollapseButton } from './sidebar-collapse-button'
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout()
   const { auth } = useAuthStore()
 
-  const data = getSidebarData(auth.role)
-  const name = auth.user?.email?.split('@')[0] ?? 'test'
-  const user = { name, email: auth.user?.email ?? '', avatar: '' }
+  const data = getSidebarData(auth.role, auth.user?.email, auth.user?.organizationName)
 
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <OrgSwitcher organisation={data.organisation} />
       </SidebarHeader>
       <SidebarContent>
         {data.navGroups.map((props) => (
@@ -31,7 +30,8 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <SidebarCollapseButton />
+        <PlatformFooter />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

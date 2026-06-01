@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { SignOutDialog } from '@/components/sign-out-dialog'
 import { useAuthStore } from '@/stores/auth-store'
+import { roleLabel } from '@/components/layout/data/sidebar-data'
 
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState()
@@ -22,6 +23,7 @@ export function ProfileDropdown() {
   const name = auth.user?.email?.split('@')[0] ?? 'test'
   const email = auth.user?.email ?? ''
   const initials = name.slice(0, 2).toUpperCase()
+  const role = roleLabel(auth.role)
 
   return (
     <>
@@ -34,18 +36,25 @@ export function ProfileDropdown() {
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className='w-56' align='end' forceMount>
+        <DropdownMenuContent className='w-60' align='end' forceMount>
           <DropdownMenuLabel className='font-normal'>
-            <div className='flex flex-col gap-1.5'>
-              <p className='text-sm leading-none font-medium'>{name}</p>
-              <p className='text-xs leading-none text-muted-foreground'>{email}</p>
+            <div className='flex items-center gap-3 py-0.5'>
+              <Avatar className='h-9 w-9'>
+                <AvatarImage src='' alt={name} />
+                <AvatarFallback>{initials}</AvatarFallback>
+              </Avatar>
+              <div className='flex flex-col gap-0.5'>
+                <p className='text-sm font-medium leading-none'>{name}</p>
+                <p className='text-xs leading-none text-muted-foreground'>{email}</p>
+                <p className='text-xs leading-none text-muted-foreground/60 mt-0.5'>{role}</p>
+              </div>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
               <Link to='/settings'>
-                Settings
+                Account settings
                 <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
               </Link>
             </DropdownMenuItem>

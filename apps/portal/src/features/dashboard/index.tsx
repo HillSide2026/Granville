@@ -61,7 +61,7 @@ export function Dashboard() {
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>Budgets</CardTitle>
-              <Icon name='wallet' className='size-4 text-muted-foreground' />
+              <Icon name='budget' className='size-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold'>
@@ -89,7 +89,7 @@ export function Dashboard() {
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>Pending</CardTitle>
-              <Icon name='compliance' className={`size-4 ${pendingPayments.length > 0 ? 'text-destructive' : 'text-muted-foreground'}`} />
+              <Icon name='shield' className={`size-4 ${pendingPayments.length > 0 ? 'text-destructive' : 'text-muted-foreground'}`} />
             </CardHeader>
             <CardContent>
               <div className={`text-2xl font-bold ${pendingPayments.length > 0 ? 'text-destructive' : ''}`}>
@@ -138,7 +138,7 @@ export function Dashboard() {
             </CardHeader>
             <CardContent className='space-y-3 text-sm'>
               <Link to='/budgets' className='flex items-center gap-2 rounded-md p-2 hover:bg-muted'>
-                <Icon name='wallet' className='size-4 text-muted-foreground' />
+                <Icon name='budget' className='size-4 text-muted-foreground' />
                 <span>Manage budgets</span>
                 <span className='ml-auto text-muted-foreground'>→</span>
               </Link>
@@ -148,12 +148,12 @@ export function Dashboard() {
                 <span className='ml-auto text-muted-foreground'>→</span>
               </Link>
               <Link to='/sales' className='flex items-center gap-2 rounded-md p-2 hover:bg-muted'>
-                <Icon name='payment-flow' className='size-4 text-muted-foreground' />
+                <Icon name='credit-card' className='size-4 text-muted-foreground' />
                 <span>View sales</span>
                 <span className='ml-auto text-muted-foreground'>→</span>
               </Link>
               <Link to='/balances' className='flex items-center gap-2 rounded-md p-2 hover:bg-muted'>
-                <Icon name='analytics' className='size-4 text-muted-foreground' />
+                <Icon name='bank' className='size-4 text-muted-foreground' />
                 <span>Check balances</span>
                 <span className='ml-auto text-muted-foreground'>→</span>
               </Link>

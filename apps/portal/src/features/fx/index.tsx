@@ -18,7 +18,7 @@ export function Fx() {
       <Main>
         <div className='flex flex-col items-center justify-center py-24 text-center'>
           <div className='mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-muted-foreground'>
-            <Icon name='trending-up' className='h-8 w-8' />
+            <Icon name='conversion-exchange' className='size-8' />
           </div>
           <div className='flex items-center gap-2'>
             <h2 className='text-xl font-semibold'>FX not enabled for your account</h2>

@@ -8,6 +8,7 @@ export interface AuthUser {
   id: string
   email: string
   role: PortalRole
+  organizationName?: string
 }
 
 interface AuthState {

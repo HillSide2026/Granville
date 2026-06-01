@@ -16,7 +16,7 @@ export function Cards() {
       </Header>
       <Main>
         <EmptyState
-          icon={<Icon name='credit-card' className='h-8 w-8' />}
+          icon={<Icon name='credit-cards' className='h-8 w-8' />}
           title='Cards — Coming Soon'
           description='Virtual and physical card issuance, spending controls, and transaction history will be available in a future release.'
           badge='Planned'
