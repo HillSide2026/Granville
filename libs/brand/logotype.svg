@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 288 72" role="img" aria-label="Granville Finance">
+  <!-- Mark tile -->
+  <rect x="0" y="0" width="72" height="72" rx="13" fill="#f8fafc"/>
+  <!-- Arrow mark (same geometry as favicon variants) -->
+  <g transform="translate(11 11) scale(0.0637) translate(-354 -363)">
+    <path fill="#d5bf9b" fill-rule="nonzero" d="M 1136.304688 472.992188 C 963.367188 788.890625 1060.191406 958.707031 1133.292969 1031.808594 L 1019.417969 1145.683594 C 960.585938 1086.855469 859.695312 951.527344 881.875 732 L 475.210938 1138.664062 L 361.335938 1024.789062 L 767.996094 618.128906 C 548.476562 640.308594 413.144531 539.414062 354.3125 480.582031 L 468.191406 366.707031 C 541.300781 439.816406 711.117188 536.640625 1026.996094 363.703125 Z"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="86" y="30" font-family="Manrope, Inter, ui-sans-serif, system-ui, sans-serif" font-weight="700" font-size="22" fill="#d5bf9b" letter-spacing="2.5">GRANVILLE</text>
+  <text x="87" y="50" font-family="Manrope, Inter, ui-sans-serif, system-ui, sans-serif" font-weight="500" font-size="14" fill="#c8ad7f" letter-spacing="4.5">FINANCE</text>
+</svg>

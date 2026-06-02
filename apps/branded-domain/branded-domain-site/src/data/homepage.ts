@@ -64,17 +64,17 @@ export const homepage = {
       "Modernize global operations with finance and treasury infrastructure built for scale, visibility, and control. Granville Finance helps teams streamline workflows and growth internationally through our unified financial platform.",
     items: [
       {
-        title: "Optimize Payment Operations",
+        title: "Optimize Operations",
         description:
-          "Consolidate fragmented payment rails, team processes, and provider workflows into a single operational platform designed for scale, visibility, and control.",
+          "Consolidate payment rails, team processes, and external systems into a single, unified platform designed for scale, visibility, and control.",
       },
       {
-        title: "Simplify Financial Workflows",
+        title: "Streamline Workflows",
         description:
           "Unify currencies, approvals, reconciliation, and reporting into standardized workflows that reduce manual intervention and improve operational consistency across markets.",
       },
       {
-        title: "Improve Operational Visibility",
+        title: "Improve Visibility",
         description:
           "Gain real-time visibility into transaction flows, settlement status, reconciliation outcomes, and operational performance through centralized monitoring and reporting infrastructure.",
       },
@@ -101,7 +101,7 @@ export const homepage = {
     tagline: "CONTACT",
     title: "Build modern global payment operations.",
     subtitle:
-      "Speak with Granville Finance about how we can help your treasury team move forward with confidence.",
+      "Speak with Granville Finance about how we can help your financial ops team move forward with confidence.",
     primaryAction: {
       text: "Sign Up",
       href: granville.appSignUpUrl,

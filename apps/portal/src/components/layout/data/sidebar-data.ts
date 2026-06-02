@@ -7,9 +7,12 @@ export type PortalRole = "customer" | "ops" | "compliance" | "admin";
 const AnalyticsIcon = createPortalIcon("analytics");
 const BankIcon = createPortalIcon("bank");
 const BudgetIcon = createPortalIcon("budget");
+const ChatIcon = createPortalIcon("chat");
 const ConversionExchangeIcon = createPortalIcon("conversion-exchange");
 const CreditCardIcon = createPortalIcon("credit-card");
+const HomeIcon = createPortalIcon("home");
 const PaymentFlowIcon = createPortalIcon("payment-flow");
+const TasksIcon = createPortalIcon("tasks");
 const WalletIcon = createPortalIcon("wallet");
 
 export function roleLabel(role: PortalRole): string {
@@ -66,11 +69,19 @@ export function getSidebarData(
     organisation: deriveOrganisation(role, email, organizationName),
     navGroups: [
       {
-        title: "My KPIs",
+        title: "Dashboard",
         items: [
+          { title: "Dashboard", url: "/", icon: HomeIcon },
           { title: "KPI 1", url: "/kpis/1", icon: AnalyticsIcon },
           { title: "KPI 2", url: "/kpis/2", icon: AnalyticsIcon },
           { title: "KPI 3", url: "/kpis/3", icon: AnalyticsIcon },
+        ],
+      },
+      {
+        title: "Today",
+        items: [
+          { title: "Tasks", url: "/tasks", icon: TasksIcon },
+          { title: "Chat", url: "/chat", icon: ChatIcon },
         ],
       },
       {

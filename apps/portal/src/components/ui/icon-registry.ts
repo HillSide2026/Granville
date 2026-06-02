@@ -2,6 +2,11 @@ export const iconRegistry = {
   // --- Brand ---
   "brand-mark": "/icons/brand/mark.svg",
 
+  // --- Navigation ---
+  home: "/icons/home/home.svg",
+  tasks: "/icons/report/task-list-document-text.svg",
+  chat: "/icons/message/chat-messages-bubble-lined.svg",
+
   // --- Domain icons (FinPack: Banking & Finance / Analytics) ---
   wallet: "/icons/banking/wallet.svg",
   bank: "/icons/banking/bank.svg",

@@ -54,7 +54,7 @@ const columnsClass =
   />
   <div class="mx-auto max-w-7xl p-4 md:px-8">
     <div class={`md:flex ${isReversed ? 'md:flex-row-reverse' : ''} md:gap-16`}>
-      <div class="md:basis-1/2 self-center">
+      <div class={twMerge('md:basis-1/2 self-center', classes?.contentCol as string)}>
         {content && (
           <div class={twMerge('mb-12 text-lg dark:text-slate-400', classes?.content as string)} set:html={content} />
         )}
@@ -76,7 +76,7 @@ const columnsClass =
                     <div class="flex shrink-0 justify-center">
                       <Icon
                         name={icon || 'tabler:check'}
-                        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[rgba(213,191,155,0.35)] bg-[rgba(213,191,155,0.12)] p-1 text-[#d5bf9b] mr-2 rtl:mr-0 rtl:ml-2"
+                        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[rgba(216,185,130,0.55)] bg-[rgba(216,185,130,0.14)] p-1 text-[#D8B982] mr-2 rtl:mr-0 rtl:ml-2"
                       />
                     </div>
                     <div class="mt-0.5">
@@ -120,7 +120,7 @@ const columnsClass =
           )
         }
       </div>
-      <div aria-hidden="true" class="mt-10 md:mt-0 md:basis-1/2">
+      <div aria-hidden="true" class={twMerge('mt-10 md:mt-0 md:basis-1/2', classes?.imageCol as string)}>
         {
           image && (
             <div class="relative m-auto max-w-4xl">

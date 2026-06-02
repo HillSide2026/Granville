@@ -123,6 +123,23 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })
 }
 
+// ── Placeholder chart data (shown when no real transactions exist) ────────────
+
+const PLACEHOLDER_CHART: { date: string; in: number; out: number }[] = [
+  { date: '05-04', in: 12400, out: 8200  },
+  { date: '05-05', in: 9800,  out: 11500 },
+  { date: '05-06', in: 15200, out: 7600  },
+  { date: '05-07', in: 6300,  out: 9400  },
+  { date: '05-08', in: 18700, out: 12100 },
+  { date: '05-09', in: 4200,  out: 5800  },
+  { date: '05-10', in: 7600,  out: 6900  },
+  { date: '05-11', in: 21300, out: 14200 },
+  { date: '05-12', in: 13900, out: 10500 },
+  { date: '05-13', in: 8400,  out: 7300  },
+  { date: '05-14', in: 16800, out: 11900 },
+  { date: '05-15', in: 11200, out: 8700  },
+]
+
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
 const PERIODS = [
@@ -329,25 +346,35 @@ export function Dashboard() {
               <CardTitle>Cash flow</CardTitle>
             </CardHeader>
             <CardContent>
-              {payments.length === 0 ? (
-                <p className='py-12 text-center text-sm text-muted-foreground'>
-                  No transaction data yet.
-                </p>
-              ) : (
-                <ResponsiveContainer width='100%' height={220}>
-                  <BarChart data={chartData} barGap={2}>
-                    <CartesianGrid strokeDasharray='3 3' stroke='var(--color-muted-foreground)' strokeOpacity={0.15} vertical={false} />
-                    <XAxis dataKey='date' tick={{ fontSize: 11 }} stroke='var(--color-muted-foreground)' strokeOpacity={0.4} tickLine={false} axisLine={false} interval='preserveStartEnd' />
-                    <YAxis tick={{ fontSize: 11 }} stroke='var(--color-muted-foreground)' strokeOpacity={0.4} tickLine={false} axisLine={false} width={40} />
-                    <Tooltip
-                      contentStyle={{ fontSize: 12, borderRadius: 6, border: '1px solid var(--color-border)' }}
-                      cursor={{ fill: 'var(--color-muted)', opacity: 0.4 }}
-                    />
-                    <Bar dataKey='in'  name='Money in'  fill='hsl(var(--primary))' radius={[3, 3, 0, 0]} maxBarSize={20} />
-                    <Bar dataKey='out' name='Money out' fill='var(--color-muted-foreground)' fillOpacity={0.4} radius={[3, 3, 0, 0]} maxBarSize={20} />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
+              {(() => {
+                const display = chartData.some((d) => d.in > 0 || d.out > 0) ? chartData : PLACEHOLDER_CHART
+                const isPlaceholder = display === PLACEHOLDER_CHART
+                return (
+                  <div className='relative'>
+                    <ResponsiveContainer width='100%' height={220}>
+                      <BarChart data={display} barGap={2}>
+                        <CartesianGrid strokeDasharray='3 3' stroke='var(--color-muted-foreground)' strokeOpacity={0.12} vertical={false} />
+                        <XAxis dataKey='date' tick={{ fontSize: 11 }} stroke='var(--color-muted-foreground)' strokeOpacity={0.4} tickLine={false} axisLine={false} interval='preserveStartEnd' />
+                        <YAxis tick={{ fontSize: 11 }} stroke='var(--color-muted-foreground)' strokeOpacity={0.4} tickLine={false} axisLine={false} width={48} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+                        <Tooltip
+                          contentStyle={{ fontSize: 12, borderRadius: 6, border: '1px solid var(--color-border)', background: 'var(--color-card)' }}
+                          cursor={{ fill: 'var(--color-muted)', opacity: 0.3 }}
+                          formatter={(v: number) => [`${v.toLocaleString()}`, undefined]}
+                        />
+                        <Bar dataKey='in'  name='Money in'  fill='var(--color-primary)' radius={[3, 3, 0, 0]} maxBarSize={18} />
+                        <Bar dataKey='out' name='Money out' fill='var(--color-muted-foreground)' fillOpacity={0.35} radius={[3, 3, 0, 0]} maxBarSize={18} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                    {isPlaceholder && (
+                      <div className='pointer-events-none absolute inset-0 flex items-center justify-center'>
+                        <span className='rounded-md bg-background/80 px-2 py-1 text-xs text-muted-foreground backdrop-blur-sm'>
+                          Sample data — connect your accounts to see live figures
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )
+              })()}
             </CardContent>
           </Card>
 

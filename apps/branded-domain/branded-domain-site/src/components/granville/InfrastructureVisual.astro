@@ -1,226 +1,183 @@
 <div
   aria-hidden="true"
-  class="infrastructure-visual relative isolate overflow-hidden rounded-[28px] border border-slate-800/80 shadow-[0_24px_70px_rgba(6,16,32,0.28)]"
+  class="infrastructure-visual relative isolate overflow-hidden rounded-[28px] border border-[rgba(184,198,214,0.1)] shadow-[0_24px_60px_rgba(2,8,18,0.52)]"
 >
-  <div class="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(56,189,248,0.24),transparent_22%),radial-gradient(circle_at_78%_18%,rgba(34,211,238,0.18),transparent_24%),radial-gradient(circle_at_70%_74%,rgba(37,99,235,0.18),transparent_28%),linear-gradient(145deg,#020816_0%,#071225_48%,#0b1931_100%)]"></div>
-  <div class="absolute inset-0 opacity-40 [background-image:linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] [background-size:72px_72px]"></div>
-  <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-cyan-300/10 to-transparent"></div>
-  <div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#020816] to-transparent"></div>
+  <!-- Background -->
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_48%_46%,rgba(216,185,130,0.055),transparent_52%),linear-gradient(152deg,#030d1a_0%,#071225_54%,#0b1931_100%)]"></div>
 
-  <div class="absolute left-[6%] top-[14%] h-28 w-28 rounded-full bg-sky-400/20 blur-3xl"></div>
-  <div class="absolute right-[8%] top-[18%] h-24 w-24 rounded-full bg-cyan-300/20 blur-3xl"></div>
-  <div class="absolute bottom-[12%] right-[18%] h-32 w-32 rounded-full bg-blue-500/18 blur-3xl"></div>
+  <!-- Dot grid -->
+  <div class="absolute inset-0 opacity-[0.14] [background-image:radial-gradient(circle,rgba(184,198,214,0.55)_1px,transparent_1px)] [background-size:36px_36px]"></div>
 
-  <svg class="absolute inset-0 h-full w-full" viewBox="0 0 640 520" fill="none" preserveAspectRatio="none">
+  <!-- Edge fades -->
+  <div class="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-[#030d1a] to-transparent"></div>
+  <div class="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#030d1a] to-transparent"></div>
+  <div class="absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#030d1a] to-transparent"></div>
+  <div class="absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#030d1a] to-transparent"></div>
+
+  <!-- Network diagram -->
+  <svg
+    class="absolute inset-0 h-full w-full"
+    viewBox="0 0 640 520"
+    fill="none"
+    preserveAspectRatio="xMidYMid meet"
+  >
     <defs>
-      <linearGradient id="trail-primary" x1="64" y1="120" x2="556" y2="388" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#7DD3FC" stop-opacity="0.92"></stop>
-        <stop offset="0.42" stop-color="#60A5FA" stop-opacity="0.82"></stop>
-        <stop offset="1" stop-color="#CFFAFE" stop-opacity="0.72"></stop>
-      </linearGradient>
-      <linearGradient id="trail-secondary" x1="84" y1="396" x2="590" y2="126" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#DBEAFE" stop-opacity="0.2"></stop>
-        <stop offset="0.35" stop-color="#38BDF8" stop-opacity="0.76"></stop>
-        <stop offset="1" stop-color="#67E8F9" stop-opacity="0.68"></stop>
-      </linearGradient>
-      <filter id="glow-soft" x="-30%" y="-30%" width="160%" height="160%">
-        <feGaussianBlur stdDeviation="10"></feGaussianBlur>
+      <radialGradient id="iv-hub-glow" cx="50%" cy="50%" r="50%">
+        <stop stop-color="#D8B982" stop-opacity="0.22"/>
+        <stop offset="1" stop-color="#D8B982" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="iv-node-glow" cx="50%" cy="50%" r="50%">
+        <stop stop-color="#D8B982" stop-opacity="0.14"/>
+        <stop offset="1" stop-color="#D8B982" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="iv-hub-f" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="8"/>
       </filter>
+      <filter id="iv-node-f" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="5"/>
+      </filter>
+      <!-- Rail paths (in defs so animateMotion mpath can reference them) -->
+      <path id="iv-rN"  d="M320,268 C320,208 320,148 320,80"/>
+      <path id="iv-rNE" d="M320,268 C392,224 462,190 510,160"/>
+      <path id="iv-rSE" d="M320,268 C392,312 462,346 510,376"/>
+      <path id="iv-rS"  d="M320,268 C320,328 320,388 320,455"/>
+      <path id="iv-rSW" d="M320,268 C248,312 178,346 130,376"/>
+      <path id="iv-rNW" d="M320,268 C248,224 178,190 130,160"/>
     </defs>
 
-    <g filter="url(#glow-soft)" opacity="0.55">
-      <path
-        d="M52 352C124 314 177 250 240 234C322 212 388 278 452 254C522 228 560 156 614 112"
-        stroke="url(#trail-primary)"
-        stroke-width="12"
-        stroke-linecap="round"
-        class="trail-glow trail-a"
-      ></path>
-      <path
-        d="M44 174C118 146 154 88 234 90C324 92 366 180 438 198C512 216 576 182 620 154"
-        stroke="url(#trail-secondary)"
-        stroke-width="10"
-        stroke-linecap="round"
-        class="trail-glow trail-b"
-      ></path>
-      <path
-        d="M92 430C162 394 198 322 280 306C360 290 426 346 490 330C550 316 584 270 616 224"
-        stroke="url(#trail-primary)"
-        stroke-width="8"
-        stroke-linecap="round"
-        class="trail-glow trail-c"
-      ></path>
+    <!-- Visible rail strokes -->
+    <g stroke="#D8B982" stroke-width="0.9" fill="none" stroke-dasharray="3 9" opacity="0.38">
+      <use href="#iv-rN"/>
+      <use href="#iv-rNE"/>
+      <use href="#iv-rSE"/>
+      <use href="#iv-rS"/>
+      <use href="#iv-rSW"/>
+      <use href="#iv-rNW"/>
     </g>
 
-    <g opacity="0.95">
-      <path
-        d="M52 352C124 314 177 250 240 234C322 212 388 278 452 254C522 228 560 156 614 112"
-        stroke="url(#trail-primary)"
-        stroke-width="2.6"
-        stroke-linecap="round"
-        class="trail-line trail-a"
-      ></path>
-      <path
-        d="M44 174C118 146 154 88 234 90C324 92 366 180 438 198C512 216 576 182 620 154"
-        stroke="url(#trail-secondary)"
-        stroke-width="2.2"
-        stroke-linecap="round"
-        class="trail-line trail-b"
-      ></path>
-      <path
-        d="M92 430C162 394 198 322 280 306C360 290 426 346 490 330C550 316 584 270 616 224"
-        stroke="url(#trail-primary)"
-        stroke-width="2"
-        stroke-linecap="round"
-        class="trail-line trail-c"
-      ></path>
-    </g>
+    <!-- Outbound flow dots (hub → node) -->
+    <circle r="2.2" fill="#D8B982" fill-opacity="0.78">
+      <animateMotion dur="3.8s" repeatCount="indefinite" begin="0s" calcMode="linear"><mpath href="#iv-rN"/></animateMotion>
+    </circle>
+    <circle r="2.2" fill="#D8B982" fill-opacity="0.78">
+      <animateMotion dur="4.2s" repeatCount="indefinite" begin="0.6s" calcMode="linear"><mpath href="#iv-rNE"/></animateMotion>
+    </circle>
+    <circle r="2.2" fill="#D8B982" fill-opacity="0.78">
+      <animateMotion dur="3.6s" repeatCount="indefinite" begin="1.4s" calcMode="linear"><mpath href="#iv-rSE"/></animateMotion>
+    </circle>
+    <circle r="2.2" fill="#D8B982" fill-opacity="0.78">
+      <animateMotion dur="4.5s" repeatCount="indefinite" begin="0.9s" calcMode="linear"><mpath href="#iv-rS"/></animateMotion>
+    </circle>
+    <circle r="2.2" fill="#D8B982" fill-opacity="0.78">
+      <animateMotion dur="3.9s" repeatCount="indefinite" begin="0.3s" calcMode="linear"><mpath href="#iv-rSW"/></animateMotion>
+    </circle>
+    <circle r="2.2" fill="#D8B982" fill-opacity="0.78">
+      <animateMotion dur="4.1s" repeatCount="indefinite" begin="1.8s" calcMode="linear"><mpath href="#iv-rNW"/></animateMotion>
+    </circle>
 
-    <g class="nodes">
-      <circle cx="182" cy="270" r="7" fill="#CFFAFE" fill-opacity="0.96" class="node node-a"></circle>
-      <circle cx="314" cy="220" r="8" fill="#7DD3FC" fill-opacity="0.92" class="node node-b"></circle>
-      <circle cx="468" cy="252" r="7" fill="#93C5FD" fill-opacity="0.92" class="node node-c"></circle>
-      <circle cx="500" cy="188" r="6" fill="#A5F3FC" fill-opacity="0.9" class="node node-d"></circle>
-      <circle cx="248" cy="92" r="6" fill="#67E8F9" fill-opacity="0.84" class="node node-e"></circle>
-      <circle cx="382" cy="332" r="7" fill="#E0F2FE" fill-opacity="0.88" class="node node-f"></circle>
-    </g>
+    <!-- Inbound flow dots (node → hub) -->
+    <circle r="1.7" fill="#D8B982" fill-opacity="0.36">
+      <animateMotion dur="4.4s" repeatCount="indefinite" begin="2s" calcMode="linear" keyPoints="1;0" keyTimes="0;1"><mpath href="#iv-rNE"/></animateMotion>
+    </circle>
+    <circle r="1.7" fill="#D8B982" fill-opacity="0.36">
+      <animateMotion dur="5.0s" repeatCount="indefinite" begin="3s" calcMode="linear" keyPoints="1;0" keyTimes="0;1"><mpath href="#iv-rSW"/></animateMotion>
+    </circle>
+    <circle r="1.7" fill="#D8B982" fill-opacity="0.36">
+      <animateMotion dur="4.8s" repeatCount="indefinite" begin="1.2s" calcMode="linear" keyPoints="1;0" keyTimes="0;1"><mpath href="#iv-rN"/></animateMotion>
+    </circle>
+
+    <!-- Hub glow aura -->
+    <circle cx="320" cy="268" r="58" fill="url(#iv-hub-glow)" filter="url(#iv-hub-f)"/>
+
+    <!-- Hub outer ring (slow rotation) -->
+    <circle cx="320" cy="268" r="44" stroke="#D8B982" stroke-width="0.8" stroke-opacity="0.2" stroke-dasharray="5 9" fill="none">
+      <animateTransform attributeName="transform" type="rotate" from="0 320 268" to="360 320 268" dur="40s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- Hub middle ring (breathing) -->
+    <circle cx="320" cy="268" r="32" stroke="#D8B982" stroke-width="1.2" stroke-opacity="0.48" fill="none">
+      <animate attributeName="stroke-opacity" values="0.48;0.68;0.48" dur="5s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- Hub inner circle -->
+    <circle cx="320" cy="268" r="20" fill="rgba(216,185,130,0.11)" stroke="#D8B982" stroke-width="1.5" stroke-opacity="0.72"/>
+
+    <!-- Hub label -->
+    <text x="320" y="272" text-anchor="middle" fill="#D8B982" fill-opacity="0.88" font-size="8" font-family="'Courier New', Courier, monospace" letter-spacing="1.5" font-weight="700">GVL</text>
+
+    <!-- Node: SWIFT/Settlement (top center) -->
+    <circle cx="320" cy="80" r="28" fill="url(#iv-node-glow)" filter="url(#iv-node-f)"/>
+    <circle cx="320" cy="80" r="17" fill="#071225" fill-opacity="0.95" stroke="#D8B982" stroke-width="1" stroke-opacity="0.45" fill-rule="nonzero">
+      <animate attributeName="stroke-opacity" values="0.45;0.65;0.45" dur="6s" repeatCount="indefinite" begin="0.4s"/>
+    </circle>
+    <text x="320" y="76" text-anchor="middle" fill="#D8B982" fill-opacity="0.9" font-size="7.5" font-family="'Courier New', Courier, monospace" font-weight="700">SWIFT</text>
+    <text x="320" y="86" text-anchor="middle" fill="rgba(184,198,214,0.42)" font-size="5.5" font-family="'Courier New', Courier, monospace">SETTLE</text>
+
+    <!-- Node: GBP (top right) -->
+    <circle cx="510" cy="160" r="26" fill="url(#iv-node-glow)" filter="url(#iv-node-f)"/>
+    <circle cx="510" cy="160" r="16" fill="#071225" fill-opacity="0.95" stroke="#D8B982" stroke-width="1" stroke-opacity="0.45">
+      <animate attributeName="stroke-opacity" values="0.45;0.65;0.45" dur="5s" repeatCount="indefinite" begin="1.2s"/>
+    </circle>
+    <text x="510" y="164" text-anchor="middle" fill="#D8B982" fill-opacity="0.9" font-size="8.5" font-family="'Courier New', Courier, monospace" font-weight="700">GBP</text>
+
+    <!-- Node: Treasury (bottom right) -->
+    <circle cx="510" cy="376" r="26" fill="url(#iv-node-glow)" filter="url(#iv-node-f)"/>
+    <circle cx="510" cy="376" r="16" fill="#071225" fill-opacity="0.95" stroke="#D8B982" stroke-width="1" stroke-opacity="0.45">
+      <animate attributeName="stroke-opacity" values="0.45;0.65;0.45" dur="7s" repeatCount="indefinite" begin="0.8s"/>
+    </circle>
+    <text x="510" y="373" text-anchor="middle" fill="#D8B982" fill-opacity="0.9" font-size="6.5" font-family="'Courier New', Courier, monospace" font-weight="700">TRSRY</text>
+    <text x="510" y="382" text-anchor="middle" fill="rgba(184,198,214,0.42)" font-size="5" font-family="'Courier New', Courier, monospace">OPS</text>
+
+    <!-- Node: Approval (bottom center) -->
+    <circle cx="320" cy="455" r="26" fill="url(#iv-node-glow)" filter="url(#iv-node-f)"/>
+    <circle cx="320" cy="455" r="16" fill="#071225" fill-opacity="0.95" stroke="#D8B982" stroke-width="1" stroke-opacity="0.45">
+      <animate attributeName="stroke-opacity" values="0.45;0.65;0.45" dur="4.5s" repeatCount="indefinite" begin="2s"/>
+    </circle>
+    <text x="320" y="452" text-anchor="middle" fill="#D8B982" fill-opacity="0.9" font-size="6.5" font-family="'Courier New', Courier, monospace" font-weight="700">APPRV</text>
+    <text x="320" y="461" text-anchor="middle" fill="rgba(184,198,214,0.42)" font-size="5" font-family="'Courier New', Courier, monospace">FLOW</text>
+
+    <!-- Node: EUR (bottom left) -->
+    <circle cx="130" cy="376" r="26" fill="url(#iv-node-glow)" filter="url(#iv-node-f)"/>
+    <circle cx="130" cy="376" r="16" fill="#071225" fill-opacity="0.95" stroke="#D8B982" stroke-width="1" stroke-opacity="0.45">
+      <animate attributeName="stroke-opacity" values="0.45;0.65;0.45" dur="5.5s" repeatCount="indefinite" begin="0.2s"/>
+    </circle>
+    <text x="130" y="380" text-anchor="middle" fill="#D8B982" fill-opacity="0.9" font-size="8.5" font-family="'Courier New', Courier, monospace" font-weight="700">EUR</text>
+
+    <!-- Node: USD (top left) -->
+    <circle cx="130" cy="160" r="26" fill="url(#iv-node-glow)" filter="url(#iv-node-f)"/>
+    <circle cx="130" cy="160" r="16" fill="#071225" fill-opacity="0.95" stroke="#D8B982" stroke-width="1" stroke-opacity="0.45">
+      <animate attributeName="stroke-opacity" values="0.45;0.65;0.45" dur="6.5s" repeatCount="indefinite" begin="1s"/>
+    </circle>
+    <text x="130" y="164" text-anchor="middle" fill="#D8B982" fill-opacity="0.9" font-size="8.5" font-family="'Courier New', Courier, monospace" font-weight="700">USD</text>
   </svg>
 
-  <div class="panel panel-top absolute left-[8%] top-[10%] w-[44%] rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.07)] p-4 backdrop-blur-xl">
-    <div class="mb-3 flex items-center justify-between">
-      <span class="h-2 w-16 rounded-full bg-cyan-100/30"></span>
-      <span class="h-2 w-2 rounded-full bg-cyan-200/70"></span>
+  <!-- Status panel -->
+  <div class="absolute bottom-[7%] right-[5%] w-[36%] rounded-xl border border-[rgba(216,185,130,0.14)] bg-[rgba(4,12,26,0.9)] p-3 backdrop-blur-md">
+    <div class="mb-2.5 flex items-center gap-1.5">
+      <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-[#D8B982] opacity-80"></span>
+      <span class="font-mono text-[7.5px] uppercase tracking-[0.18em] text-[rgba(216,185,130,0.78)]">Routes Active</span>
     </div>
-    <div class="space-y-2">
-      <div class="h-2 rounded-full bg-white/10"></div>
-      <div class="h-2 w-[78%] rounded-full bg-sky-200/20"></div>
-      <div class="h-2 w-[62%] rounded-full bg-cyan-200/15"></div>
-    </div>
-  </div>
-
-  <div class="panel panel-right absolute right-[8%] top-[28%] w-[28%] rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] p-4 backdrop-blur-xl">
-    <div class="mb-3 flex items-center gap-2">
-      <span class="h-2.5 w-2.5 rounded-full bg-cyan-200/70"></span>
-      <span class="h-2 w-[4.5rem] rounded-full bg-[rgba(255,255,255,0.12)]"></span>
-    </div>
-    <div class="grid grid-cols-3 gap-2">
-      <span class="h-12 rounded-xl bg-[rgba(255,255,255,0.08)]"></span>
-      <span class="h-12 rounded-xl bg-[rgba(165,243,252,0.1)]"></span>
-      <span class="h-12 rounded-xl bg-[rgba(255,255,255,0.08)]"></span>
+    <div class="space-y-1.5">
+      <div class="flex items-center justify-between">
+        <span class="font-mono text-[7px] text-[rgba(184,198,214,0.52)]">USD → GBP</span>
+        <span class="rounded bg-[rgba(216,185,130,0.1)] px-1 py-0.5 font-mono text-[6px] text-[rgba(216,185,130,0.74)]">LIVE</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="font-mono text-[7px] text-[rgba(184,198,214,0.52)]">EUR → SWIFT</span>
+        <span class="rounded bg-[rgba(216,185,130,0.1)] px-1 py-0.5 font-mono text-[6px] text-[rgba(216,185,130,0.74)]">LIVE</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="font-mono text-[7px] text-[rgba(184,198,214,0.52)]">FX Settlement</span>
+        <span class="rounded bg-[rgba(184,198,214,0.06)] px-1 py-0.5 font-mono text-[6px] text-[rgba(184,198,214,0.32)]">QUEUE</span>
+      </div>
     </div>
   </div>
-
-  <div class="panel panel-bottom absolute bottom-[10%] left-[14%] w-[34%] rounded-2xl border border-[rgba(207,250,254,0.12)] bg-[rgba(11,23,48,0.76)] p-4 backdrop-blur-xl">
-    <div class="mb-3 h-2 w-20 rounded-full bg-[rgba(207,250,254,0.24)]"></div>
-    <div class="flex items-end gap-2">
-      <span class="h-7 w-7 rounded-lg bg-[rgba(125,211,252,0.12)]"></span>
-      <span class="h-10 w-10 rounded-xl bg-[rgba(103,232,249,0.16)]"></span>
-      <span class="h-14 w-14 rounded-2xl bg-[rgba(147,197,253,0.16)]"></span>
-    </div>
-  </div>
-
-  <div class="absolute right-[18%] bottom-[16%] h-[4.5rem] w-[4.5rem] rounded-full border border-[rgba(207,250,254,0.14)] bg-[rgba(165,243,252,0.08)] blur-[1px]"></div>
 </div>
 
 <style>
   .infrastructure-visual {
     aspect-ratio: 1.08 / 1;
     min-height: 320px;
-  }
-
-  .trail-line {
-    fill: none;
-    stroke-dasharray: 10 16;
-  }
-
-  .trail-glow {
-    fill: none;
-    stroke-dasharray: 16 28;
-  }
-
-  .trail-a {
-    animation: flow-drift-a 18s linear infinite;
-  }
-
-  .trail-b {
-    animation: flow-drift-b 20s linear infinite;
-  }
-
-  .trail-c {
-    animation: flow-drift-c 16s linear infinite;
-  }
-
-  .node {
-    transform-origin: center;
-  }
-
-  .node-a,
-  .node-d {
-    animation: node-pulse 4.8s ease-in-out infinite;
-  }
-
-  .node-b,
-  .node-e {
-    animation: node-pulse 6s ease-in-out infinite 1s;
-  }
-
-  .node-c,
-  .node-f {
-    animation: node-pulse 5.6s ease-in-out infinite 0.6s;
-  }
-
-  .panel-top {
-    animation: panel-float 10s ease-in-out infinite;
-  }
-
-  .panel-right {
-    animation: panel-float 12s ease-in-out infinite 1.2s;
-  }
-
-  .panel-bottom {
-    animation: panel-float 11s ease-in-out infinite 0.4s;
-  }
-
-  @keyframes flow-drift-a {
-    to {
-      stroke-dashoffset: -280;
-    }
-  }
-
-  @keyframes flow-drift-b {
-    to {
-      stroke-dashoffset: 320;
-    }
-  }
-
-  @keyframes flow-drift-c {
-    to {
-      stroke-dashoffset: -220;
-    }
-  }
-
-  @keyframes node-pulse {
-    0%,
-    100% {
-      opacity: 0.78;
-      transform: scale(1);
-    }
-
-    50% {
-      opacity: 1;
-      transform: scale(1.18);
-    }
-  }
-
-  @keyframes panel-float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(-6px);
-    }
   }
 
   @media (max-width: 640px) {
@@ -230,18 +187,9 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .trail-a,
-    .trail-b,
-    .trail-c,
-    .node-a,
-    .node-b,
-    .node-c,
-    .node-d,
-    .node-e,
-    .node-f,
-    .panel-top,
-    .panel-right,
-    .panel-bottom {
+    .infrastructure-visual circle,
+    .infrastructure-visual animateMotion,
+    .infrastructure-visual animateTransform {
       animation: none;
     }
   }

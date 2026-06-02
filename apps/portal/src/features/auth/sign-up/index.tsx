@@ -1,9 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { cn } from '@/lib/utils'
 import { Icon } from '@/components/ui/icon'
 import { BrandHead } from '@/components/brand-head'
-import dashboardDark from '../sign-in/assets/dashboard-dark.png'
-import dashboardLight from '../sign-in/assets/dashboard-light.png'
+import authPanel from '../assets/auth-panel.png'
 import { SignUpForm } from './components/sign-up-form'
 
 export function SignUp() {
@@ -52,25 +50,12 @@ export function SignUp() {
         </div>
       </div>
 
-      <div
-        className={cn(
-          'relative h-full overflow-hidden bg-muted max-lg:hidden',
-          '[&>img]:absolute [&>img]:top-[15%] [&>img]:left-20 [&>img]:h-full [&>img]:w-full [&>img]:object-cover [&>img]:object-top-left [&>img]:select-none'
-        )}
-      >
+      <div className='relative h-full overflow-hidden max-lg:hidden'>
         <img
-          src={dashboardLight}
-          className='dark:hidden'
-          width={1024}
-          height={1151}
-          alt='Granville Finance dashboard'
-        />
-        <img
-          src={dashboardDark}
-          className='hidden dark:block'
-          width={1024}
-          height={1138}
-          alt='Granville Finance dashboard'
+          src={authPanel}
+          className='absolute inset-0 h-full w-full object-cover object-top select-none'
+          alt=''
+          aria-hidden='true'
         />
       </div>
     </div>
