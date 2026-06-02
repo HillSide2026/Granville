@@ -9,12 +9,20 @@ import CallToAction from '~/components/widgets/CallToAction.astro';
 import InfrastructureVisual from '~/components/granville/InfrastructureVisual.astro';
 
 import { getPermalink } from '~/utils/permalinks';
-import { homepage } from '~/data/homepage';
+import { homepage as defaultHomepage } from '~/data/homepage';
+
+interface Props {
+  data?: typeof defaultHomepage;
+  lang?: string;
+}
+
+const { data: homepage = defaultHomepage, lang } = Astro.props;
 
 const metadata = {
   title: 'Granville Finance',
   ignoreTitleTemplate: true,
   description: homepage.hero.subtitle,
+  ...(lang ? { lang } : {}),
 };
 
 const headerLinks = homepage.navigation.links.map((link) => ({
