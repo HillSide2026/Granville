@@ -7,7 +7,7 @@ Airwallex MVP proves Granville's first external payment rail before the broader 
 | Milestone | Status |
 |---|---|
 | AW1 — Sandbox integration | **Complete** |
-| AW2 — Production readiness | In progress — webhook endpoint and compliance review outstanding |
+| AW2 — Production readiness | In progress — API key (Balances scope) and compliance review outstanding |
 | AW3 — Go-live | Planned — blocked on AW2 + Granville MVP M9 staging readiness |
 
 **Release exit criterion:** one Airwallex sandbox payment completes end to end: Granville API request → Airwallex transfer → `PAID` webhook → completed payment → ledger posting → basic reconciliation/audit evidence.
@@ -28,15 +28,17 @@ Full payout flow proven in sandbox: auth → beneficiary create → transfer cre
 
 These are the steps required to finish Airwallex MVP.
 
-1. **Register the sandbox webhook endpoint**
-   - In the Airwallex sandbox portal, go to Developers → Webhooks → Add endpoint.
-   - Register a public HTTPS endpoint that points to `POST https://<public-url>/webhooks/airwallex`.
-   - Use ngrok or a staging deploy for the public URL.
-   - Store the signing secret as `AIRWALLEX_WEBHOOK_SECRET`.
+1. ~~**Register the sandbox webhook endpoint**~~ **Done (2026-06-01)**
+   - Webhook "Granville Sandbox" registered at `https://playlist-justly-anteater.ngrok-free.dev/webhooks/airwallex`
+   - Subscribed to: `payout.transfer.paid`, `payout.transfer.failed`, `payout.transfer.cancelled`
+   - Signing secret stored as `AIRWALLEX_WEBHOOK_SECRET` in `.env`
+   - HMAC signature formula confirmed as `timestamp + raw_body` (no dot separator)
+   - Test event fired locally: signature verified, endpoint reachable, 500 is expected (no provider binding seeded in in-memory store)
 
-2. **Add Balances read scope**
+2. **Add Balances read scope** ← next
    - In the Airwallex sandbox portal, go to API Keys → Edit key.
    - Add the Balances read scope.
+   - Fill in `AIRWALLEX_API_KEY` in `.env` (currently on a separate machine).
    - Verify with `node --experimental-strip-types scripts/airwallex-auth-probe.ts`.
    - Success means the probe reports `GET /balances` as OK instead of `401`.
 
@@ -64,17 +66,16 @@ These are the steps required to finish Airwallex MVP.
    - Confirm the ledger posting is enqueued and posted.
    - Confirm reconciliation has `0` exceptions for the completed payment.
 
-5. **Resolve signing and replay documentation before certification**
-   - Verify Airwallex's exact HMAC signing formula against the implementation before relying on certification results.
-   - Current implementation signs `x-timestamp + raw_body`; the signature mismatch runbook says `x-timestamp + "." + raw_body`.
-   - Align the manual replay payload example with the Airwallex webhook normalizer before using break-glass replay.
+5. ~~**Resolve signing and replay documentation before certification**~~ **Resolved (2026-06-01)**
+   - HMAC formula confirmed live: `x-timestamp + raw_body` is correct. No dot separator needed.
+   - Runbook note about `x-timestamp + "." + raw_body` was incorrect — can be removed from the runbook.
 
 ### External Actions (Airwallex Portal)
 
 | Item | Action | Priority |
 |---|---|---|
-| **Register webhook endpoint** | Webhooks → Add endpoint. Must be a public HTTPS URL (use ngrok or a staging deploy). Airwallex delivers `PAID` events here. | Highest |
-| **Add Balances read scope** | API Keys → Edit → add Balances scope. Currently `GET /api/v1/balances` returns `401`. | High |
+| ~~**Register webhook endpoint**~~ | **Done 2026-06-01.** Webhook ID `wh_1ooQvUi1bAPFUe5sPJrYk6BGb-RLkBge`, secret in `.env`. | ~~Highest~~ |
+| **Add Balances read scope** | API Keys → Edit → add Balances scope. Blocked on `AIRWALLEX_API_KEY` from other machine. | High |
 | **Activate production credentials** | Switch `AIRWALLEX_BASE_URL` to `https://api.airwallex.com` and uncomment production `CLIENT_ID`/`API_KEY`. Only after sandbox acceptance and compliance sign-off. | Last |
 
 ### Code / Docs Work
@@ -82,19 +83,18 @@ These are the steps required to finish Airwallex MVP.
 | Item | Status |
 |---|---|
 | Ops runbooks (5 files) | **Done** — `ops/runbooks/airwallex/` |
-| PAID event path validation | Blocked on webhook endpoint registration |
+| PAID event path validation | Blocked on `AIRWALLEX_API_KEY` — webhook endpoint and signature verification confirmed |
 | Compliance review document | Pending — data fields sent to Airwallex, PII handling, FX exposure, regulatory requirements |
 
 ### Webhook Endpoint Registration (Step by Step)
 
-Once a public HTTPS endpoint is available:
+**Done 2026-06-01.**
 
-1. Register it in the Airwallex sandbox portal under Webhooks
-2. Confirm Airwallex delivers a test `payout.transfer.paid` event
-3. Verify `x-timestamp` and `x-signature` headers arrive at the Granville endpoint
-4. Confirm Granville processes the event: `signatureValid=true`, payment transitions to `completed`, ledger posting enqueued and posted
-
-The complete code path is already implemented — this is environment configuration only.
+1. ✅ Registered in sandbox portal — webhook ID `wh_1ooQvUi1bAPFUe5sPJrYk6BGb-RLkBge`
+2. ✅ Endpoint reachable — test event confirmed delivered via ngrok
+3. ✅ `x-timestamp` + `x-signature` headers verified present and parseable
+4. ✅ `signatureValid=true` confirmed — HMAC formula `timestamp + raw_body` is correct
+5. ⏳ Full payment-to-`completed` path pending `AIRWALLEX_API_KEY` + real sandbox transfer
 
 ### Exit Criteria
 
