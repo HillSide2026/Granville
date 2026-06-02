@@ -35,22 +35,22 @@ export const homepage = {
     subtitle: "",
     items: [
       {
-        title: "Treasury Platform",
+        title: "Payment Platform",
         description:
-          "A simple, scalable platform for routing payments, managing accounts, and currency conversion.",
-        icon: "tabler:route",
+          "Coordinate domestic and international payment flows through a unified infrastructure layer designed for speed and clarity.",
+        icon: "arrow/arrow-transaction-left-right",
       },
       {
-        title: "Operational Visibility",
+        title: "Treasury Functionality",
         description:
-          "A unified operational layer for monitoring payments, tracking providers, and reconciling execution.",
-        icon: "tabler:chart-dots-3",
+          "Centralize account management, liquidity visibility, currency handling, and treasury operations across financial partners.",
+        icon: "banking/bank",
       },
       {
-        title: "User Security",
+        title: "Operational Security",
         description:
-          "Secure authentication, account protection, and controlled access designed for modern financial operations.",
-        icon: "tabler:building-bank",
+          "Built-in access controls, monitoring, authentication, and operational safeguards designed for regulated financial environments.",
+        icon: "security/shield-protection-secure-check",
       },
     ],
   },
@@ -59,9 +59,9 @@ export const homepage = {
     title: "Optimize Your Infrastructure for Corporate Money Movement.",
     subtitle:
       "Granville Finance helps global corporates optimize payments, currencies, and financial workflows across markets without relying on fragmented banking infrastructure.",
-    contentTitle: "GAME-CHANGING OPPORTUNITIES",
+    contentTitle: "Built for Scale and Control",
     contentBody:
-      "Modernize global payments with infrastructure built for scale, visibility, and control. Granville Finance helps corporates streamline treasury and support international growth through unified financial infrastructure.",
+      "Modernize global operations with finance and treasury infrastructure built for scale, visibility, and control. Granville Finance helps teams streamline workflows and growth internationally through our unified financial platform.",
     items: [
       {
         title: "Optimize Payment Operations",

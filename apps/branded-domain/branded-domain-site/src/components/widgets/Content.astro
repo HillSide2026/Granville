@@ -69,21 +69,21 @@ const columnsClass =
 
         {
           items.length > 0 && (
-            <div class:list={['grid mx-auto gap-y-4 md:gap-y-8 gap-8', columnsClass]}>
+            <div class:list={['grid mx-auto gap-y-7 md:gap-y-10 gap-8', columnsClass]}>
               {items.map(({ title: itemTitle, description, icon, callToAction }) => (
                 <div class="intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
                   <div class="flex flex-row max-w-none">
-                    <div class="flex justify-center">
+                    <div class="flex shrink-0 justify-center">
                       <Icon
                         name={icon || 'tabler:check'}
-                        class="flex h-7 w-7 items-center justify-center rounded-full bg-green-600 dark:bg-green-700 text-gray-50 p-1 mr-2 rtl:mr-0 rtl:ml-2"
+                        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[rgba(213,191,155,0.35)] bg-[rgba(213,191,155,0.12)] p-1 text-[#d5bf9b] mr-2 rtl:mr-0 rtl:ml-2"
                       />
                     </div>
                     <div class="mt-0.5">
                       {itemTitle && (
                         <h3
                           class={twMerge(
-                            'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
+                            'text-xl font-semibold leading-snug dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
                             classes?.itemTitle as string
                           )}
                         >

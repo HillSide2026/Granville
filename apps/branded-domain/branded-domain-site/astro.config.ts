@@ -24,6 +24,7 @@ export default defineConfig({
     sitemap(),
     mdx(),
     icon({
+      iconDir: path.resolve(__dirname, '../../../libs/brand/icons'),
       include: {
         tabler: ["*"],
         "flat-color-icons": [
