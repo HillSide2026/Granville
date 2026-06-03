@@ -4,6 +4,7 @@ import type { Organisation, SidebarData } from "../types";
 export type PortalRole = "customer" | "ops" | "compliance" | "admin";
 
 const BankIcon = createPortalIcon("bank");
+const BudgetIcon = createPortalIcon("budget");
 const HomeIcon = createPortalIcon("home");
 const PaymentFlowIcon = createPortalIcon("payment-flow");
 const UsersIcon = createPortalIcon("users");
@@ -70,10 +71,15 @@ export function getSidebarData(
       {
         title: "Payment operations",
         items: [
+          { title: "Budgets", url: "/budgets", icon: BudgetIcon },
           { title: "Balances", url: "/balances", icon: BankIcon },
           { title: "Payments", url: "/payments", icon: PaymentFlowIcon },
           { title: "Beneficiaries", url: "/beneficiaries", icon: UsersIcon },
         ],
+      },
+      {
+        title: "Dashboards",
+        items: [],
       },
     ],
   };
