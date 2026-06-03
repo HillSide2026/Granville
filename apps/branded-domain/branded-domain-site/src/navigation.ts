@@ -16,7 +16,7 @@ export const headerData = {
       href: getPermalink("/contact"),
     },
   ],
-  actions: [{ text: "Sign up", href: granville.appSignUpUrl, target: "_blank" }],
+  actions: [{ text: "Request access", href: granville.requestAccessUrl }],
 };
 
 export const footerData = {

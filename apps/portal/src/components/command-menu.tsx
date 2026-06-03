@@ -64,7 +64,7 @@ export function CommandMenu() {
                     }}
                   >
                     <div className='flex size-4 items-center justify-center'>
-                      <ArrowRight className='size-2 text-muted-foreground/80' />
+                      <Icon name='arrow-right' className='size-2 text-muted-foreground/80' />
                     </div>
                     {navItem.title} <Icon name='chevron-right' /> {subItem.title}
                   </CommandItem>

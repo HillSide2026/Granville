@@ -8,9 +8,8 @@ export const homepage = {
       { text: "Contact", href: "/#contact" },
     ],
     primaryAction: {
-      text: "Sign up",
-      href: granville.appSignUpUrl,
-      target: "_blank",
+      text: "Request access",
+      href: granville.requestAccessUrl,
     },
   },
   hero: {
@@ -19,9 +18,8 @@ export const homepage = {
     subtitle:
       "Granville Finance provides financial infrastructure and payment technology to help businesses move, manage, and grow.",
     primaryAction: {
-      text: "Sign up",
-      href: granville.appSignUpUrl,
-      target: "_blank",
+      text: "Request access",
+      href: granville.requestAccessUrl,
     },
     secondaryAction: {
       text: "Discover Platform",
@@ -55,8 +53,8 @@ export const homepage = {
     ],
   },
   operatingModel: {
-    tagline: "REVOLUTIONISE PAYMENTS",
-    title: "Optimize Your Infrastructure for Corporate Money Movement.",
+    tagline: "PAYMENTS",
+    title: "Fast Forward Global Money Movement.",
     subtitle:
       "Granville Finance helps global corporates optimize payments, currencies, and financial workflows across markets without relying on fragmented banking infrastructure.",
     contentTitle: "Built for Scale and Control",
@@ -81,7 +79,7 @@ export const homepage = {
     ],
   },
   company: {
-    title: "Company",
+    title: "About Granville",
     items: [
       {
         title: "Careers",
@@ -103,9 +101,8 @@ export const homepage = {
     subtitle:
       "Speak with Granville Finance about how we can help your financial ops team move forward with confidence.",
     primaryAction: {
-      text: "Sign Up",
-      href: granville.appSignUpUrl,
-      target: "_blank",
+      text: "Request access",
+      href: granville.requestAccessUrl,
     },
     secondaryAction: {
       text: "Contact Us",

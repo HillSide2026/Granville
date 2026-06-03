@@ -8,9 +8,8 @@ export const homepageFr = {
       { text: "Contact", href: "/#contact" },
     ],
     primaryAction: {
-      text: "S'inscrire",
-      href: granville.appSignUpUrl,
-      target: "_blank",
+      text: "Demander l'accès",
+      href: granville.requestAccessUrl,
     },
   },
   hero: {
@@ -19,9 +18,8 @@ export const homepageFr = {
     subtitle:
       "Granville Finance fournit des infrastructures financières et des technologies de paiement pour aider les entreprises à déplacer, gérer et croître.",
     primaryAction: {
-      text: "S'inscrire",
-      href: granville.appSignUpUrl,
-      target: "_blank",
+      text: "Demander l'accès",
+      href: granville.requestAccessUrl,
     },
     secondaryAction: {
       text: "Découvrir la Plateforme",
@@ -103,9 +101,8 @@ export const homepageFr = {
     subtitle:
       "Parlez à Granville Finance pour découvrir comment nous pouvons aider votre équipe d'opérations financières à aller de l'avant avec confiance.",
     primaryAction: {
-      text: "S'inscrire",
-      href: granville.appSignUpUrl,
-      target: "_blank",
+      text: "Demander l'accès",
+      href: granville.requestAccessUrl,
     },
     secondaryAction: {
       text: "Nous Contacter",

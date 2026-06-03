@@ -12,9 +12,14 @@ export function SignIn() {
       <BrandHead state='public' />
       <div className='lg:p-8'>
         <div className='mx-auto flex w-full flex-col justify-center space-y-2 py-8 sm:w-120 sm:p-8'>
-          <div className='mb-4 flex items-center justify-center'>
-            <Icon name='brand-mark' className='me-2 size-6 text-foreground' />
-            <h1 className='text-xl font-medium'>Granville Finance</h1>
+          <div className='mb-6 flex flex-col items-center gap-2.5'>
+            <div className='flex h-12 w-12 items-center justify-center rounded-[12px] bg-foreground/8'>
+              <Icon name='brand-mark' className='size-7 text-[#d5bf9b]' />
+            </div>
+            <div className='text-center leading-tight'>
+              <div className='font-heading text-sm font-bold tracking-[0.16em] uppercase text-[#d5bf9b]'>Granville</div>
+              <div className='text-[0.68rem] font-medium tracking-[0.2em] uppercase text-muted-foreground'>Finance</div>
+            </div>
           </div>
         </div>
         <div className='mx-auto flex w-full max-w-sm flex-col justify-center space-y-2'>

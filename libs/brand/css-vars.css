@@ -58,4 +58,34 @@
   --granville-width-standard: 1280px;
   --granville-width-focused: 1024px;
   --granville-width-narrow: 768px;
+
+  /* ── Spacing scale (8px grid) ─────────────────────────────────── */
+  --granville-space-1:  4px;
+  --granville-space-2:  8px;
+  --granville-space-3:  12px;
+  --granville-space-4:  16px;
+  --granville-space-5:  20px;
+  --granville-space-6:  24px;
+  --granville-space-8:  32px;
+  --granville-space-10: 40px;
+  --granville-space-12: 48px;
+  --granville-space-16: 64px;
+
+  /* ── Shadow scale ─────────────────────────────────────────────── */
+  /* Portal surfaces are flat; shadows are reserved for marketing panels only. */
+  --granville-shadow-portal: none;
+  --granville-shadow-marketing-panel: 0 4px 32px rgba(3, 8, 14, 0.48);
+  --granville-shadow-marketing-card:  0 2px 16px rgba(3, 8, 14, 0.32);
+
+  /* ── Type scale ───────────────────────────────────────────────── */
+  /* Headings use Manrope; body and UI copy use Inter.              */
+  /* Manrope should not be used below 16px.                        */
+  --granville-text-display:  3rem;       /* 48px  Manrope 600–700 */
+  --granville-text-h1:       2.25rem;    /* 36px  Manrope 600     */
+  --granville-text-h2:       1.75rem;    /* 28px  Manrope 600     */
+  --granville-text-h3:       1.375rem;   /* 22px  Manrope 600     */
+  --granville-text-body-lg:  1rem;       /* 16px  Inter  400      */
+  --granville-text-body:     0.875rem;   /* 14px  Inter  400      */
+  --granville-text-caption:  0.75rem;    /* 12px  Inter  400      */
+  --granville-text-label:    0.6875rem;  /* 11px  Inter  600  UPPERCASE */
 }

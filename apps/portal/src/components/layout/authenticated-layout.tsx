@@ -6,6 +6,7 @@ import { SearchProvider } from '@/context/search-provider'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { BrandHead } from '@/components/brand-head'
 import { AppSidebar } from '@/components/layout/app-sidebar'
+import { ContentFooter } from '@/components/layout/content-footer'
 import { SkipToMain } from '@/components/skip-to-main'
 
 type AuthenticatedLayoutProps = {
@@ -36,6 +37,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
             )}
           >
             {children ?? <Outlet />}
+            <ContentFooter />
           </SidebarInset>
         </SidebarProvider>
       </LayoutProvider>

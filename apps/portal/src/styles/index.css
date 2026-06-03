@@ -44,6 +44,63 @@
   padding-inline: 2rem;
 }
 
+/* ── Granville type scale utilities ──────────────────────────────────────── */
+/* Heading roles (h1–h3, display) use Manrope; body/UI roles use Inter.      */
+/* Never apply a heading utility below 16px — use text-body or text-label.   */
+
+@utility text-display {
+  font-family: var(--granville-font-heading);
+  font-size: var(--granville-text-display);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+@utility text-h1 {
+  font-family: var(--granville-font-heading);
+  font-size: var(--granville-text-h1);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+@utility text-h2 {
+  font-family: var(--granville-font-heading);
+  font-size: var(--granville-text-h2);
+  font-weight: 600;
+  line-height: 1.2;
+}
+@utility text-h3 {
+  font-family: var(--granville-font-heading);
+  font-size: var(--granville-text-h3);
+  font-weight: 600;
+  line-height: 1.25;
+}
+@utility text-body-lg {
+  font-family: var(--granville-font-sans);
+  font-size: var(--granville-text-body-lg);
+  font-weight: 400;
+  line-height: 1.5;
+}
+@utility text-body {
+  font-family: var(--granville-font-sans);
+  font-size: var(--granville-text-body);
+  font-weight: 400;
+  line-height: 1.5;
+}
+@utility text-caption {
+  font-family: var(--granville-font-sans);
+  font-size: var(--granville-text-caption);
+  font-weight: 400;
+  line-height: 1.4;
+}
+@utility text-label {
+  font-family: var(--granville-font-sans);
+  font-size: var(--granville-text-label);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 @utility no-scrollbar {
   /* Hide scrollbar for Chrome, Safari and Opera */
   &::-webkit-scrollbar {

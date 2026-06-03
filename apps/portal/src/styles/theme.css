@@ -1,5 +1,6 @@
 :root {
-  --radius: 0.625rem;
+  /* 8px base — matches --granville-radius-portal-card */
+  --radius: 0.5rem;
   --background: var(--granville-color-surface-public);
   --foreground: var(--granville-color-navy-900);
   --card: #ffffff;

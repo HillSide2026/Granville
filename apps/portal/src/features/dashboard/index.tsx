@@ -232,19 +232,19 @@ export function Dashboard() {
         {/* ── Financial position — 4 metric cards ──────────────────────── */}
         <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>
 
-          {/* Available Cash */}
-          <Card>
+          {/* Available Cash — primary metric, spans 2 columns */}
+          <Card className='border-l-2 border-l-[#d5bf9b]/40 sm:col-span-2 xl:col-span-2'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>Available cash</CardTitle>
-              <Icon name='bank' className='size-4 text-muted-foreground' />
+              <Icon name='bank' className='size-5 text-[#d5bf9b]' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>
+              <div className='text-4xl font-bold tabular-nums'>
                 {accounts.length > 0 ? `${accounts.length} account${accounts.length !== 1 ? 's' : ''}` : '—'}
               </div>
-              <p className='mt-1 text-xs text-muted-foreground'>Real-time balance</p>
-              <div className='mt-3 border-t pt-3'>
-                <Link to='/balances' className='text-xs text-muted-foreground hover:text-foreground'>
+              <p className='mt-1.5 text-sm text-muted-foreground'>Real-time balance across all accounts</p>
+              <div className='mt-4 border-t pt-3'>
+                <Link to='/balances' className='text-xs text-[#d5bf9b] hover:text-[#d5bf9b]/80 transition-colors'>
                   View balances →
                 </Link>
               </div>
@@ -343,7 +343,24 @@ export function Dashboard() {
           {/* Cash flow trend */}
           <Card className='lg:col-span-4'>
             <CardHeader>
-              <CardTitle>Cash flow</CardTitle>
+              <div className='flex items-start justify-between gap-4'>
+                <CardTitle>Cash flow</CardTitle>
+                {(inTotal > 0 || outTotal > 0) && (
+                  <p className='text-right text-xs text-muted-foreground leading-relaxed'>
+                    <span className='text-foreground font-medium'>{formatAmt(inTotal, inAsset)}</span>{' in'}
+                    {'  ·  '}
+                    <span className='text-foreground font-medium'>{formatAmt(outTotal, outAsset)}</span>{' out'}
+                    {inTotal > 0 && outTotal > 0 && inAsset === outAsset && (
+                      <>
+                        {'  ·  net '}
+                        <span className={inTotal - outTotal >= 0 ? 'text-foreground font-medium' : 'text-destructive font-medium'}>
+                          {formatAmt(Math.abs(inTotal - outTotal), inAsset)}
+                        </span>
+                      </>
+                    )}
+                  </p>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               {(() => {
@@ -359,7 +376,7 @@ export function Dashboard() {
                         <Tooltip
                           contentStyle={{ fontSize: 12, borderRadius: 6, border: '1px solid var(--color-border)', background: 'var(--color-card)' }}
                           cursor={{ fill: 'var(--color-muted)', opacity: 0.3 }}
-                          formatter={(v: number) => [`${v.toLocaleString()}`, undefined]}
+                          formatter={(v) => [`${Number(v).toLocaleString()}`, undefined]}
                         />
                         <Bar dataKey='in'  name='Money in'  fill='var(--color-primary)' radius={[3, 3, 0, 0]} maxBarSize={18} />
                         <Bar dataKey='out' name='Money out' fill='var(--color-muted-foreground)' fillOpacity={0.35} radius={[3, 3, 0, 0]} maxBarSize={18} />
