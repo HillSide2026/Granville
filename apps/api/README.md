@@ -25,7 +25,9 @@ Initial Milestone 1 endpoints:
 - `GET /customers/{id}`
 - `PATCH /customers/{id}`
 - `POST /payment-accounts`
+- `GET /payment-accounts`
 - `GET /payment-accounts/{id}`
+- `GET /payments`
 - `POST /payments`
 - `GET /payments/{id}`
 - `GET /payments/{id}/status`

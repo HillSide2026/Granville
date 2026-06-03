@@ -91,6 +91,23 @@ paths:
           $ref: "#/components/responses/NotFound"
 
   /payment-accounts:
+    get:
+      operationId: listPaymentAccounts
+      summary: List payment accounts
+      tags: [PaymentAccounts]
+      responses:
+        "200":
+          description: Payment accounts visible to the caller
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentAccount"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
     post:
       operationId: createPaymentAccount
       summary: Open a payment account
@@ -141,6 +158,23 @@ paths:
           $ref: "#/components/responses/NotFound"
 
   /payments:
+    get:
+      operationId: listPayments
+      summary: List payment orders
+      tags: [Payments]
+      responses:
+        "200":
+          description: Payment orders visible to the caller
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentOrder"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
     post:
       operationId: createPayment
       summary: Create a payment order

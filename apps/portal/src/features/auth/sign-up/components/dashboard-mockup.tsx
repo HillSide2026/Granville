@@ -7,11 +7,11 @@ const BARS = [
 const LABELS = ['05-04','05-05','05-06','05-07','05-08','05-09','05-10','05-11','05-12','05-13','05-14','05-15']
 
 const ACTIVITY = [
-  { ref: 'INT-2281',   date: 'Jun 1', status: 'Completed',  amount: '24,000 USD', in: true  },
-  { ref: 'TRF-8814',   date: 'Jun 1', status: 'Processing', amount: '8,500 GBP',  in: false },
+  { ref: 'REC-2281',   date: 'Jun 1', status: 'Completed',  amount: '24,000 USD', in: true  },
+  { ref: 'PAY-8814',   date: 'Jun 1', status: 'Processing', amount: '8,500 GBP',  in: false },
   { ref: 'PAYMT-0042', date: 'May 31', status: 'Completed', amount: '11,200 EUR', in: false },
-  { ref: 'INT-2280',   date: 'May 31', status: 'Completed', amount: '18,750 USD', in: true  },
-  { ref: 'TRF-8801',   date: 'May 30', status: 'Pending',   amount: '3,200 GBP',  in: false },
+  { ref: 'REC-2280',   date: 'May 31', status: 'Completed', amount: '18,750 USD', in: true  },
+  { ref: 'PAY-8801',   date: 'May 30', status: 'Pending',   amount: '3,200 GBP',  in: false },
 ]
 
 function SidebarLabel({ children }: { children: string }) {
@@ -65,29 +65,18 @@ export function DashboardMockup() {
           </div>
           <div>
             <div className="text-[8px] font-semibold text-white/80 leading-none">Acme Corp</div>
-            <div className="text-[6.5px] text-white/35 leading-none mt-0.5">Treasury Ops</div>
+            <div className="text-[6.5px] text-white/35 leading-none mt-0.5">Treasury Workspace</div>
           </div>
         </div>
 
         <div className="flex-1 overflow-hidden">
-          <SidebarLabel>Dashboard</SidebarLabel>
-          <SidebarItem label="Dashboard" active />
-          <SidebarItem label="KPI 1" />
-          <SidebarItem label="KPI 2" />
-          <SidebarItem label="KPI 3" />
+          <SidebarLabel>Workspace</SidebarLabel>
+          <SidebarItem label="Overview" active />
 
-          <SidebarLabel>Today</SidebarLabel>
-          <SidebarItem label="Tasks" />
-          <SidebarItem label="Chat" />
-
-          <SidebarLabel>Finance</SidebarLabel>
-          <SidebarItem label="Budgets" />
-          <SidebarItem label="Wallets" muted badge="Soon" />
+          <SidebarLabel>Payment operations</SidebarLabel>
           <SidebarItem label="Balances" />
-
-          <SidebarLabel>Transactions</SidebarLabel>
           <SidebarItem label="Payments" />
-          <SidebarItem label="Sales" />
+          <SidebarItem label="Beneficiaries" />
         </div>
 
         {/* Footer brand */}
@@ -128,7 +117,7 @@ export function DashboardMockup() {
 
           {/* KPI cards */}
           <div className="grid grid-cols-4 gap-2">
-            <KPI title="Available cash"   value="3 accounts"  sub="Real-time balance" />
+            <KPI title="Reported balances" value="3 accounts" sub="Partner-reported" />
             <KPI title="Money in"         value="24,000 USD"  sub="↑ 12% vs prior period" />
             <KPI title="Money out"        value="14,750 USD"  sub="↓ 4% vs prior period" />
             <KPI title="Needs attention"  value="—"           sub="All clear" />

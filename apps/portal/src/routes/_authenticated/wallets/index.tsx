@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { CryptoWallets } from '@/features/wallets-crypto'
+import { Navigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated/wallets/')({
-  component: CryptoWallets,
+  component: () => <Navigate to='/' replace />,
 })

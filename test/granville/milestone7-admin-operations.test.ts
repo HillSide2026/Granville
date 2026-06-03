@@ -242,6 +242,26 @@ test("M7: HTTP admin routes require admin:read role", async () => {
   );
 });
 
+test("M7: customer-scoped payment list routes require payment:read, not admin:read", async () => {
+  const controllers = new GranvilleHttpControllers();
+  await makeCompletedFlow(controllers.api, "customer-list-routes");
+
+  const operatorCtx = {
+    principal: {
+      id: "dev-operator",
+      roles: ["customer:read", "payment:read", "reconciliation:read"],
+    },
+  };
+
+  const payments = await controllers.route("GET", "/payments", {}, operatorCtx);
+  assert.equal(payments.statusCode, 200);
+  assert.ok(Array.isArray(payments.body));
+
+  const accounts = await controllers.route("GET", "/payment-accounts", {}, operatorCtx);
+  assert.equal(accounts.statusCode, 200);
+  assert.ok(Array.isArray(accounts.body));
+});
+
 test("M7: HTTP admin:write routes reject admin:read-only principal", async () => {
   const controllers = new GranvilleHttpControllers();
 

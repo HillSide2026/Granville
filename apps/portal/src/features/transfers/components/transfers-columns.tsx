@@ -45,9 +45,9 @@ function RowActions({ payment }: { payment: PaymentOrder }) {
       <DropdownMenuContent align='end'>
         {canSubmit && (
           <DropdownMenuItem
-            onClick={() => submit.mutate(payment.id, { onSuccess: () => toast.success('Submitted'), onError: () => toast.error('Failed') })}
+            onClick={() => submit.mutate(payment.id, { onSuccess: () => toast.success('Submitted for processing'), onError: () => toast.error('Failed') })}
           >
-            Submit
+            Submit for processing
           </DropdownMenuItem>
         )}
         {canRetry && (

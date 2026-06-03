@@ -8,6 +8,10 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
+  const path = typeof config.url === "string" ? config.url : "";
+  if (path.startsWith("/admin")) {
+    throw new Error("Customer portal API calls must not use /admin endpoints");
+  }
   const token = useAuthStore.getState().auth.accessToken;
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;

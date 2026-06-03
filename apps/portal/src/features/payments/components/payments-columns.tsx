@@ -1,6 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -9,20 +8,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Icon } from '@/components/ui/icon'
-import type { CanonicalPaymentStatus, PaymentOrder } from '@/types/granville'
+import type { PaymentOrder } from '@/types/granville'
 import { useSubmitTransfer, useCancelTransfer, useRetryTransfer } from '@/features/transfers/hooks/use-transfers'
-
-const statusVariant: Record<CanonicalPaymentStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-  completed: 'default',
-  processing: 'secondary',
-  provider_accepted: 'secondary',
-  submitted_to_provider: 'secondary',
-  pending_review: 'outline',
-  created: 'outline',
-  failed: 'destructive',
-  returned: 'destructive',
-  cancelled: 'destructive',
-}
+import {
+  formatPaymentAmount,
+  formatPaymentDate,
+  PaymentActivitySummary,
+  PaymentStatusBadge,
+} from './payment-activity'
 
 function RowActions({ payment }: { payment: PaymentOrder }) {
   const submit = useSubmitTransfer()
@@ -44,8 +37,8 @@ function RowActions({ payment }: { payment: PaymentOrder }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
         {canSubmit && (
-          <DropdownMenuItem onClick={() => submit.mutate(payment.id, { onSuccess: () => toast.success('Submitted'), onError: () => toast.error('Failed') })}>
-            Submit
+          <DropdownMenuItem onClick={() => submit.mutate(payment.id, { onSuccess: () => toast.success('Submitted for processing'), onError: () => toast.error('Failed') })}>
+            Submit for processing
           </DropdownMenuItem>
         )}
         {canRetry && (
@@ -66,45 +59,52 @@ function RowActions({ payment }: { payment: PaymentOrder }) {
 export const paymentsColumns: ColumnDef<PaymentOrder>[] = [
   {
     accessorKey: 'id',
-    header: 'ID',
+    header: 'Payment',
+    size: 340,
     cell: ({ row }) => (
-      <span className='font-mono text-xs' title={row.original.id}>
-        {row.original.id.slice(0, 8)}…
-      </span>
+      <PaymentActivitySummary payment={row.original} />
     ),
   },
   {
     accessorKey: 'status',
-    header: 'Status',
+    header: 'Lifecycle',
     cell: ({ row }) => (
-      <Badge variant={statusVariant[row.original.status] ?? 'secondary'}>
-        {row.original.status.replace(/_/g, ' ')}
-      </Badge>
+      <PaymentStatusBadge status={row.original.status} />
     ),
   },
   {
     accessorKey: 'amount',
     header: 'Amount',
-    cell: ({ row }) =>
-      row.original.amount ? `${row.original.amount.amount} ${row.original.amount.asset}` : '—',
+    cell: ({ row }) => (
+      <span className='block text-right font-semibold tabular-nums text-foreground'>
+        {formatPaymentAmount(row.original)}
+      </span>
+    ),
   },
   {
-    accessorKey: 'transactionType',
-    header: 'Type',
-    cell: ({ row }) => row.original.transactionType,
-  },
-  {
-    accessorKey: 'beneficiaryReference',
-    header: 'Beneficiary',
-    cell: ({ row }) => row.original.beneficiaryReference ?? '—',
+    accessorKey: 'paymentAccountId',
+    header: 'Payment account',
+    cell: ({ row }) => (
+      <span className='font-mono text-xs text-muted-foreground' title={row.original.paymentAccountId}>
+        {row.original.paymentAccountId.slice(0, 8)}
+      </span>
+    ),
   },
   {
     accessorKey: 'createdAt',
     header: 'Created',
-    cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+    cell: ({ row }) => (
+      <span className='text-sm text-muted-foreground'>
+        {formatPaymentDate(row.original.createdAt)}
+      </span>
+    ),
   },
   {
     id: 'actions',
-    cell: ({ row }) => <RowActions payment={row.original} />,
+    cell: ({ row }) => (
+      <div className='flex justify-end'>
+        <RowActions payment={row.original} />
+      </div>
+    ),
   },
 ]

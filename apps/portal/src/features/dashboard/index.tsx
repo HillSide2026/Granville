@@ -20,27 +20,21 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { ActivityRowsSkeleton, ChartSkeleton, PortalEmptyState } from '@/components/portal-state'
 import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ThemeSwitch } from '@/components/theme-switch'
-
-// ── Status badge map ──────────────────────────────────────────────────────────
-
-const statusVariant: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-  completed: 'default',
-  processing: 'secondary',
-  provider_accepted: 'secondary',
-  submitted_to_provider: 'secondary',
-  pending_review: 'outline',
-  created: 'outline',
-  failed: 'destructive',
-  returned: 'destructive',
-  cancelled: 'destructive',
-}
+import {
+  formatPaymentAmount,
+  formatPaymentDate,
+  PaymentActivityMarker,
+  paymentActivityTitle,
+  PaymentStatusBadge,
+} from '@/features/payments/components/payment-activity'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -119,10 +113,6 @@ function inPeriod(orders: PaymentOrder[], days: number): PaymentOrder[] {
   return orders.filter((p) => new Date(p.createdAt) >= cutoff)
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })
-}
-
 // ── Placeholder chart data (shown when no real transactions exist) ────────────
 
 const PLACEHOLDER_CHART: { date: string; in: number; out: number }[] = [
@@ -151,13 +141,13 @@ const PERIODS = [
 export function Dashboard() {
   const [period, setPeriod] = useState<7 | 30 | 90>(30)
 
-  const { data: accounts = [] } = useQuery<PaymentAccount[]>({
-    queryKey: ['wallets'],
+  const { data: accounts = [], isLoading: accountsLoading } = useQuery<PaymentAccount[]>({
+    queryKey: ['payment-accounts'],
     queryFn: () => api.get('/payment-accounts').then((r) => r.data),
   })
 
-  const { data: payments = [] } = useQuery<PaymentOrder[]>({
-    queryKey: ['transfers'],
+  const { data: payments = [], isLoading: paymentsLoading } = useQuery<PaymentOrder[]>({
+    queryKey: ['payments'],
     queryFn: () => api.get('/payments').then((r) => r.data),
   })
 
@@ -206,12 +196,13 @@ export function Dashboard() {
         </div>
       </Header>
 
-      <Main>
+      <Main className='portal-page'>
         {/* ── Page heading ─────────────────────────────────────────────── */}
-        <div className='mb-6 flex items-end justify-between'>
+        <div className='portal-page-header flex flex-col gap-4 md:flex-row md:items-end md:justify-between'>
           <div>
-            <h1 className='text-2xl font-bold tracking-tight'>Overview</h1>
-            <p className='text-muted-foreground'>
+            <p className='text-label text-muted-foreground'>Payment operations</p>
+            <h1 className='mt-2 text-h2'>Overview</h1>
+            <p className='mt-1 text-sm text-muted-foreground'>
               {new Date().toLocaleDateString('en-CA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
           </div>
@@ -229,22 +220,33 @@ export function Dashboard() {
           </div>
         </div>
 
-        {/* ── Financial position — 4 metric cards ──────────────────────── */}
+        {/* ── Payment operations — 4 metric cards ──────────────────────── */}
         <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>
 
-          {/* Available Cash — primary metric, spans 2 columns */}
-          <Card className='border-l-2 border-l-[#d5bf9b]/40 sm:col-span-2 xl:col-span-2'>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium text-muted-foreground'>Available cash</CardTitle>
-              <Icon name='bank' className='size-5 text-[#d5bf9b]' />
+          {/* Reported balances — primary metric, spans 2 columns */}
+          <Card className='overflow-hidden border-[var(--portal-status-submitted-border)] bg-card sm:col-span-2 xl:col-span-2'>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-3'>
+              <CardTitle className='text-sm font-medium text-muted-foreground'>Reported balances</CardTitle>
+              <span className='flex size-9 items-center justify-center rounded-full bg-[var(--portal-status-submitted-bg)] text-[var(--portal-status-submitted-text)] ring-1 ring-[var(--portal-status-submitted-border)]'>
+                <Icon name='bank' className='size-4' />
+              </span>
             </CardHeader>
             <CardContent>
-              <div className='text-4xl font-bold tabular-nums'>
-                {accounts.length > 0 ? `${accounts.length} account${accounts.length !== 1 ? 's' : ''}` : '—'}
-              </div>
-              <p className='mt-1.5 text-sm text-muted-foreground'>Real-time balance across all accounts</p>
+              {accountsLoading ? (
+                <div className='space-y-3'>
+                  <Skeleton className='h-10 w-44' />
+                  <Skeleton className='h-4 w-64 max-w-full' />
+                </div>
+              ) : (
+                <>
+                  <div className='text-4xl font-semibold tracking-tight tabular-nums'>
+                    {accounts.length > 0 ? `${accounts.length} account${accounts.length !== 1 ? 's' : ''}` : '—'}
+                  </div>
+                  <p className='mt-1.5 text-sm text-muted-foreground'>Balance data reported by connected partners</p>
+                </>
+              )}
               <div className='mt-4 border-t pt-3'>
-                <Link to='/balances' className='text-xs text-[#d5bf9b] hover:text-[#d5bf9b]/80 transition-colors'>
+                <Link to='/balances' className='text-xs font-medium text-[var(--portal-status-submitted-text)] transition-colors hover:opacity-80'>
                   View balances →
                 </Link>
               </div>
@@ -252,87 +254,126 @@ export function Dashboard() {
           </Card>
 
           {/* Money In */}
-          <Card>
+          <Card className='bg-card'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>Money in</CardTitle>
-              <Icon name='arrow-up' className='size-4 text-muted-foreground' />
+              <span className='flex size-8 items-center justify-center rounded-full bg-[var(--portal-status-completed-bg)] text-[var(--portal-status-completed-text)] ring-1 ring-[var(--portal-status-completed-border)]'>
+                <Icon name='arrow-up' className='size-4' />
+              </span>
             </CardHeader>
             <CardContent>
-              <div className='flex items-start justify-between gap-2'>
-                <div>
-                  <div className='text-2xl font-bold tabular-nums'>{formatAmt(inTotal, inAsset)}</div>
-                  <p className={`mt-1 text-xs ${inDelta.positive ? 'text-muted-foreground' : 'text-destructive'}`}>
-                    {inDelta.label}
-                  </p>
+              {paymentsLoading ? (
+                <div className='space-y-3'>
+                  <Skeleton className='h-8 w-32' />
+                  <Skeleton className='h-3 w-24' />
+                  <Skeleton className='h-px w-full' />
+                  <Skeleton className='h-3 w-36' />
                 </div>
-                <div className='h-10 w-20 shrink-0'>
-                  <ResponsiveContainer width='100%' height='100%'>
-                    <AreaChart data={inSparkline}>
-                      <Area type='monotone' dataKey='v' stroke='var(--color-muted-foreground)' fill='var(--color-muted-foreground)' fillOpacity={0.12} strokeWidth={1.5} dot={false} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              <div className='mt-3 border-t pt-3'>
-                <p className='text-xs text-muted-foreground'>
-                  {completedInbound.length === 0 ? 'No receipts this period' : `${completedInbound.length} receipt${completedInbound.length !== 1 ? 's' : ''} · ${period}d`}
-                </p>
-              </div>
+              ) : (
+                <>
+                  <div className='flex items-start justify-between gap-2'>
+                    <div className='min-w-0'>
+                      <div className='truncate text-2xl font-bold tabular-nums'>{formatAmt(inTotal, inAsset)}</div>
+                      <p className={`mt-1 text-xs ${inDelta.positive ? 'text-muted-foreground' : 'text-destructive'}`}>
+                        {inDelta.label}
+                      </p>
+                    </div>
+                    <div className='h-10 w-20 shrink-0'>
+                      <ResponsiveContainer width='100%' height='100%'>
+                        <AreaChart data={inSparkline}>
+                          <Area type='monotone' dataKey='v' stroke='var(--color-muted-foreground)' fill='var(--color-muted-foreground)' fillOpacity={0.12} strokeWidth={1.5} dot={false} />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                  <div className='mt-3 border-t pt-3'>
+                    <p className='text-xs text-muted-foreground'>
+                      {completedInbound.length === 0 ? 'No receipts this period' : `${completedInbound.length} receipt${completedInbound.length !== 1 ? 's' : ''} · ${period}d`}
+                    </p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
           {/* Money Out */}
-          <Card>
+          <Card className='bg-card'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>Money out</CardTitle>
-              <Icon name='arrow-down' className='size-4 text-muted-foreground' />
+              <span className='flex size-8 items-center justify-center rounded-full bg-[var(--portal-status-processing-bg)] text-[var(--portal-status-processing-text)] ring-1 ring-[var(--portal-status-processing-border)]'>
+                <Icon name='arrow-down' className='size-4' />
+              </span>
             </CardHeader>
             <CardContent>
-              <div className='flex items-start justify-between gap-2'>
-                <div>
-                  <div className='text-2xl font-bold tabular-nums'>{formatAmt(outTotal, outAsset)}</div>
-                  <p className={`mt-1 text-xs ${outDelta.positive ? 'text-muted-foreground' : 'text-destructive'}`}>
-                    {outDelta.label}
-                  </p>
+              {paymentsLoading ? (
+                <div className='space-y-3'>
+                  <Skeleton className='h-8 w-32' />
+                  <Skeleton className='h-3 w-24' />
+                  <Skeleton className='h-px w-full' />
+                  <Skeleton className='h-3 w-36' />
                 </div>
-                <div className='h-10 w-20 shrink-0'>
-                  <ResponsiveContainer width='100%' height='100%'>
-                    <AreaChart data={outSparkline}>
-                      <Area type='monotone' dataKey='v' stroke='var(--color-muted-foreground)' fill='var(--color-muted-foreground)' fillOpacity={0.12} strokeWidth={1.5} dot={false} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              <div className='mt-3 border-t pt-3'>
-                <p className='text-xs text-muted-foreground'>
-                  {completedOutbound.length === 0 ? 'No payments this period' : `${completedOutbound.length} payment${completedOutbound.length !== 1 ? 's' : ''} · ${period}d`}
-                </p>
-              </div>
+              ) : (
+                <>
+                  <div className='flex items-start justify-between gap-2'>
+                    <div className='min-w-0'>
+                      <div className='truncate text-2xl font-bold tabular-nums'>{formatAmt(outTotal, outAsset)}</div>
+                      <p className={`mt-1 text-xs ${outDelta.positive ? 'text-muted-foreground' : 'text-destructive'}`}>
+                        {outDelta.label}
+                      </p>
+                    </div>
+                    <div className='h-10 w-20 shrink-0'>
+                      <ResponsiveContainer width='100%' height='100%'>
+                        <AreaChart data={outSparkline}>
+                          <Area type='monotone' dataKey='v' stroke='var(--color-muted-foreground)' fill='var(--color-muted-foreground)' fillOpacity={0.12} strokeWidth={1.5} dot={false} />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                  <div className='mt-3 border-t pt-3'>
+                    <p className='text-xs text-muted-foreground'>
+                      {completedOutbound.length === 0 ? 'No payments this period' : `${completedOutbound.length} payment${completedOutbound.length !== 1 ? 's' : ''} · ${period}d`}
+                    </p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
           {/* Needs Attention */}
-          <Card>
+          <Card className={hasAttention ? 'border-[var(--portal-status-failed-border)] bg-[var(--portal-status-failed-bg)]/30' : 'bg-card'}>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>Needs attention</CardTitle>
-              <Icon name='shield' className={`size-4 ${hasAttention ? 'text-destructive' : 'text-muted-foreground'}`} />
+              <span className={`flex size-8 items-center justify-center rounded-full ring-1 ${hasAttention ? 'bg-[var(--portal-status-failed-bg)] text-[var(--portal-status-failed-text)] ring-[var(--portal-status-failed-border)]' : 'bg-[var(--portal-status-completed-bg)] text-[var(--portal-status-completed-text)] ring-[var(--portal-status-completed-border)]'}`}>
+                <Icon name={hasAttention ? 'shield' : 'circle-check'} className='size-4' />
+              </span>
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold ${hasAttention ? 'text-destructive' : ''}`}>
-                {attentionItems.length === 0 ? '—' : attentionItems.length}
-              </div>
-              <p className='mt-1 text-xs text-muted-foreground'>
-                {hasAttention ? `${attentionItems.filter((p) => p.status === 'failed' || p.status === 'returned').length} failed · ${attentionItems.filter((p) => p.status === 'pending_review' || p.status === 'created').length} pending` : 'All clear'}
-              </p>
-              <div className='mt-3 border-t pt-3'>
-                {hasAttention ? (
-                  <Link to='/payments' className='text-xs text-destructive hover:underline'>
-                    Review now →
-                  </Link>
-                ) : (
-                  <p className='text-xs text-muted-foreground'>Nothing to action</p>
-                )}
-              </div>
+              {paymentsLoading ? (
+                <div className='space-y-3'>
+                  <Skeleton className='h-8 w-14' />
+                  <Skeleton className='h-3 w-28' />
+                  <Skeleton className='h-px w-full' />
+                  <Skeleton className='h-3 w-24' />
+                </div>
+              ) : (
+                <>
+                  <div className={`text-2xl font-semibold tabular-nums ${hasAttention ? 'text-[var(--portal-status-failed-text)]' : ''}`}>
+                    {attentionItems.length === 0 ? '—' : attentionItems.length}
+                  </div>
+                  <p className='mt-1 text-xs text-muted-foreground'>
+                    {hasAttention ? `${attentionItems.filter((p) => p.status === 'failed' || p.status === 'returned').length} failed · ${attentionItems.filter((p) => p.status === 'pending_review' || p.status === 'created').length} pending` : 'All clear'}
+                  </p>
+                  <div className='mt-3 border-t pt-3'>
+                    {hasAttention ? (
+                      <Link to='/payments' className='text-xs font-medium text-[var(--portal-status-failed-text)] hover:underline'>
+                        Review now →
+                      </Link>
+                    ) : (
+                      <p className='text-xs text-muted-foreground'>Nothing to action</p>
+                    )}
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -363,7 +404,9 @@ export function Dashboard() {
               </div>
             </CardHeader>
             <CardContent>
-              {(() => {
+              {paymentsLoading ? (
+                <ChartSkeleton className='h-[220px] border-0 bg-transparent p-0' />
+              ) : (() => {
                 const display = chartData.some((d) => d.in > 0 || d.out > 0) ? chartData : PLACEHOLDER_CHART
                 const isPlaceholder = display === PLACEHOLDER_CHART
                 return (
@@ -385,7 +428,7 @@ export function Dashboard() {
                     {isPlaceholder && (
                       <div className='pointer-events-none absolute inset-0 flex items-center justify-center'>
                         <span className='rounded-md bg-background/80 px-2 py-1 text-xs text-muted-foreground backdrop-blur-sm'>
-                          Sample data — connect your accounts to see live figures
+                          Sample data — connect payment accounts to see reported activity
                         </span>
                       </div>
                     )}
@@ -400,28 +443,37 @@ export function Dashboard() {
             <CardHeader>
               <CardTitle>Recent activity</CardTitle>
             </CardHeader>
-            <CardContent className='space-y-0'>
-              {recentActivity.length === 0 ? (
-                <p className='py-6 text-center text-sm text-muted-foreground'>No activity yet.</p>
+            <CardContent className='space-y-1'>
+              {paymentsLoading ? (
+                <ActivityRowsSkeleton rows={5} />
+              ) : recentActivity.length === 0 ? (
+                <PortalEmptyState
+                  icon='payment-flow'
+                  title='No activity yet'
+                  description='Payment activity will appear here after orders are created or received from connected partners.'
+                  className='py-10'
+                />
               ) : (
                 recentActivity.map((p) => (
-                  <div key={p.id} className='flex items-center gap-2 border-b py-2.5 text-sm last:border-0'>
-                    <Icon
-                      name={p.direction === 'inbound' ? 'arrow-up' : 'arrow-down'}
-                      className='size-3 shrink-0 text-muted-foreground'
-                    />
-                    <div className='min-w-0 flex-1'>
-                      <p className='truncate text-xs font-medium'>
-                        {p.beneficiaryReference ?? p.id.slice(0, 8) + '…'}
-                      </p>
-                      <p className='text-xs text-muted-foreground'>{formatDate(p.createdAt)}</p>
+                  <div
+                    key={p.id}
+                    className='portal-list-row flex items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors hover:bg-muted/35'
+                  >
+                    <PaymentActivityMarker payment={p} className='size-8' />
+                    <div className='min-w-0 flex-1 space-y-1'>
+                      <div className='flex min-w-0 items-center justify-between gap-2'>
+                        <p className='truncate text-sm font-medium'>{paymentActivityTitle(p)}</p>
+                        <span className='shrink-0 text-sm font-semibold tabular-nums'>
+                          {formatPaymentAmount(p)}
+                        </span>
+                      </div>
+                      <div className='flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground'>
+                        <span>{formatPaymentDate(p.createdAt)}</span>
+                        <span aria-hidden='true'>·</span>
+                        <span className='font-mono'>{p.id.slice(0, 8)}</span>
+                        <PaymentStatusBadge status={p.status} className='ml-auto text-[11px]' />
+                      </div>
                     </div>
-                    <Badge variant={statusVariant[p.status] ?? 'secondary'} className='shrink-0 text-xs'>
-                      {p.status.replace(/_/g, ' ')}
-                    </Badge>
-                    <span className='shrink-0 text-xs font-medium tabular-nums'>
-                      {p.amount ? `${p.amount.amount} ${p.amount.asset}` : '—'}
-                    </span>
                   </div>
                 ))
               )}

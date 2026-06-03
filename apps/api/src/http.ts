@@ -129,6 +129,10 @@ export class GranvilleHttpControllers {
         body: this.api.postPaymentAccount(asObject(body), context),
       };
     }
+    if (method === "GET" && path === "/payment-accounts") {
+      requireRole(context, "payment:read");
+      return { statusCode: 200, body: this.api.listPaymentAccounts() };
+    }
     if (method === "GET" && parts[0] === "payment-accounts" && parts[1]) {
       requireRole(context, "payment:read");
       return { statusCode: 200, body: required(this.api.getPaymentAccount(parts[1])) };
@@ -136,6 +140,10 @@ export class GranvilleHttpControllers {
     if (method === "POST" && path === "/payments") {
       requireRole(context, "payment:write");
       return { statusCode: 201, body: this.api.postPayment(asObject(body), context) };
+    }
+    if (method === "GET" && path === "/payments") {
+      requireRole(context, "payment:read");
+      return { statusCode: 200, body: this.api.listPayments() };
     }
     if (method === "POST" && parts[0] === "payments" && parts[1] && parts[2] === "submit") {
       requireRole(context, "payment:write");

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Icon } from '@/components/ui/icon'
 import {
   useReactTable,
   getCoreRowModel,
@@ -10,7 +9,6 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Table,
@@ -22,10 +20,8 @@ import {
 } from '@/components/ui/table'
 import { useTransfers } from './hooks/use-transfers'
 import { transfersColumns } from './components/transfers-columns'
-import { TransferCreateDrawer } from './components/transfer-create-drawer'
 
 export function Transfers() {
-  const [createOpen, setCreateOpen] = useState(false)
   const [globalFilter, setGlobalFilter] = useState('')
   const { data = [], isLoading } = useTransfers()
 
@@ -50,12 +46,9 @@ export function Transfers() {
       <Main>
         <div className='mb-4 flex items-center justify-between'>
           <div>
-            <h1 className='text-2xl font-bold tracking-tight'>Transfers</h1>
+            <h1 className='text-2xl font-bold tracking-tight'>Payment activity</h1>
             <p className='text-sm text-muted-foreground'>Payment orders</p>
           </div>
-          <Button onClick={() => setCreateOpen(true)} size='sm'>
-            <Icon name='plus' className='mr-1 h-4 w-4' /> New Transfer
-          </Button>
         </div>
 
         <div className='mb-3 flex items-center gap-2'>
@@ -90,7 +83,7 @@ export function Transfers() {
               ) : table.getRowModel().rows.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={transfersColumns.length} className='py-10 text-center text-muted-foreground'>
-                    No transfers yet.
+                    No payment orders yet.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -107,8 +100,6 @@ export function Transfers() {
             </TableBody>
           </Table>
         </div>
-
-        <TransferCreateDrawer open={createOpen} onOpenChange={setCreateOpen} />
       </Main>
     </>
   )

@@ -72,6 +72,8 @@ function html(title: string, content: string): string {
   <nav>
     <span class="brand">Granville Ops</span>
     <a href="/">Dashboard</a>
+    <a href="/approvals">Approvals</a>
+    <a href="/compliance">Compliance</a>
     <a href="/providers">Providers</a>
     <a href="/routing-rules">Routing Rules</a>
     <a href="/payments">Payments</a>
@@ -149,6 +151,11 @@ function humanAge(createdAt: unknown): string {
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
+function money(value: unknown): string {
+  const amount = value as Record<string, unknown> | undefined;
+  return amount ? `${amount.amount ?? "—"} ${amount.asset ?? ""}` : "—";
+}
+
 async function handleDashboard(): Promise<string> {
   const [payments, webhooks, exceptions, postings, rules, auditEvents] = await Promise.all([
     adminFetch("/admin/payments") as Promise<Array<Record<string, unknown>>>,
@@ -193,6 +200,46 @@ async function handleDashboard(): Promise<string> {
     </div>`;
 }
 
+async function handleApprovals(): Promise<string> {
+  const rows = (await adminFetch("/admin/payments")) as Array<Record<string, unknown>>;
+  const pending = rows.filter((p) => p.status === "pending_review");
+
+  const summary = `
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-label">Pending Review</div><div class="stat-value" style="color:${pending.length > 0 ? "#856404" : "#198754"}">${pending.length}</div></div>
+      <div class="stat"><div class="stat-label">Total Payment Orders</div><div class="stat-value">${rows.length}</div></div>
+    </div>
+    <p style="font-size:13px;color:#666;margin-top:-8px;margin-bottom:16px">
+      Operator approvals authorize Granville orchestration to submit a payment order to a regulated partner for execution. They do not indicate that Granville holds customer funds.
+    </p>`;
+
+  if (pending.length === 0) {
+    return `${summary}<p class="empty">No pending approvals — all clear.</p>`;
+  }
+
+  const body = pending
+    .map(
+      (p) => `<tr>
+        <td><a href="/payments/${p.id}">${short(String(p.id))}</a></td>
+        <td>${money(p.amount)}</td>
+        <td>${short(String(p.customerId))}</td>
+        <td>${short(String(p.paymentAccountId))}</td>
+        <td style="font-size:11px">${humanAge(p.createdAt)} old</td>
+        <td style="white-space:nowrap">
+          <form class="action-form" method="POST" action="/admin/payments/${p.id}/approve">
+            <button class="btn btn-success" type="submit">Approve for partner submission</button>
+          </form>
+          <form class="action-form" method="POST" action="/admin/payments/${p.id}/reject">
+            <button class="btn btn-danger" type="submit">Reject payment order</button>
+          </form>
+        </td>
+      </tr>`,
+    )
+    .join("");
+
+  return `${summary}<table><thead><tr><th>ID</th><th>Amount</th><th>Customer</th><th>Payment Account</th><th>Age</th><th>Action</th></tr></thead><tbody>${body}</tbody></table>`;
+}
+
 async function handlePayments(): Promise<string> {
   const rows = (await adminFetch("/admin/payments")) as Array<Record<string, unknown>>;
   return table(
@@ -201,11 +248,109 @@ async function handlePayments(): Promise<string> {
     (r) => `<tr>
       <td><a href="/payments/${r.id}">${short(String(r.id))}</a></td>
       <td>${statusBadge(String(r.status))}</td>
-      <td>${r.amount ? `${(r.amount as Record<string, unknown>).amount} ${(r.amount as Record<string, unknown>).asset}` : "—"}</td>
+      <td>${money(r.amount)}</td>
       <td>${short(String(r.paymentAccountId))}</td>
       <td>${ts(r.createdAt)}</td>
     </tr>`,
   );
+}
+
+async function handleCompliance(): Promise<string> {
+  const [customers, auditEvents, compliancePayments] = await Promise.all([
+    adminFetch("/admin/customers") as Promise<Array<Record<string, unknown>>>,
+    adminFetch("/admin/audit-events") as Promise<Array<Record<string, unknown>>>,
+    adminFetch("/admin/reports/compliance-payments") as Promise<Array<Record<string, unknown>>>,
+  ]);
+
+  const restricted = customers.filter((c) => c.status === "restricted").length;
+  const recentAudit = [...auditEvents].reverse().slice(0, 25);
+  const recentPayments = [...compliancePayments].reverse().slice(0, 25);
+
+  const customerRows =
+    customers.length === 0
+      ? `<p class="empty">No customers.</p>`
+      : `<table>
+          <thead><tr><th>ID</th><th>Legal Name</th><th>Type</th><th>Status</th><th>Email</th><th>Country</th><th>Created</th></tr></thead>
+          <tbody>
+            ${customers
+              .map(
+                (c) => `<tr>
+                  <td>${short(String(c.id))}</td>
+                  <td><strong>${c.legalName ?? "—"}</strong></td>
+                  <td>${c.type ?? "—"}</td>
+                  <td>${statusBadge(String(c.status))}</td>
+                  <td>${c.email ?? "—"}</td>
+                  <td>${c.countryCode ?? "—"}</td>
+                  <td>${ts(c.createdAt)}</td>
+                </tr>`,
+              )
+              .join("")}
+          </tbody>
+        </table>`;
+
+  const paymentRows =
+    recentPayments.length === 0
+      ? `<p class="empty">No compliance payment records.</p>`
+      : `<table>
+          <thead><tr><th>Payment</th><th>Customer</th><th>Status</th><th>Amount</th><th>Provider Ref</th><th>Created</th></tr></thead>
+          <tbody>
+            ${recentPayments
+              .map(
+                (p) => `<tr>
+                  <td><a href="/payments/${p.paymentOrderId}">${short(String(p.paymentOrderId))}</a></td>
+                  <td>${short(String(p.customerId))}</td>
+                  <td>${statusBadge(String(p.status))}</td>
+                  <td>${p.amount ?? "—"} ${p.asset ?? ""}</td>
+                  <td>${p.providerReference ? short(String(p.providerReference)) : "—"}</td>
+                  <td>${ts(p.createdAt)}</td>
+                </tr>`,
+              )
+              .join("")}
+          </tbody>
+        </table>`;
+
+  const auditRows =
+    recentAudit.length === 0
+      ? `<p class="empty">No audit events.</p>`
+      : `<table>
+          <thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Resource</th><th>Resource ID</th></tr></thead>
+          <tbody>
+            ${recentAudit
+              .map(
+                (e) => `<tr>
+                  <td>${ts(e.createdAt)}</td>
+                  <td>${e.actorType}${e.actorId ? `:${e.actorId}` : ""}</td>
+                  <td><code style="font-size:11px">${e.action}</code></td>
+                  <td>${e.resourceType}</td>
+                  <td>${short(String(e.resourceId))}</td>
+                </tr>`,
+              )
+              .join("")}
+          </tbody>
+        </table>`;
+
+  return `
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-label">Customers</div><div class="stat-value">${customers.length}</div></div>
+      <div class="stat"><div class="stat-label">Restricted Customers</div><div class="stat-value" style="color:${restricted > 0 ? "#dc3545" : "#198754"}">${restricted}</div></div>
+      <div class="stat"><div class="stat-label">Compliance Payment Records</div><div class="stat-value">${compliancePayments.length}</div></div>
+      <div class="stat"><div class="stat-label">Audit Events</div><div class="stat-value">${auditEvents.length}</div></div>
+    </div>
+
+    <h2 style="font-size:15px;margin:0 0 8px">Customers / KYC</h2>
+    ${customerRows}
+
+    <h2 style="font-size:15px;margin:24px 0 8px">Compliance Payments</h2>
+    ${paymentRows}
+
+    <h2 style="font-size:15px;margin:24px 0 8px">Recent Audit Events</h2>
+    ${auditRows}
+
+    <p style="font-size:13px;margin-top:16px">
+      <a href="${API_URL}/admin/reports/audit-export" target="_blank">Download audit export</a>
+      &nbsp;·&nbsp;
+      <a href="${API_URL}/admin/reports/compliance-payments" target="_blank">Download compliance payments</a>
+    </p>`;
 }
 
 async function handlePaymentDetail(id: string): Promise<string> {
@@ -595,6 +740,20 @@ async function handleAdminPost(path: string): Promise<string> {
     await adminPost(`/admin/providers/${parts[2]}/enable`);
     return "ok";
   }
+  // POST /admin/payments/:id/approve
+  if (parts[0] === "admin" && parts[1] === "payments" && parts[3] === "approve") {
+    await adminPost(`/payments/${parts[2]}/approve`, {
+      note: "Approved from ops-ui",
+    });
+    return "ok";
+  }
+  // POST /admin/payments/:id/reject
+  if (parts[0] === "admin" && parts[1] === "payments" && parts[3] === "reject") {
+    await adminPost(`/payments/${parts[2]}/reject`, {
+      note: "Rejected from ops-ui",
+    });
+    return "ok";
+  }
   throw new Error(`Unknown action: ${path}`);
 }
 
@@ -616,6 +775,12 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
 
     if (path === "/" || path === "") {
       content = await handleDashboard();
+    } else if (path === "/approvals") {
+      title = "Approvals";
+      content = await handleApprovals();
+    } else if (path === "/compliance") {
+      title = "Compliance";
+      content = await handleCompliance();
     } else if (path === "/payments") {
       title = "Payments";
       content = await handlePayments();

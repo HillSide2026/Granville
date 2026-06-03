@@ -5,7 +5,7 @@ import type { CreatePaymentOrderInput, PaymentAttempt, PaymentOrder } from "@/ty
 export function useTransfers() {
   return useQuery<PaymentOrder[]>({
     queryKey: ["transfers"],
-    queryFn: () => api.get("/admin/payments").then((r) => r.data),
+    queryFn: () => api.get("/payments").then((r) => r.data),
   });
 }
 
@@ -20,10 +20,7 @@ export function useTransfer(id: string) {
 export function usePaymentAttempts(paymentId: string) {
   return useQuery<PaymentAttempt[]>({
     queryKey: ["payment-attempts", paymentId],
-    queryFn: () =>
-      api
-        .get("/admin/payment-attempts")
-        .then((r) => (r.data as PaymentAttempt[]).filter((a) => a.paymentOrderId === paymentId)),
+    queryFn: async () => [],
     enabled: !!paymentId,
   });
 }

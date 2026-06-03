@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Compliance } from '@/features/compliance'
+import { Navigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated/compliance/')({
-  component: Compliance,
+  component: () => <Navigate to='/' replace />,
 })

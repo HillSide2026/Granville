@@ -5,7 +5,7 @@ import type { CreatePaymentAccountInput, PaymentAccount } from "@/types/granvill
 export function useWallets() {
   return useQuery<PaymentAccount[]>({
     queryKey: ["wallets"],
-    queryFn: () => api.get("/admin/payment-accounts").then((r) => r.data),
+    queryFn: () => api.get("/payment-accounts").then((r) => r.data),
   });
 }
 

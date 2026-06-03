@@ -6,7 +6,7 @@ Granville ships in three sequential releases:
 2. **Granville MVP** turns that proof into a usable product/platform.
 3. **Version 1** hardens the system into broader provider-ready financial infrastructure.
 
-See [portal-roadmap.md](portal-roadmap.md) for the customer portal and operator console build-out (Tracks 1–4).
+See [portal-roadmap.md](portal-roadmap.md) for the customer portal and operator console build-out (Tracks 1–4). See [product-surface-separation.md](product-surface-separation.md) for the workplan that defines and enforces the boundary between `apps/portal` and `apps/ops-ui`.
 
 ## Release Glossary
 
@@ -49,6 +49,7 @@ Granville MVP wraps the proven first provider in the minimum complete Granville 
 | Platform (M0–M9) | [mvp-platform.md](mvp-platform.md) |
 | Design System (DS1–DS2d) | [mvp-design-system.md](mvp-design-system.md) |
 | Portal and operator console | [portal-roadmap.md](portal-roadmap.md) |
+| Product surface separation | [product-surface-separation.md](product-surface-separation.md) |
 
 **Exit criterion:** the core payment workflow can be run repeatedly in a staging-like environment with Postgres persistence, portal/operator workflows, reporting, durable events, and Airwallex configured as the first provider.
 

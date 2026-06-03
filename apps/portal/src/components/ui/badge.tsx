@@ -16,6 +16,22 @@ const badgeVariants = cva(
           'border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
         outline:
           'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
+        created:
+          'border-[var(--portal-status-created-border)] bg-[var(--portal-status-created-bg)] text-[var(--portal-status-created-text)]',
+        review:
+          'border-[var(--portal-status-review-border)] bg-[var(--portal-status-review-bg)] text-[var(--portal-status-review-text)]',
+        submitted:
+          'border-[var(--portal-status-submitted-border)] bg-[var(--portal-status-submitted-bg)] text-[var(--portal-status-submitted-text)]',
+        processing:
+          'border-[var(--portal-status-processing-border)] bg-[var(--portal-status-processing-bg)] text-[var(--portal-status-processing-text)]',
+        completed:
+          'border-[var(--portal-status-completed-border)] bg-[var(--portal-status-completed-bg)] text-[var(--portal-status-completed-text)]',
+        failed:
+          'border-[var(--portal-status-failed-border)] bg-[var(--portal-status-failed-bg)] text-[var(--portal-status-failed-text)]',
+        returned:
+          'border-[var(--portal-status-returned-border)] bg-[var(--portal-status-returned-bg)] text-[var(--portal-status-returned-text)]',
+        cancelled:
+          'border-[var(--portal-status-cancelled-border)] bg-[var(--portal-status-cancelled-bg)] text-[var(--portal-status-cancelled-text)]',
       },
     },
     defaultVariants: {

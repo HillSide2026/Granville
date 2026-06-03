@@ -115,6 +115,35 @@
   @apply after:pointer-events-none after:absolute after:inset-s-0 after:bottom-0 after:hidden after:h-32 after:w-full after:rounded-b-2xl after:bg-[linear-gradient(180deg,transparent_10%,var(--background)_70%)] md:after:block;
 }
 
+@utility portal-page {
+  padding-inline: var(--portal-page-padding-x);
+  padding-block: var(--portal-page-padding-y);
+}
+
+@utility portal-page-header {
+  margin-bottom: var(--portal-page-header-gap);
+}
+
+@utility portal-section {
+  margin-top: var(--portal-section-gap);
+}
+
+@utility portal-card-pad {
+  padding: var(--portal-card-padding);
+}
+
+@utility portal-card-pad-compact {
+  padding: var(--portal-card-padding-compact);
+}
+
+@utility portal-table-row {
+  min-height: var(--portal-table-row-height);
+}
+
+@utility portal-list-row {
+  min-height: var(--portal-list-row-height);
+}
+
 /* styles.css */
 .CollapsibleContent {
   overflow: hidden;

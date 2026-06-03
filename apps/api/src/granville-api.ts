@@ -89,6 +89,10 @@ export class GranvilleApi {
     return this.store.paymentAccounts.get(id);
   }
 
+  listPaymentAccounts(): PaymentAccount[] {
+    return [...this.store.paymentAccounts.values()];
+  }
+
   postPayment(input: CreatePaymentOrderInput, context: ApiContext = {}): PaymentOrder {
     return this.orchestrator.createPayment(input, context);
   }
@@ -121,6 +125,10 @@ export class GranvilleApi {
 
   getPayment(id: string): PaymentOrder | undefined {
     return this.store.paymentOrders.get(id);
+  }
+
+  listPayments(): PaymentOrder[] {
+    return [...this.store.paymentOrders.values()];
   }
 
   getPaymentStatus(id: string): { id: string; status: string } | undefined {
