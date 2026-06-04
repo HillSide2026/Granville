@@ -6,7 +6,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { Icon } from '@/components/ui/icon'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
-import { sleep, cn } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -18,11 +18,17 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import {
+  ALLOWED_EMAIL_MESSAGE,
+  createPortalAccessToken,
+  createPortalUser,
+  isAllowedPortalEmail,
+} from '../../lib/portal-auth'
 
 const formSchema = z.object({
   email: z.email({
     error: (iss) => (iss.input === '' ? 'Please enter your email.' : undefined),
-  }),
+  }).refine(isAllowedPortalEmail, ALLOWED_EMAIL_MESSAGE),
   password: z
     .string()
     .min(1, 'Please enter your password.')
@@ -52,20 +58,21 @@ export function UserAuthForm({
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
+    const user = createPortalUser(data.email)
 
-    toast.promise(sleep(2000), {
+    toast.promise(Promise.resolve(), {
       loading: 'Signing in...',
       success: () => {
         setIsLoading(false)
 
-        auth.setUser({ id: 'mock-user-001', email: data.email, role: 'customer' })
-        auth.setAccessToken('mock-access-token')
+        auth.setUser(user)
+        auth.setAccessToken(createPortalAccessToken(user.email), user.role)
 
         // Redirect to the stored location or default to dashboard
         const targetPath = redirectTo || '/'
         navigate({ to: targetPath, replace: true })
 
-        return `Welcome back, ${data.email}!`
+        return `Welcome back, ${user.email}!`
       },
       error: 'Error',
     })

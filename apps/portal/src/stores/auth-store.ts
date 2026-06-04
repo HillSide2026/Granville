@@ -3,6 +3,7 @@ import type { PortalRole } from "@/components/layout/data/sidebar-data";
 import { getCookie, removeCookie, setCookie } from "@/lib/cookies";
 
 const ACCESS_TOKEN = "granville_access_token";
+const AUTH_USER = "granville_auth_user";
 
 export interface AuthUser {
   id: string;
@@ -30,22 +31,68 @@ function roleFromToken(token: string): PortalRole {
   return "customer";
 }
 
+function parseCookieValue<T>(value: string | undefined, fallback: T): T {
+  if (!value) return fallback;
+
+  try {
+    return JSON.parse(decodeURIComponent(value)) as T;
+  } catch {
+    try {
+      return JSON.parse(value) as T;
+    } catch {
+      return fallback;
+    }
+  }
+}
+
+function persistCookieValue(name: string, value: unknown) {
+  setCookie(name, encodeURIComponent(JSON.stringify(value)));
+}
+
+function fallbackUserFromToken(token: string): AuthUser | null {
+  if (!token) return null;
+
+  return {
+    id: `token:${token}`,
+    email: "operator@granville.local",
+    role: roleFromToken(token),
+    organizationName: "Granville",
+  };
+}
+
 export const useAuthStore = create<AuthState>()((set) => {
-  const cookieState = getCookie(ACCESS_TOKEN);
-  const initToken = cookieState ? JSON.parse(cookieState) : "";
+  const initToken = parseCookieValue(getCookie(ACCESS_TOKEN), "");
+  const initUser = parseCookieValue<AuthUser | null>(getCookie(AUTH_USER), null);
   // Auto-load dev token from env if available and no token stored
   const devToken = (import.meta as unknown as { env: Record<string, string> }).env
     ?.VITE_GRANVILLE_DEV_TOKEN;
   const token = initToken || devToken || "";
+  const user = initUser ?? fallbackUserFromToken(token);
   return {
     auth: {
-      user: null,
-      role: roleFromToken(token),
-      setUser: (user) => set((state) => ({ ...state, auth: { ...state.auth, user } })),
+      user,
+      role: user?.role ?? roleFromToken(token),
+      setUser: (user) =>
+        set((state) => {
+          if (user) {
+            persistCookieValue(AUTH_USER, user);
+          } else {
+            removeCookie(AUTH_USER);
+          }
+
+          return {
+            ...state,
+            auth: {
+              ...state.auth,
+              user,
+              role: user?.role ?? state.auth.role,
+            },
+          };
+        }),
       accessToken: token,
       setAccessToken: (accessToken, role) =>
         set((state) => {
-          setCookie(ACCESS_TOKEN, JSON.stringify(accessToken));
+          persistCookieValue(ACCESS_TOKEN, accessToken);
           return {
             ...state,
             auth: {
@@ -66,6 +113,7 @@ export const useAuthStore = create<AuthState>()((set) => {
       reset: () =>
         set((state) => {
           removeCookie(ACCESS_TOKEN);
+          removeCookie(AUTH_USER);
           return {
             ...state,
             auth: {

@@ -5,11 +5,16 @@ import { SignUpForm } from './sign-up-form'
 
 const FORM_MESSAGES = {
   emailEmpty: 'Please enter your email.',
+  emailDomain:
+    'Use a levine-law.ca, levinelegal.ca, or levinelegalservices.com email address.',
   passwordEmpty: 'Please enter your password.',
   confirmPasswordEmpty: 'Please confirm your password.',
   passwordMismatch: "Passwords don't match.",
 } as const
 
+const navigate = vi.fn()
+const setUserMock = vi.fn()
+const setAccessTokenMock = vi.fn()
 const toastPromise = vi.hoisted(() =>
   vi.fn((p: Promise<unknown>, opts: { success?: () => unknown }) => {
     p.then(() => opts.success?.())
@@ -17,6 +22,23 @@ const toastPromise = vi.hoisted(() =>
 )
 
 vi.mock('sonner', () => ({ toast: { promise: toastPromise } }))
+
+vi.mock('@/stores/auth-store', () => ({
+  useAuthStore: () => ({
+    auth: {
+      setUser: setUserMock,
+      setAccessToken: setAccessTokenMock,
+    },
+  }),
+}))
+
+vi.mock('@tanstack/react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@tanstack/react-router')>()
+  return {
+    ...actual,
+    useNavigate: () => navigate,
+  }
+})
 
 describe('SignUpForm', () => {
   let screen: RenderResult
@@ -61,7 +83,7 @@ describe('SignUpForm', () => {
   })
 
   it('shows a mismatch error when passwords do not match', async () => {
-    await userEvent.fill(emailInput, 'a@b.com')
+    await userEvent.fill(emailInput, 'user@levine-law.ca')
     await userEvent.fill(passwordInput, '1234567')
     await userEvent.fill(confirmPasswordInput, '7654321')
 
@@ -71,18 +93,40 @@ describe('SignUpForm', () => {
       .toBeInTheDocument()
   })
 
-  it('disables submit while submitting and re-enables after timeout', async () => {
-    vi.useFakeTimers()
-
-    await userEvent.fill(emailInput, 'a@b.com')
+  it('rejects sign-up from outside approved domains', async () => {
+    await userEvent.fill(emailInput, 'user@example.com')
     await userEvent.fill(passwordInput, '1234567')
     await userEvent.fill(confirmPasswordInput, '1234567')
 
     await userEvent.click(submitButton)
-    await expect.element(submitButton).toBeDisabled()
 
-    await vi.advanceTimersByTimeAsync(2000)
-    await expect.element(submitButton).toBeEnabled()
-    expect(toastPromise).toHaveBeenCalledOnce()
+    await expect
+      .element(screen.getByText(FORM_MESSAGES.emailDomain))
+      .toBeInTheDocument()
+    expect(setUserMock).not.toHaveBeenCalled()
+    expect(setAccessTokenMock).not.toHaveBeenCalled()
+  })
+
+  it('creates a session and navigates home for approved domains', async () => {
+    await userEvent.fill(emailInput, 'User@levinelegalservices.com')
+    await userEvent.fill(passwordInput, '1234567')
+    await userEvent.fill(confirmPasswordInput, '1234567')
+
+    await userEvent.click(submitButton)
+
+    await vi.waitFor(() => expect(setUserMock).toHaveBeenCalledOnce())
+    expect(setUserMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'portal:user@levinelegalservices.com',
+        email: 'user@levinelegalservices.com',
+        role: 'customer',
+        organizationName: 'Levine Legal Services',
+      })
+    )
+    expect(setAccessTokenMock).toHaveBeenCalledWith(
+      'portal-user-levinelegalservices-com',
+      'customer'
+    )
+    expect(navigate).toHaveBeenCalledWith({ to: '/', replace: true })
   })
 })

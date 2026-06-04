@@ -5,6 +5,8 @@ import { UserAuthForm } from './user-auth-form'
 
 const FORM_MESSAGES = {
   emailEmpty: 'Please enter your email.',
+  emailDomain:
+    'Use a levine-law.ca, levinelegal.ca, or levinelegalservices.com email address.',
   passwordEmpty: 'Please enter your password.',
   passwordShort: 'Password must be at least 7 characters long.',
 } as const
@@ -44,11 +46,6 @@ vi.mock('@tanstack/react-router', async (importOriginal) => {
   }
 })
 
-vi.mock('@/lib/utils', async (orig) => ({
-  ...(await orig()),
-  sleep: vi.fn(() => Promise.resolve()),
-}))
-
 describe('UserAuthForm', () => {
   describe('Rendering without redirectTo', () => {
     let screen: RenderResult
@@ -85,7 +82,7 @@ describe('UserAuthForm', () => {
     })
 
     it('authenticates and navigates to default route on success', async () => {
-      await userEvent.fill(emailInput, 'a@b.com')
+      await userEvent.fill(emailInput, 'User@levine-law.ca')
       await userEvent.fill(passwordInput, '1234567')
 
       await userEvent.click(signInButton)
@@ -93,18 +90,34 @@ describe('UserAuthForm', () => {
       await vi.waitFor(() => expect(setUserMock).toHaveBeenCalledOnce())
       expect(setUserMock).toHaveBeenCalledWith(
         expect.objectContaining({
-          email: 'a@b.com',
-          accountNo: expect.any(String),
-          role: expect.any(Array),
-          exp: expect.any(Number),
+          id: 'portal:user@levine-law.ca',
+          email: 'user@levine-law.ca',
+          role: 'customer',
+          organizationName: 'Levine Law',
         })
       )
       expect(setAccessTokenMock).toHaveBeenCalledOnce()
-      expect(setAccessTokenMock).toHaveBeenCalledWith('mock-access-token')
+      expect(setAccessTokenMock).toHaveBeenCalledWith(
+        'portal-user-levine-law-ca',
+        'customer'
+      )
 
       await vi.waitFor(() =>
         expect(navigate).toHaveBeenCalledWith({ to: '/', replace: true })
       )
+    })
+
+    it('rejects sign-in from outside approved domains', async () => {
+      await userEvent.fill(emailInput, 'user@example.com')
+      await userEvent.fill(passwordInput, '1234567')
+
+      await userEvent.click(signInButton)
+
+      await expect
+        .element(screen.getByText(FORM_MESSAGES.emailDomain))
+        .toBeInTheDocument()
+      expect(setUserMock).not.toHaveBeenCalled()
+      expect(setAccessTokenMock).not.toHaveBeenCalled()
     })
   })
 
@@ -115,7 +128,10 @@ describe('UserAuthForm', () => {
       <UserAuthForm redirectTo='/settings' />
     )
 
-    await userEvent.fill(getByRole('textbox', { name: /Email/i }), 'a@b.com')
+    await userEvent.fill(
+      getByRole('textbox', { name: /Email/i }),
+      'user@levinelegal.ca'
+    )
     await userEvent.fill(getByLabelText('Password'), '1234567')
 
     await userEvent.click(getByRole('button', { name: /Sign in/i }))

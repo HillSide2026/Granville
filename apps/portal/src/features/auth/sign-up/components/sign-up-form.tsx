@@ -3,8 +3,10 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Icon } from '@/components/ui/icon'
+import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
-import { sleep, cn } from '@/lib/utils'
+import { useAuthStore } from '@/stores/auth-store'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -16,13 +18,19 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import {
+  ALLOWED_EMAIL_MESSAGE,
+  createPortalAccessToken,
+  createPortalUser,
+  isAllowedPortalEmail,
+} from '../../lib/portal-auth'
 
 const formSchema = z
   .object({
     email: z.email({
       error: (iss) =>
         iss.input === '' ? 'Please enter your email.' : undefined,
-    }),
+    }).refine(isAllowedPortalEmail, ALLOWED_EMAIL_MESSAGE),
     password: z
       .string()
       .min(1, 'Please enter your password.')
@@ -39,6 +47,8 @@ export function SignUpForm({
   ...props
 }: React.HTMLAttributes<HTMLFormElement>) {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+  const { auth } = useAuthStore()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,12 +61,17 @@ export function SignUpForm({
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
+    const user = createPortalUser(data.email)
 
-    toast.promise(sleep(2000), {
+    toast.promise(Promise.resolve(), {
       loading: 'Creating account...',
       success: () => {
         setIsLoading(false)
-        return `Account created for ${data.email}.`
+        auth.setUser(user)
+        auth.setAccessToken(createPortalAccessToken(user.email), user.role)
+        navigate({ to: '/', replace: true })
+
+        return `Account created for ${user.email}.`
       },
       error: 'Error',
     })

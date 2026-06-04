@@ -12,17 +12,34 @@ const sampleUser = {
   role: "customer" as const,
 };
 
+function configuredDevToken() {
+  return (
+    (import.meta as unknown as { env: Record<string, string> }).env
+      ?.VITE_GRANVILLE_DEV_TOKEN ?? ""
+  );
+}
+
 describe("useAuthStore", () => {
   beforeEach(() => {
     clearCookies();
     vi.resetModules();
   });
 
-  it("starts with an empty access token when nothing is persisted", async () => {
+  it("starts with the configured dev token when nothing is persisted", async () => {
     const useAuthStore = await importAuthStore();
+    const devToken = configuredDevToken();
 
-    expect(useAuthStore.getState().auth.accessToken).toBe("");
-    expect(useAuthStore.getState().auth.user).toBeNull();
+    expect(useAuthStore.getState().auth.accessToken).toBe(devToken);
+    if (devToken) {
+      expect(useAuthStore.getState().auth.user).toEqual(
+        expect.objectContaining({
+          id: `token:${devToken}`,
+          email: "operator@granville.local",
+        })
+      );
+    } else {
+      expect(useAuthStore.getState().auth.user).toBeNull();
+    }
   });
 
   it("persists access token so a new store instance reads it back", async () => {
@@ -52,6 +69,16 @@ describe("useAuthStore", () => {
     useAuthStore.getState().auth.setUser({ ...sampleUser });
 
     expect(useAuthStore.getState().auth.user).toEqual(sampleUser);
+  });
+
+  it("persists the signed-in user so a new store instance reads it back", async () => {
+    const useAuthStore = await importAuthStore();
+    useAuthStore.getState().auth.setUser({ ...sampleUser });
+
+    vi.resetModules();
+    const useAuthStoreAfterReload = await importAuthStore();
+
+    expect(useAuthStoreAfterReload.getState().auth.user).toEqual(sampleUser);
   });
 
   it("reset clears user and access token and drops persistence", async () => {
