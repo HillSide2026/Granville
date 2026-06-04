@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  id="granville-settlement-reconciliation-definitions"
+  targetNamespace="https://granville.finance/workflows">
+  <bpmn:process id="granville-settlement-reconciliation" name="Settlement Reconciliation Workflow" isExecutable="true">
+    <bpmn:startEvent id="settlement_received" name="Settlement file or webhook received">
+      <bpmn:outgoing>flow_ingest</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:serviceTask id="ingest_statement" name="Ingest settlement statement">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="reconciliation.ingest-statement" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_ingest</bpmn:incoming>
+      <bpmn:outgoing>flow_match</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="match_formance" name="Match against Formance records">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="reconciliation.match-formance" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_match</bpmn:incoming>
+      <bpmn:outgoing>flow_match_gateway</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:exclusiveGateway id="match_gateway" name="Breaks found?">
+      <bpmn:incoming>flow_match_gateway</bpmn:incoming>
+      <bpmn:outgoing>flow_auto_reconcile</bpmn:outgoing>
+      <bpmn:outgoing>flow_manual_breaks</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="auto_reconcile" name="Auto-reconcile exact matches">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="reconciliation.auto-reconcile" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_auto_reconcile</bpmn:incoming>
+      <bpmn:outgoing>flow_publish_status</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:userTask id="manual_break_review" name="Review reconciliation breaks">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_manual_breaks</bpmn:incoming>
+      <bpmn:outgoing>flow_adjustment_gateway</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="adjustment_gateway" name="Adjustment required?">
+      <bpmn:incoming>flow_adjustment_gateway</bpmn:incoming>
+      <bpmn:outgoing>flow_adjust_through_formance</bpmn:outgoing>
+      <bpmn:outgoing>flow_publish_after_review</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="adjust_through_formance" name="Create adjustment through backend/Formance">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="reconciliation.create-formance-adjustment" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_adjust_through_formance</bpmn:incoming>
+      <bpmn:outgoing>flow_publish_after_adjustment</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="publish_portal_status" name="Publish reconciliation status">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="reconciliation.publish-status" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_publish_status</bpmn:incoming>
+      <bpmn:incoming>flow_publish_after_review</bpmn:incoming>
+      <bpmn:incoming>flow_publish_after_adjustment</bpmn:incoming>
+      <bpmn:outgoing>flow_done</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="reconciliation_completed" name="Reconciliation status produced">
+      <bpmn:incoming>flow_done</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="flow_ingest" sourceRef="settlement_received" targetRef="ingest_statement" />
+    <bpmn:sequenceFlow id="flow_match" sourceRef="ingest_statement" targetRef="match_formance" />
+    <bpmn:sequenceFlow id="flow_match_gateway" sourceRef="match_formance" targetRef="match_gateway" />
+    <bpmn:sequenceFlow id="flow_auto_reconcile" sourceRef="match_gateway" targetRef="auto_reconcile">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=breakCount = 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_manual_breaks" sourceRef="match_gateway" targetRef="manual_break_review">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=breakCount &gt; 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_publish_status" sourceRef="auto_reconcile" targetRef="publish_portal_status" />
+    <bpmn:sequenceFlow id="flow_adjustment_gateway" sourceRef="manual_break_review" targetRef="adjustment_gateway" />
+    <bpmn:sequenceFlow id="flow_adjust_through_formance" sourceRef="adjustment_gateway" targetRef="adjust_through_formance">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=adjustmentRequired = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_publish_after_review" sourceRef="adjustment_gateway" targetRef="publish_portal_status">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=adjustmentRequired != true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_publish_after_adjustment" sourceRef="adjust_through_formance" targetRef="publish_portal_status" />
+    <bpmn:sequenceFlow id="flow_done" sourceRef="publish_portal_status" targetRef="reconciliation_completed" />
+  </bpmn:process>
+</bpmn:definitions>

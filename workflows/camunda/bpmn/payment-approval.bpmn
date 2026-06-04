@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  id="granville-payment-approval-definitions"
+  targetNamespace="https://granville.finance/workflows">
+  <bpmn:process id="granville-payment-approval" name="Payment Approval Workflow" isExecutable="true">
+    <bpmn:startEvent id="approval_started" name="Approval required">
+      <bpmn:outgoing>flow_assign_approval</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:businessRuleTask id="approval_routing" name="Route approval task">
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="approval-routing" resultVariable="approvalRouting" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_assign_approval</bpmn:incoming>
+      <bpmn:outgoing>flow_maker_checker</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+
+    <bpmn:serviceTask id="enforce_maker_checker" name="Enforce maker-checker">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="approval.enforce-maker-checker" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_maker_checker</bpmn:incoming>
+      <bpmn:outgoing>flow_human_approval</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:userTask id="human_approval" name="Approve or reject payment">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_human_approval</bpmn:incoming>
+      <bpmn:outgoing>flow_decision_gateway</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="approval_decision_gateway" name="Decision">
+      <bpmn:incoming>flow_decision_gateway</bpmn:incoming>
+      <bpmn:outgoing>flow_approved</bpmn:outgoing>
+      <bpmn:outgoing>flow_rejected</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="write_approval" name="Write approval decision">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="approval.write-decision" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_approved</bpmn:incoming>
+      <bpmn:outgoing>flow_approval_complete</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="write_rejection" name="Write rejection reason">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="approval.write-rejection" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_rejected</bpmn:incoming>
+      <bpmn:outgoing>flow_rejection_complete</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="approval_completed" name="Approved">
+      <bpmn:incoming>flow_approval_complete</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="approval_rejected" name="Rejected">
+      <bpmn:incoming>flow_rejection_complete</bpmn:incoming>
+      <bpmn:terminateEventDefinition />
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="flow_assign_approval" sourceRef="approval_started" targetRef="approval_routing" />
+    <bpmn:sequenceFlow id="flow_maker_checker" sourceRef="approval_routing" targetRef="enforce_maker_checker" />
+    <bpmn:sequenceFlow id="flow_human_approval" sourceRef="enforce_maker_checker" targetRef="human_approval" />
+    <bpmn:sequenceFlow id="flow_decision_gateway" sourceRef="human_approval" targetRef="approval_decision_gateway" />
+    <bpmn:sequenceFlow id="flow_approved" sourceRef="approval_decision_gateway" targetRef="write_approval">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=approvalDecision = "approved"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_rejected" sourceRef="approval_decision_gateway" targetRef="write_rejection">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=approvalDecision = "rejected"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_approval_complete" sourceRef="write_approval" targetRef="approval_completed" />
+    <bpmn:sequenceFlow id="flow_rejection_complete" sourceRef="write_rejection" targetRef="approval_rejected" />
+  </bpmn:process>
+</bpmn:definitions>

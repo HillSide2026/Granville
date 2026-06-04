@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+  id="granville-exception-classification-definitions"
+  name="Granville exception classification"
+  namespace="https://granville.finance/decisions">
+  <decision id="exception-classification" name="Exception classification">
+    <decisionTable id="exception-classification-table" hitPolicy="FIRST">
+      <input id="input-payment-status" label="Payment status">
+        <inputExpression id="input-payment-status-expression" typeRef="string">
+          <text>paymentStatus</text>
+        </inputExpression>
+      </input>
+      <input id="input-provider-status" label="Provider status">
+        <inputExpression id="input-provider-status-expression" typeRef="string">
+          <text>providerStatus</text>
+        </inputExpression>
+      </input>
+      <input id="input-age-minutes" label="Age minutes">
+        <inputExpression id="input-age-minutes-expression" typeRef="number">
+          <text>ageMinutes</text>
+        </inputExpression>
+      </input>
+      <output id="output-exception-type" label="Exception type" name="exceptionType" typeRef="string" />
+      <output id="output-queue" label="Queue" name="operationsQueue" typeRef="string" />
+      <output id="output-severity" label="Severity" name="severity" typeRef="string" />
+      <rule id="exception-classification-failed">
+        <inputEntry><text>"failed"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>"failed_payment"</text></outputEntry>
+        <outputEntry><text>"payments-ops"</text></outputEntry>
+        <outputEntry><text>"high"</text></outputEntry>
+      </rule>
+      <rule id="exception-classification-rejected">
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>"rejected"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>"partner_rejection"</text></outputEntry>
+        <outputEntry><text>"compliance"</text></outputEntry>
+        <outputEntry><text>"high"</text></outputEntry>
+      </rule>
+      <rule id="exception-classification-delayed">
+        <inputEntry><text>"processing"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>&gt;= 1440</text></inputEntry>
+        <outputEntry><text>"delayed_payment"</text></outputEntry>
+        <outputEntry><text>"payments-ops"</text></outputEntry>
+        <outputEntry><text>"medium"</text></outputEntry>
+      </rule>
+      <rule id="exception-classification-unmatched">
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>"unmatched"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>"unmatched_settlement"</text></outputEntry>
+        <outputEntry><text>"reconciliation"</text></outputEntry>
+        <outputEntry><text>"medium"</text></outputEntry>
+      </rule>
+      <rule id="exception-classification-default">
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>"manual_review"</text></outputEntry>
+        <outputEntry><text>"ops"</text></outputEntry>
+        <outputEntry><text>"low"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

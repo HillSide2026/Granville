@@ -50,5 +50,5 @@ export const footerData = {
   ],
   description: "Financial infrastructure for global money movement.",
   footNote:
-    "Granville Finance is a trading name of 174 Canada Inc. Registered Office: 1235 Bay Street, Suite 700, Toronto, Ontario, Canada, M5R 3K4.",
+    "Granville Finance is a trading name of 17409052 Canada Inc. Registered Office: 1235 Bay Street, Suite 700, Toronto, Ontario, Canada, M5R 3K4.",
 };

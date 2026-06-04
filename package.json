@@ -5,6 +5,7 @@
   "scripts": {
     "db:migrate": "node --experimental-strip-types libs/db/migrate.ts",
     "start:api": "node --experimental-strip-types apps/api/src/server.ts",
+    "start:camunda-workers": "node --experimental-strip-types apps/camunda-workers/src/index.ts",
     "test:granville": "node --test --experimental-strip-types test/granville/*.test.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."

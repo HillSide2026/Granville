@@ -5,8 +5,16 @@ export type PortalRole = "customer" | "ops" | "compliance" | "admin";
 
 const BankIcon = createPortalIcon("bank");
 const BudgetIcon = createPortalIcon("budget");
+const AccountingIcon = createPortalIcon("accounting");
+const ApprovalIcon = createPortalIcon("approval");
+const ChatIcon = createPortalIcon("chat");
 const HomeIcon = createPortalIcon("home");
+const MerchantPlatformIcon = createPortalIcon("merchant-platform");
 const PaymentFlowIcon = createPortalIcon("payment-flow");
+const PaymentProcessorIcon = createPortalIcon("processor");
+const ReconciliationIcon = createPortalIcon("reconciliation");
+const RequestsIcon = createPortalIcon("requests");
+const TasksIcon = createPortalIcon("tasks");
 const UsersIcon = createPortalIcon("users");
 
 export function roleLabel(role: PortalRole): string {
@@ -64,22 +72,60 @@ export function getSidebarData(
     navGroups: [
       {
         title: "Workspace",
-        items: [
-          { title: "Overview", url: "/", icon: HomeIcon },
-        ],
+        items: [{ title: "Overview", url: "/", icon: HomeIcon }],
       },
       {
-        title: "Payment operations",
+        title: "Financial Operations",
         items: [
           { title: "Budgets", url: "/budgets", icon: BudgetIcon },
           { title: "Balances", url: "/balances", icon: BankIcon },
-          { title: "Payments", url: "/payments", icon: PaymentFlowIcon },
           { title: "Beneficiaries", url: "/beneficiaries", icon: UsersIcon },
         ],
       },
       {
-        title: "Dashboards",
-        items: [],
+        title: "Payment Operations",
+        items: [
+          { title: "Payment Initiation", url: "/payments", icon: PaymentFlowIcon },
+          { title: "Payment Approval", url: "/approvals", icon: ApprovalIcon, disabled: true },
+          {
+            title: "Reconciliation",
+            url: "/reconciliation",
+            icon: ReconciliationIcon,
+            disabled: true,
+          },
+        ],
+      },
+      {
+        title: "Today",
+        items: [
+          { title: "Requests", url: "/requests", icon: RequestsIcon, disabled: true },
+          { title: "Approvals", url: "/approvals", icon: ApprovalIcon, disabled: true },
+          { title: "Tasks", url: "/tasks", icon: TasksIcon, disabled: true },
+          { title: "Chats", url: "/chats", icon: ChatIcon, disabled: true },
+        ],
+      },
+      {
+        title: "Integrations",
+        items: [
+          {
+            title: "Payment Processor",
+            url: "/integrations/payment-processor",
+            icon: PaymentProcessorIcon,
+            disabled: true,
+          },
+          {
+            title: "Accounting",
+            url: "/integrations/accounting",
+            icon: AccountingIcon,
+            disabled: true,
+          },
+          {
+            title: "Merchant Platform",
+            url: "/integrations/merchant-platform",
+            icon: MerchantPlatformIcon,
+            disabled: true,
+          },
+        ],
       },
     ],
   };

@@ -15,6 +15,12 @@ import type {
   RoutingRule,
   UpdateRoutingRuleInput,
 } from "../../contracts/routing.ts";
+import type {
+  StartWorkflowInput,
+  WorkflowAuditRecord,
+  WorkflowInstanceRecord,
+  WorkflowStatus,
+} from "../../contracts/workflow.ts";
 
 export interface AuditEvent {
   id: string;
@@ -222,6 +228,8 @@ export class InMemoryGranvilleStore {
   readonly providerHealth = new Map<string, ProviderHealth>();
   readonly routingRules = new Map<string, RoutingRule>();
   readonly beneficiaries = new Map<string, Beneficiary>();
+  readonly workflowInstances = new Map<string, WorkflowInstanceRecord>();
+  readonly workflowAuditRecords: WorkflowAuditRecord[] = [];
 
   constructor() {
     this.seedMockProvider();
@@ -826,6 +834,106 @@ export class InMemoryGranvilleStore {
     return clone(event);
   }
 
+  startWorkflow(input: StartWorkflowInput): WorkflowInstanceRecord {
+    const existing = [...this.workflowInstances.values()].find(
+      (workflow) => workflow.businessKey === input.businessKey,
+    );
+    if (existing) {
+      return clone(existing);
+    }
+    const now = timestamp();
+    const workflow: WorkflowInstanceRecord = {
+      id: randomUUID(),
+      workflowKind: input.workflowKind,
+      bpmnProcessId: input.bpmnProcessId,
+      camundaProcessInstanceKey: input.camundaProcessInstanceKey,
+      businessKey: input.businessKey,
+      status: input.camundaProcessInstanceKey ? "running" : "requested",
+      subjectType: input.subjectType,
+      subjectId: input.subjectId,
+      correlationIds: input.correlationIds ?? {},
+      metadata: input.metadata ?? {},
+      startedBy: input.startedBy,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.workflowInstances.set(workflow.id, workflow);
+    const auditPayload = {
+      workflowKind: workflow.workflowKind,
+      bpmnProcessId: workflow.bpmnProcessId,
+      businessKey: workflow.businessKey,
+    };
+    this.workflowAuditRecords.push({
+      id: randomUUID(),
+      workflowInstanceId: workflow.id,
+      action: "workflow.started",
+      actorType: "system",
+      actorId: input.startedBy,
+      payload: auditPayload,
+      createdAt: now,
+    });
+    this.audit("system", "workflow.started", "workflow_instance", workflow.id, auditPayload);
+    return clone(workflow);
+  }
+
+  updateWorkflow(
+    id: string,
+    patch: Partial<
+      Pick<
+        WorkflowInstanceRecord,
+        "camundaProcessInstanceKey" | "correlationIds" | "metadata" | "status" | "completedAt"
+      >
+    >,
+  ): WorkflowInstanceRecord {
+    const existing = this.require(this.workflowInstances, id, "workflow_instance");
+    const nextStatus = patch.status ?? existing.status;
+    const updated: WorkflowInstanceRecord = {
+      ...existing,
+      ...patch,
+      status: nextStatus,
+      correlationIds: { ...existing.correlationIds, ...patch.correlationIds },
+      metadata: { ...existing.metadata, ...patch.metadata },
+      completedAt:
+        patch.completedAt ??
+        (isTerminalWorkflowStatus(nextStatus) && !existing.completedAt
+          ? timestamp()
+          : existing.completedAt),
+      updatedAt: timestamp(),
+    };
+    this.workflowInstances.set(id, updated);
+    return clone(updated);
+  }
+
+  recordWorkflowAudit(
+    workflowInstanceId: string,
+    action: string,
+    actorType: WorkflowAuditRecord["actorType"],
+    actorId?: string,
+    payload: Record<string, unknown> = {},
+  ): WorkflowAuditRecord {
+    const record: WorkflowAuditRecord = {
+      id: randomUUID(),
+      workflowInstanceId,
+      action,
+      actorType,
+      actorId,
+      payload,
+      createdAt: timestamp(),
+    };
+    this.workflowAuditRecords.push(record);
+    this.audit(
+      actorType === "worker" ? "service" : actorType,
+      action,
+      "workflow_instance",
+      workflowInstanceId,
+      {
+        actorId,
+        ...payload,
+      },
+    );
+    return clone(record);
+  }
+
   withIdempotency<T>(
     scope: string,
     key: string | undefined,
@@ -1076,4 +1184,8 @@ export class InMemoryGranvilleStore {
     }
     return value;
   }
+}
+
+function isTerminalWorkflowStatus(status: WorkflowStatus): boolean {
+  return status === "completed" || status === "failed" || status === "cancelled";
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+  id="granville-partner-selection-definitions"
+  name="Granville partner selection"
+  namespace="https://granville.finance/decisions">
+  <decision id="partner-selection" name="Partner selection">
+    <decisionTable id="partner-selection-table" hitPolicy="FIRST">
+      <input id="input-currency" label="Currency">
+        <inputExpression id="input-currency-expression" typeRef="string">
+          <text>currency</text>
+        </inputExpression>
+      </input>
+      <input id="input-country" label="Country">
+        <inputExpression id="input-country-expression" typeRef="string">
+          <text>destinationCountry</text>
+        </inputExpression>
+      </input>
+      <input id="input-rail" label="Rail">
+        <inputExpression id="input-rail-expression" typeRef="string">
+          <text>rail</text>
+        </inputExpression>
+      </input>
+      <output id="output-adapter-key" label="Adapter key" name="adapterKey" typeRef="string" />
+      <output id="output-partner-code" label="Partner code" name="partnerCode" typeRef="string" />
+      <output id="output-requires-live-provider" label="Requires live provider" name="requiresLiveProvider" typeRef="boolean" />
+      <rule id="partner-selection-airwallex-gbp">
+        <inputEntry><text>"GBP"</text></inputEntry>
+        <inputEntry><text>"GB"</text></inputEntry>
+        <inputEntry><text>"LOCAL"</text></inputEntry>
+        <outputEntry><text>"airwallex"</text></outputEntry>
+        <outputEntry><text>"airwallex"</text></outputEntry>
+        <outputEntry><text>true</text></outputEntry>
+      </rule>
+      <rule id="partner-selection-mock-gbp">
+        <inputEntry><text>"GBP"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>"mock-emi"</text></outputEntry>
+        <outputEntry><text>"mock-emi"</text></outputEntry>
+        <outputEntry><text>false</text></outputEntry>
+      </rule>
+      <rule id="partner-selection-mock-usd">
+        <inputEntry><text>"USD"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>"mock-bank"</text></outputEntry>
+        <outputEntry><text>"mock-bank"</text></outputEntry>
+        <outputEntry><text>false</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

@@ -6,11 +6,17 @@ export const iconRegistry = {
   home: "/icons/home/home.svg",
   tasks: "/icons/report/task-list-document-text.svg",
   chat: "/icons/message/chat-messages-bubble-lined.svg",
+  requests: "/icons/payment/receipt-add-plus.svg",
+  approval: "/icons/payment/finance-card-check-approve.svg",
 
   // --- Domain icons (FinPack: Banking & Finance / Analytics) ---
   wallet: "/icons/banking/wallet.svg",
   bank: "/icons/banking/bank.svg",
   "payment-flow": "/icons/payment/payments-transactions.svg",
+  reconciliation: "/icons/arrow/restart-arrows-check.svg",
+  processor: "/icons/security/processor-lock.svg",
+  accounting: "/icons/payment/payments-finance-receipt.svg",
+  "merchant-platform": "/icons/network/servers-databases-rack-check.svg",
   analytics: "/icons/analytics/browser-web-graph-analitycs.svg",
   shield: "/icons/security/shield-protection-secure-check.svg",
   compliance: "/icons/security/fingerprint-bio-protection.svg",

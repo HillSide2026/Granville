@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+  xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+  xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+  id="granville-approval-thresholds-definitions"
+  name="Granville approval thresholds"
+  namespace="https://granville.finance/decisions">
+  <decision id="approval-thresholds" name="Approval thresholds">
+    <decisionTable id="approval-thresholds-table" hitPolicy="FIRST">
+      <input id="input-amount" label="Amount minor units">
+        <inputExpression id="input-amount-expression" typeRef="number">
+          <text>amountMinor</text>
+        </inputExpression>
+      </input>
+      <input id="input-currency" label="Currency">
+        <inputExpression id="input-currency-expression" typeRef="string">
+          <text>currency</text>
+        </inputExpression>
+      </input>
+      <input id="input-risk" label="Risk score">
+        <inputExpression id="input-risk-expression" typeRef="number">
+          <text>riskScore</text>
+        </inputExpression>
+      </input>
+      <output id="output-requires-approval" label="Requires approval" name="requiresApproval" typeRef="boolean" />
+      <output id="output-approval-level" label="Approval level" name="approvalLevel" typeRef="string" />
+      <rule id="approval-thresholds-high-risk">
+        <inputEntry><text>&gt;= 0</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>&gt;= 80</text></inputEntry>
+        <outputEntry><text>true</text></outputEntry>
+        <outputEntry><text>"risk"</text></outputEntry>
+      </rule>
+      <rule id="approval-thresholds-large-gbp">
+        <inputEntry><text>&gt;= 10000000</text></inputEntry>
+        <inputEntry><text>"GBP"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>true</text></outputEntry>
+        <outputEntry><text>"senior_ops"</text></outputEntry>
+      </rule>
+      <rule id="approval-thresholds-large-usd">
+        <inputEntry><text>&gt;= 10000000</text></inputEntry>
+        <inputEntry><text>"USD"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>true</text></outputEntry>
+        <outputEntry><text>"senior_ops"</text></outputEntry>
+      </rule>
+      <rule id="approval-thresholds-standard">
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>false</text></outputEntry>
+        <outputEntry><text>"none"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

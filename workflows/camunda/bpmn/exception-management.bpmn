@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  id="granville-exception-management-definitions"
+  targetNamespace="https://granville.finance/workflows">
+  <bpmn:process id="granville-exception-management" name="Exception Management Workflow" isExecutable="true">
+    <bpmn:startEvent id="exception_detected" name="Exception detected">
+      <bpmn:outgoing>flow_classify</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:businessRuleTask id="classify_exception" name="Classify exception">
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="exception-classification" resultVariable="exceptionPolicy" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_classify</bpmn:incoming>
+      <bpmn:outgoing>flow_assign_queue</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+
+    <bpmn:serviceTask id="assign_operations_queue" name="Assign operations queue">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="exception.assign-queue" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_assign_queue</bpmn:incoming>
+      <bpmn:outgoing>flow_ops_review</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:userTask id="operations_review" name="Review exception">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_ops_review</bpmn:incoming>
+      <bpmn:outgoing>flow_action_gateway</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="exception_action_gateway" name="Selected action">
+      <bpmn:incoming>flow_action_gateway</bpmn:incoming>
+      <bpmn:outgoing>flow_retry</bpmn:outgoing>
+      <bpmn:outgoing>flow_cancel</bpmn:outgoing>
+      <bpmn:outgoing>flow_amend</bpmn:outgoing>
+      <bpmn:outgoing>flow_escalate</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="retry_payment" name="Retry through backend">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="exception.retry-payment" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_retry</bpmn:incoming>
+      <bpmn:outgoing>flow_record_retry</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="cancel_payment" name="Cancel through backend">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="exception.cancel-payment" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_cancel</bpmn:incoming>
+      <bpmn:outgoing>flow_record_cancel</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="amend_payment" name="Amend through backend">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="exception.amend-payment" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_amend</bpmn:incoming>
+      <bpmn:outgoing>flow_record_amend</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="escalate_exception" name="Escalate exception">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="exception.escalate" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_escalate</bpmn:incoming>
+      <bpmn:outgoing>flow_record_escalation</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="record_actions" name="Record audit and status">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="exception.record-action" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_record_retry</bpmn:incoming>
+      <bpmn:incoming>flow_record_cancel</bpmn:incoming>
+      <bpmn:incoming>flow_record_amend</bpmn:incoming>
+      <bpmn:incoming>flow_record_escalation</bpmn:incoming>
+      <bpmn:outgoing>flow_done</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="exception_handled" name="Exception action recorded">
+      <bpmn:incoming>flow_done</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="flow_classify" sourceRef="exception_detected" targetRef="classify_exception" />
+    <bpmn:sequenceFlow id="flow_assign_queue" sourceRef="classify_exception" targetRef="assign_operations_queue" />
+    <bpmn:sequenceFlow id="flow_ops_review" sourceRef="assign_operations_queue" targetRef="operations_review" />
+    <bpmn:sequenceFlow id="flow_action_gateway" sourceRef="operations_review" targetRef="exception_action_gateway" />
+    <bpmn:sequenceFlow id="flow_retry" sourceRef="exception_action_gateway" targetRef="retry_payment">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=exceptionAction = "retry"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_cancel" sourceRef="exception_action_gateway" targetRef="cancel_payment">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=exceptionAction = "cancel"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_amend" sourceRef="exception_action_gateway" targetRef="amend_payment">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=exceptionAction = "amend"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_escalate" sourceRef="exception_action_gateway" targetRef="escalate_exception">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=exceptionAction = "escalate"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_record_retry" sourceRef="retry_payment" targetRef="record_actions" />
+    <bpmn:sequenceFlow id="flow_record_cancel" sourceRef="cancel_payment" targetRef="record_actions" />
+    <bpmn:sequenceFlow id="flow_record_amend" sourceRef="amend_payment" targetRef="record_actions" />
+    <bpmn:sequenceFlow id="flow_record_escalation" sourceRef="escalate_exception" targetRef="record_actions" />
+    <bpmn:sequenceFlow id="flow_done" sourceRef="record_actions" targetRef="exception_handled" />
+  </bpmn:process>
+</bpmn:definitions>

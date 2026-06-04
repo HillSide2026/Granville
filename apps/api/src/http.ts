@@ -204,6 +204,79 @@ export class GranvilleHttpControllers {
         body: this.api.getReconciliationExceptions({ status: query.get("status") ?? undefined }),
       };
     }
+    if (method === "POST" && path === "/workflows") {
+      requireRole(context, "admin:write");
+      const correlationIds = asObject(body.correlationIds);
+      const metadata = asStringMap(asObject(body.metadata));
+      return {
+        statusCode: 201,
+        body: this.api.startWorkflow({
+          workflowKind: String(body.workflowKind) as Parameters<
+            typeof this.api.startWorkflow
+          >[0]["workflowKind"],
+          bpmnProcessId: String(body.bpmnProcessId ?? ""),
+          businessKey: String(body.businessKey ?? context.idempotencyKey ?? ""),
+          subjectType: String(body.subjectType) as Parameters<
+            typeof this.api.startWorkflow
+          >[0]["subjectType"],
+          subjectId: String(body.subjectId ?? ""),
+          correlationIds,
+          metadata,
+          startedBy: context.principal.id,
+          camundaProcessInstanceKey: body.camundaProcessInstanceKey
+            ? String(body.camundaProcessInstanceKey)
+            : undefined,
+        }),
+      };
+    }
+    if (method === "GET" && path === "/workflows") {
+      requireRole(context, "payment:read");
+      return {
+        statusCode: 200,
+        body: this.api.listWorkflows({
+          subjectType: query.get("subjectType") ?? undefined,
+          subjectId: query.get("subjectId") ?? undefined,
+          status: query.get("status") ?? undefined,
+        }),
+      };
+    }
+    if (method === "GET" && parts[0] === "workflows" && parts[1] && !parts[2]) {
+      requireRole(context, "payment:read");
+      return { statusCode: 200, body: required(this.api.getWorkflow(parts[1])) };
+    }
+    if (method === "PATCH" && parts[0] === "workflows" && parts[1] && !parts[2]) {
+      requireRole(context, "admin:write");
+      return {
+        statusCode: 200,
+        body: this.api.updateWorkflow(parts[1], {
+          status: body.status
+            ? (String(body.status) as Parameters<typeof this.api.updateWorkflow>[1]["status"])
+            : undefined,
+          camundaProcessInstanceKey: body.camundaProcessInstanceKey
+            ? String(body.camundaProcessInstanceKey)
+            : undefined,
+          correlationIds: body.correlationIds ? asObject(body.correlationIds) : undefined,
+          metadata: body.metadata ? asStringMap(asObject(body.metadata)) : undefined,
+        }),
+      };
+    }
+    if (method === "POST" && parts[0] === "workflows" && parts[1] && parts[2] === "audit") {
+      requireRole(context, "admin:write");
+      return {
+        statusCode: 201,
+        body: this.api.recordWorkflowAction(
+          parts[1],
+          String(body.action ?? ""),
+          (body.actorType ? String(body.actorType) : "worker") as "system" | "user" | "worker",
+          body.actorId ? String(body.actorId) : context.principal.id,
+          asObject(body.payload),
+        ),
+      };
+    }
+    if (method === "GET" && parts[0] === "workflows" && parts[1] && parts[2] === "audit") {
+      requireRole(context, "payment:read");
+      return { statusCode: 200, body: this.api.getWorkflowAudit(parts[1]) };
+    }
     if (method === "GET" && path === "/admin/audit-events") {
       requireRole(context, "admin:read");
       return { statusCode: 200, body: this.api.getAuditEvents() };
@@ -571,4 +644,12 @@ function asObject(value: unknown): Record<string, unknown> {
     return {};
   }
   return value as Record<string, unknown>;
+}
+
+function asStringMap(value: Record<string, unknown>): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([, entryValue]) => entryValue !== undefined && entryValue !== null)
+      .map(([key, entryValue]) => [key, String(entryValue)]),
+  );
 }

@@ -14,6 +14,11 @@ import type {
   RoutingRule,
   UpdateRoutingRuleInput,
 } from "../../../libs/contracts/routing.ts";
+import type {
+  StartWorkflowInput,
+  WorkflowInstanceRecord,
+  WorkflowStatus,
+} from "../../../libs/contracts/workflow.ts";
 import {
   type AuditEvent,
   type Beneficiary,
@@ -255,6 +260,60 @@ export class GranvilleApi {
 
   getAuditEvents(): AuditEvent[] {
     return [...this.store.auditEvents];
+  }
+
+  startWorkflow(input: StartWorkflowInput): WorkflowInstanceRecord {
+    const workflow = this.store.startWorkflow(input);
+    this.store.audit("service", "workflow.instance_started", "workflow_instance", workflow.id, {
+      workflowKind: workflow.workflowKind,
+      subjectType: workflow.subjectType,
+      subjectId: workflow.subjectId,
+    });
+    return workflow;
+  }
+
+  listWorkflows(filter: { subjectType?: string; subjectId?: string; status?: string } = {}) {
+    return [...this.store.workflowInstances.values()].filter((workflow) => {
+      if (filter.subjectType && workflow.subjectType !== filter.subjectType) return false;
+      if (filter.subjectId && workflow.subjectId !== filter.subjectId) return false;
+      if (filter.status && workflow.status !== filter.status) return false;
+      return true;
+    });
+  }
+
+  getWorkflow(id: string): WorkflowInstanceRecord | undefined {
+    return this.store.workflowInstances.get(id);
+  }
+
+  updateWorkflow(
+    id: string,
+    input: {
+      status?: WorkflowStatus;
+      camundaProcessInstanceKey?: string;
+      correlationIds?: WorkflowInstanceRecord["correlationIds"];
+      metadata?: Record<string, string>;
+    },
+  ): WorkflowInstanceRecord {
+    const workflow = this.store.updateWorkflow(id, input);
+    this.store.recordWorkflowAudit(id, "workflow.updated", "worker", "camunda-worker", {
+      status: input.status,
+      correlationIds: input.correlationIds ?? {},
+    });
+    return workflow;
+  }
+
+  recordWorkflowAction(
+    id: string,
+    action: string,
+    actorType: "system" | "user" | "worker",
+    actorId?: string,
+    payload: Record<string, unknown> = {},
+  ) {
+    return this.store.recordWorkflowAudit(id, action, actorType, actorId, payload);
+  }
+
+  getWorkflowAudit(id: string) {
+    return this.store.workflowAuditRecords.filter((record) => record.workflowInstanceId === id);
   }
 
   // --- Admin methods ---

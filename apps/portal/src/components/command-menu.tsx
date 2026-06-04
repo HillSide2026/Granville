@@ -39,6 +39,7 @@ export function CommandMenu() {
           {sidebarData.navGroups.map((group) => (
             <CommandGroup key={group.title} heading={group.title}>
               {group.items.map((navItem, i) => {
+                if (navItem.disabled) return null
                 if (navItem.url)
                   return (
                     <CommandItem
@@ -55,20 +56,22 @@ export function CommandMenu() {
                     </CommandItem>
                   )
 
-                return navItem.items?.map((subItem, i) => (
-                  <CommandItem
-                    key={`${navItem.title}-${subItem.url}-${i}`}
-                    value={`${navItem.title}-${subItem.url}`}
-                    onSelect={() => {
-                      runCommand(() => navigate({ to: subItem.url }))
-                    }}
-                  >
-                    <div className='flex size-4 items-center justify-center'>
-                      <Icon name='arrow-right' className='size-2 text-muted-foreground/80' />
-                    </div>
-                    {navItem.title} <Icon name='chevron-right' /> {subItem.title}
-                  </CommandItem>
-                ))
+                return navItem.items
+                  ?.filter((subItem) => !subItem.disabled)
+                  .map((subItem, i) => (
+                    <CommandItem
+                      key={`${navItem.title}-${subItem.url}-${i}`}
+                      value={`${navItem.title}-${subItem.url}`}
+                      onSelect={() => {
+                        runCommand(() => navigate({ to: subItem.url }))
+                      }}
+                    >
+                      <div className='flex size-4 items-center justify-center'>
+                        <Icon name='arrow-right' className='size-2 text-muted-foreground/80' />
+                      </div>
+                      {navItem.title} <Icon name='chevron-right' /> {subItem.title}
+                    </CommandItem>
+                  ))
               })}
             </CommandGroup>
           ))}

@@ -12,6 +12,11 @@ import type {
   RoutingRule,
   UpdateRoutingRuleInput,
 } from "../../contracts/routing.ts";
+import type {
+  StartWorkflowInput,
+  WorkflowAuditRecord,
+  WorkflowInstanceRecord,
+} from "../../contracts/workflow.ts";
 import type { SqlClient } from "../../db/client.ts";
 import {
   type AuditEvent,
@@ -113,6 +118,8 @@ export class PostgresGranvilleStore extends InMemoryGranvilleStore {
       idempotencyRows,
       auditRows,
       routingRuleRows,
+      workflowRows,
+      workflowAuditRows,
     ] = await Promise.all([
       this.#q<Provider>(
         `SELECT id, code, display_name AS "displayName", kind, stage, active, metadata,
@@ -245,6 +252,20 @@ export class PostgresGranvilleStore extends InMemoryGranvilleStore {
                 created_at AS "createdAt", updated_at AS "updatedAt"
          FROM routing_rules ORDER BY priority ASC`,
       ),
+      this.#q<WorkflowInstanceRecord>(
+        `SELECT id, workflow_kind AS "workflowKind", bpmn_process_id AS "bpmnProcessId",
+                camunda_process_instance_key AS "camundaProcessInstanceKey",
+                business_key AS "businessKey", status, subject_type AS "subjectType",
+                subject_id AS "subjectId", correlation_ids AS "correlationIds", metadata,
+                started_by AS "startedBy", created_at AS "createdAt", updated_at AS "updatedAt",
+                completed_at AS "completedAt"
+         FROM workflow_instances`,
+      ),
+      this.#q<WorkflowAuditRecord>(
+        `SELECT id, workflow_instance_id AS "workflowInstanceId", action, actor_type AS "actorType",
+                actor_id AS "actorId", payload, created_at AS "createdAt"
+         FROM workflow_audit_records ORDER BY created_at ASC`,
+      ),
     ]);
 
     for (const row of providerRows) this.providers.set(row.id, row);
@@ -313,6 +334,8 @@ export class PostgresGranvilleStore extends InMemoryGranvilleStore {
     }
     for (const row of auditRows) this.auditEvents.push(row);
     for (const row of routingRuleRows) this.routingRules.set(row.id, row);
+    for (const row of workflowRows) this.workflowInstances.set(row.id, row);
+    for (const row of workflowAuditRows) this.workflowAuditRecords.push(row);
 
     if (this.providers.size === 0) {
       await this.#seedMockProviders();
@@ -324,7 +347,12 @@ export class PostgresGranvilleStore extends InMemoryGranvilleStore {
     const now = new Date().toISOString();
     for (const [id, cmd] of this.providerCommandQueue) {
       if (cmd.status === "processing") {
-        this.providerCommandQueue.set(id, { ...cmd, status: "pending", lockedAt: undefined, updatedAt: now });
+        this.providerCommandQueue.set(id, {
+          ...cmd,
+          status: "pending",
+          lockedAt: undefined,
+          updatedAt: now,
+        });
       }
     }
     for (const [id, event] of this.webhooks) {
@@ -1179,6 +1207,108 @@ export class PostgresGranvilleStore extends InMemoryGranvilleStore {
         .then(() => undefined),
     );
     return event;
+  }
+
+  override startWorkflow(input: StartWorkflowInput): WorkflowInstanceRecord {
+    const workflow = super.startWorkflow(input);
+    const initialAudit = this.workflowAuditRecords
+      .filter((record) => record.workflowInstanceId === workflow.id)
+      .at(-1);
+    this.#persist("startWorkflow", async () => {
+      await this.#client.query(
+        `INSERT INTO workflow_instances (
+           id, workflow_kind, bpmn_process_id, camunda_process_instance_key, business_key,
+           status, subject_type, subject_id, correlation_ids, metadata, started_by,
+           created_at, updated_at, completed_at
+         )
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+         ON CONFLICT (business_key) DO NOTHING`,
+        [
+          workflow.id,
+          workflow.workflowKind,
+          workflow.bpmnProcessId,
+          workflow.camundaProcessInstanceKey ?? null,
+          workflow.businessKey,
+          workflow.status,
+          workflow.subjectType,
+          workflow.subjectId,
+          workflow.correlationIds,
+          workflow.metadata,
+          workflow.startedBy ?? null,
+          workflow.createdAt,
+          workflow.updatedAt,
+          workflow.completedAt ?? null,
+        ],
+      );
+      if (initialAudit) {
+        await this.#insertWorkflowAudit(initialAudit);
+      }
+    });
+    return workflow;
+  }
+
+  override updateWorkflow(
+    id: string,
+    patch: Parameters<InMemoryGranvilleStore["updateWorkflow"]>[1],
+  ): WorkflowInstanceRecord {
+    const workflow = super.updateWorkflow(id, patch);
+    this.#persist("updateWorkflow", () =>
+      this.#client
+        .query(
+          `UPDATE workflow_instances
+           SET camunda_process_instance_key = $2, status = $3, correlation_ids = $4,
+               metadata = $5, updated_at = $6, completed_at = $7
+           WHERE id = $1`,
+          [
+            workflow.id,
+            workflow.camundaProcessInstanceKey ?? null,
+            workflow.status,
+            workflow.correlationIds,
+            workflow.metadata,
+            workflow.updatedAt,
+            workflow.completedAt ?? null,
+          ],
+        )
+        .then(() => undefined),
+    );
+    return workflow;
+  }
+
+  override recordWorkflowAudit(
+    workflowInstanceId: string,
+    action: string,
+    actorType: WorkflowAuditRecord["actorType"],
+    actorId?: string,
+    payload: Record<string, unknown> = {},
+  ): WorkflowAuditRecord {
+    const record = super.recordWorkflowAudit(
+      workflowInstanceId,
+      action,
+      actorType,
+      actorId,
+      payload,
+    );
+    this.#persist("recordWorkflowAudit", () => this.#insertWorkflowAudit(record));
+    return record;
+  }
+
+  async #insertWorkflowAudit(record: WorkflowAuditRecord): Promise<void> {
+    await this.#client.query(
+      `INSERT INTO workflow_audit_records (
+         id, workflow_instance_id, action, actor_type, actor_id, payload, created_at
+       )
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       ON CONFLICT (id) DO NOTHING`,
+      [
+        record.id,
+        record.workflowInstanceId,
+        record.action,
+        record.actorType,
+        record.actorId ?? null,
+        record.payload,
+        record.createdAt,
+      ],
+    );
   }
 
   override withIdempotency<T>(

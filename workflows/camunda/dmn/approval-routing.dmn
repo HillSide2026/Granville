@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+  id="granville-approval-routing-definitions"
+  name="Granville approval routing"
+  namespace="https://granville.finance/decisions">
+  <decision id="approval-routing" name="Approval routing">
+    <decisionTable id="approval-routing-table" hitPolicy="FIRST">
+      <input id="input-approval-level" label="Approval level">
+        <inputExpression id="input-approval-level-expression" typeRef="string">
+          <text>approvalLevel</text>
+        </inputExpression>
+      </input>
+      <input id="input-entity-type" label="Entity type">
+        <inputExpression id="input-entity-type-expression" typeRef="string">
+          <text>entityType</text>
+        </inputExpression>
+      </input>
+      <output id="output-candidate-group" label="Candidate group" name="candidateGroup" typeRef="string" />
+      <output id="output-maker-checker" label="Maker checker" name="makerCheckerRequired" typeRef="boolean" />
+      <rule id="approval-routing-risk">
+        <inputEntry><text>"risk"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>"compliance"</text></outputEntry>
+        <outputEntry><text>true</text></outputEntry>
+      </rule>
+      <rule id="approval-routing-senior-ops">
+        <inputEntry><text>"senior_ops"</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>"senior-ops"</text></outputEntry>
+        <outputEntry><text>true</text></outputEntry>
+      </rule>
+      <rule id="approval-routing-corporate">
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>"corporate"</text></inputEntry>
+        <outputEntry><text>"ops"</text></outputEntry>
+        <outputEntry><text>true</text></outputEntry>
+      </rule>
+      <rule id="approval-routing-default">
+        <inputEntry><text>-</text></inputEntry>
+        <inputEntry><text>-</text></inputEntry>
+        <outputEntry><text>"ops"</text></outputEntry>
+        <outputEntry><text>true</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

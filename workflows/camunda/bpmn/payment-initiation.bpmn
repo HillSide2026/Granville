@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  id="granville-payment-initiation-definitions"
+  targetNamespace="https://granville.finance/workflows">
+  <bpmn:process id="granville-payment-initiation" name="Payment Initiation Workflow" isExecutable="true">
+    <bpmn:startEvent id="payment_request_received" name="Payment request received">
+      <bpmn:outgoing>flow_validate_request</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:serviceTask id="validate_request" name="Validate request">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payment.validate-request" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_validate_request</bpmn:incoming>
+      <bpmn:outgoing>flow_check_permissions</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="check_permissions" name="Check permissions and policy">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payment.check-permissions" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_check_permissions</bpmn:incoming>
+      <bpmn:outgoing>flow_create_pending</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="create_pending_payment" name="Create pending payment in backend/Formance">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payment.create-pending" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_create_pending</bpmn:incoming>
+      <bpmn:outgoing>flow_approval_policy</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:businessRuleTask id="approval_policy" name="Evaluate approval threshold">
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="approval-thresholds" resultVariable="approvalPolicy" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_approval_policy</bpmn:incoming>
+      <bpmn:outgoing>flow_requires_approval_gateway</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+
+    <bpmn:exclusiveGateway id="requires_approval_gateway" name="Approval required?">
+      <bpmn:incoming>flow_requires_approval_gateway</bpmn:incoming>
+      <bpmn:outgoing>flow_to_approval</bpmn:outgoing>
+      <bpmn:outgoing>flow_to_partner_selection</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:callActivity id="payment_approval" name="Payment approval">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="granville-payment-approval" propagateAllChildVariables="false" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_to_approval</bpmn:incoming>
+      <bpmn:outgoing>flow_after_approval</bpmn:outgoing>
+    </bpmn:callActivity>
+
+    <bpmn:businessRuleTask id="partner_selection" name="Select regulated partner">
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="partner-selection" resultVariable="partnerSelection" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_to_partner_selection</bpmn:incoming>
+      <bpmn:incoming>flow_after_approval</bpmn:incoming>
+      <bpmn:outgoing>flow_submit_partner</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+
+    <bpmn:serviceTask id="submit_partner" name="Submit payment instruction to partner">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payment.submit-to-partner" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_submit_partner</bpmn:incoming>
+      <bpmn:outgoing>flow_wait_status</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:intermediateCatchEvent id="wait_partner_status" name="Wait for partner status">
+      <bpmn:incoming>flow_wait_status</bpmn:incoming>
+      <bpmn:outgoing>flow_update_formance</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="partner_status_message" />
+    </bpmn:intermediateCatchEvent>
+
+    <bpmn:serviceTask id="update_formance_state" name="Update Formance/backend state">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payment.update-formance-state" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_update_formance</bpmn:incoming>
+      <bpmn:outgoing>flow_completion_gateway</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:exclusiveGateway id="completion_gateway" name="Final status">
+      <bpmn:incoming>flow_completion_gateway</bpmn:incoming>
+      <bpmn:outgoing>flow_completed</bpmn:outgoing>
+      <bpmn:outgoing>flow_failed</bpmn:outgoing>
+      <bpmn:outgoing>flow_manual_review</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:callActivity id="exception_management" name="Exception management">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="granville-exception-management" propagateAllChildVariables="false" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_manual_review</bpmn:incoming>
+      <bpmn:outgoing>flow_failed_after_review</bpmn:outgoing>
+    </bpmn:callActivity>
+
+    <bpmn:endEvent id="payment_completed" name="Completed">
+      <bpmn:incoming>flow_completed</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="payment_failed" name="Failed">
+      <bpmn:incoming>flow_failed</bpmn:incoming>
+      <bpmn:incoming>flow_failed_after_review</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="flow_validate_request" sourceRef="payment_request_received" targetRef="validate_request" />
+    <bpmn:sequenceFlow id="flow_check_permissions" sourceRef="validate_request" targetRef="check_permissions" />
+    <bpmn:sequenceFlow id="flow_create_pending" sourceRef="check_permissions" targetRef="create_pending_payment" />
+    <bpmn:sequenceFlow id="flow_approval_policy" sourceRef="create_pending_payment" targetRef="approval_policy" />
+    <bpmn:sequenceFlow id="flow_requires_approval_gateway" sourceRef="approval_policy" targetRef="requires_approval_gateway" />
+    <bpmn:sequenceFlow id="flow_to_approval" sourceRef="requires_approval_gateway" targetRef="payment_approval">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=approvalPolicy.requiresApproval = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_to_partner_selection" sourceRef="requires_approval_gateway" targetRef="partner_selection">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=approvalPolicy.requiresApproval != true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_after_approval" sourceRef="payment_approval" targetRef="partner_selection" />
+    <bpmn:sequenceFlow id="flow_submit_partner" sourceRef="partner_selection" targetRef="submit_partner" />
+    <bpmn:sequenceFlow id="flow_wait_status" sourceRef="submit_partner" targetRef="wait_partner_status" />
+    <bpmn:sequenceFlow id="flow_update_formance" sourceRef="wait_partner_status" targetRef="update_formance_state" />
+    <bpmn:sequenceFlow id="flow_completion_gateway" sourceRef="update_formance_state" targetRef="completion_gateway" />
+    <bpmn:sequenceFlow id="flow_completed" sourceRef="completion_gateway" targetRef="payment_completed">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=paymentStatus = "completed"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_failed" sourceRef="completion_gateway" targetRef="payment_failed">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=paymentStatus = "failed" or paymentStatus = "cancelled"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_manual_review" sourceRef="completion_gateway" targetRef="exception_management">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=paymentStatus = "manual_review"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_failed_after_review" sourceRef="exception_management" targetRef="payment_failed" />
+  </bpmn:process>
+  <bpmn:message id="partner_status_message" name="partner-status-update" />
+</bpmn:definitions>
