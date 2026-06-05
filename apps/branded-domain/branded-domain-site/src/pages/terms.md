@@ -1,83 +1,164 @@
 ---
-title: 'Terms of Use'
+title: 'Website Terms'
 layout: '~/layouts/MarkdownLayout.astro'
 ---
 
-_Last updated_: May 18, 2026
+_Last Updated_: May 18, 2026
 
-These Terms of Use govern your use of the Granville website. They do not replace any separate platform agreement, onboarding document, order form, or other contract that may apply if you become a Granville customer or counterparty.
+## Introduction
 
-## Who we are
+These Website Terms govern your access to and use of the Granville Finance website and its public-facing content.
 
-Granville Finance is a trading name of **17409052 Canada Inc.** In these Terms, "Granville", "we", "us", and "our" refer to that entity unless a page, agreement, or product disclosure states otherwise.
+These Website Terms apply only to the website and related public-facing content. If you access, register for, or use any Granville platform, application, product, service, API, portal, customer environment, or other offering (collectively, the "Platform"), your use of the Platform will also be subject to Granville's Terms of Use and any additional agreements, disclosures, policies, partner terms, or other documents that may apply.
 
-## Website purpose
+These Website Terms do not govern the provision of Platform services and do not create any obligation on Granville to provide products, services, access, onboarding, approval, or any other relationship to any person.
 
-This website is provided for general information, product positioning, and contact or sign-up routing. It is not a banking portal, brokerage portal, consumer wallet, or deposit account interface unless a specific product page or authenticated application states otherwise.
+By accessing or using this website, you agree to these Website Terms. If you do not agree, you must not access or use the website.
 
-## Acceptance of these Terms
+## Who We Are
 
-By accessing or using this website, you agree to these Terms. If you do not agree, do not use the website.
+Granville Finance is a trading name of **17409052 Canada Inc.**
 
-## Eligibility and lawful use
+In these Website Terms, "Granville", "we", "us", and "our" refer to that entity and, where applicable, its affiliates, directors, officers, employees, contractors, service providers, agents, successors, and assigns.
 
-You may use the website only in compliance with applicable law. You may not:
+## Purpose of This Website
 
-- use the website in a way that is unlawful, fraudulent, abusive, or misleading
-- interfere with the website's operation or security
-- attempt to gain unauthorized access to systems, data, or accounts
-- copy, scrape, or reuse website content in a way that violates applicable law or our rights
-- represent that you are Granville, affiliated with Granville, or authorized by Granville when you are not
+This website is provided for general information, product descriptions, educational content, business communications, marketing, contact requests, and onboarding inquiries.
 
-## Sign-up and access
+This website is not a banking portal, brokerage portal, payment account, deposit account, wallet, custody platform, transaction execution platform, or regulated financial services interface unless expressly stated otherwise within an authenticated environment.
 
-Any sign-up path, onboarding path, or contact flow on this website does not guarantee approval, account creation, product eligibility, or service availability. Access to services may depend on:
+Content on this website is intended to provide a general overview of Granville, its products, services, capabilities, partners, and business activities. Information may be incomplete, simplified, subject to change, or applicable only in certain jurisdictions or circumstances.
 
-- jurisdiction
-- use case
-- internal approval
-- due diligence and onboarding
-- fraud, sanctions, AML, or other compliance review
-- third-party provider or partner availability
+Nothing on this website constitutes or should be interpreted as an offer, solicitation, recommendation, endorsement, guarantee, commitment, promise, approval, or representation that any product, service, feature, functionality, partnership, integration, regulatory approval, or business relationship is available or will become available to you.
 
-## No financial, legal, or regulatory advice
+## Regulatory Information
 
-Content on this website is provided for general informational purposes only. It is not legal advice, investment advice, tax advice, accounting advice, regulatory advice, or a commitment to provide a service on any particular terms.
+Granville has submitted an application for registration as a money services business with the Financial Transactions and Reports Analysis Centre of Canada (FINTRAC). Granville has also submitted an application under the Retail Payment Activities Act with the Bank of Canada.
 
-## Accuracy and availability
+Those applications remain subject to regulatory review and approval.
 
-We try to keep the website accurate and current, but we do not guarantee that all content is complete, current, or error-free. We may change, suspend, or remove any part of the website at any time without notice.
+Nothing on this website should be interpreted as a statement or representation that Granville is registered, licensed, authorized, approved, supervised, endorsed, or regulated by any governmental, regulatory, or supervisory authority except to the extent expressly stated by Granville in writing.
 
-## Third-party links and services
+## No Reliance
 
-The website may include links to third-party websites, providers, or tools. Granville does not control those third-party properties and is not responsible for their content, availability, or privacy and security practices.
+You are responsible for evaluating any information made available on this website.
 
-## Intellectual property
+You should not rely on this website as the basis for legal, regulatory, tax, accounting, financial, investment, treasury, operational, commercial, or business decisions.
 
-Unless otherwise stated, the website and its content, design, branding, text, graphics, and underlying materials are owned by Granville or its licensors and are protected by applicable intellectual property laws.
+Any action you take or decision you make based on information available on this website is taken entirely at your own risk.
 
-You may view and print reasonable excerpts for internal informational use. You may not reproduce, modify, distribute, republish, or commercially exploit website content without permission, except as allowed by law.
+Granville is not responsible for any loss, liability, cost, damage, or consequence arising from your reliance on information contained on this website.
 
-## Disclaimers
+## Eligibility and Lawful Use
 
-The website is provided on an "as is" and "as available" basis. To the maximum extent permitted by law, Granville disclaims warranties of any kind, whether express, implied, statutory, or otherwise, including implied warranties of merchantability, fitness for a particular purpose, title, non-infringement, and uninterrupted or error-free availability.
+You may use this website only in compliance with applicable laws.
 
-## Limitation of liability
+You must not use the website in a way that is unlawful, fraudulent, deceptive, misleading, abusive, harmful, or intended to interfere with the operation, security, integrity, or availability of the website.
 
-To the maximum extent permitted by law, Granville will not be liable for indirect, incidental, consequential, special, exemplary, or punitive damages arising out of or related to your use of, or inability to use, the website, even if advised of the possibility of those damages.
+You must not attempt to gain unauthorized access to any system, network, account, database, software, or information connected to the website.
 
-Nothing in these Terms excludes liability that cannot be excluded under applicable law.
+You must not scrape, harvest, extract, copy, reproduce, monitor, index, republish, distribute, or otherwise reuse website content, data, or materials except as permitted by applicable law or with our prior written consent.
+
+You must not represent that you are affiliated with, endorsed by, acting on behalf of, or authorized by Granville unless expressly authorized in writing.
+
+## Sign-Up, Contact Requests, and Onboarding
+
+Submitting a contact request, requesting information, booking a meeting, joining a waitlist, completing an onboarding form, creating a profile, or otherwise communicating with Granville does not create a customer relationship and does not guarantee approval, onboarding, account creation, product access, pricing, service availability, or eligibility.
+
+Any future relationship with Granville may be subject to identity verification, ownership verification, due diligence, compliance review, anti-money laundering review, sanctions screening, fraud review, commercial review, partner approval, jurisdictional restrictions, regulatory requirements, and other criteria determined by Granville or its partners.
+
+Granville may decline to proceed with any person, business, application, inquiry, onboarding request, or commercial opportunity at any time and is not required to provide a reason for doing so.
+
+## Third-Party Services and Links
+
+This website may contain links to, references to, integrations with, or information regarding third-party websites, products, services, institutions, providers, software, or content.
+
+Granville does not control and is not responsible for any third-party website, service, provider, institution, content, security practice, privacy practice, availability, accuracy, performance, or conduct.
+
+Any interaction with a third party is solely between you and that third party.
+
+Granville is not responsible for any loss, damage, delay, interruption, error, dispute, claim, or liability arising from any third-party service, provider, website, or content.
+
+## Intellectual Property
+
+The website and all associated content, software, branding, logos, trademarks, service marks, graphics, designs, text, layouts, documentation, materials, and intellectual property are owned by Granville or its licensors and are protected by applicable laws.
+
+You may view the website solely for your own lawful informational purposes.
+
+Except as permitted by law, you may not copy, reproduce, modify, distribute, publish, display, transmit, create derivative works from, sell, license, or otherwise exploit any portion of the website without Granville's prior written consent.
+
+All rights not expressly granted are reserved.
+
+## Availability and Changes
+
+Granville may change, update, suspend, restrict, discontinue, remove, replace, or modify any content, feature, page, product description, service description, functionality, integration, or capability described on this website at any time and without notice.
+
+Granville does not guarantee that the website will be available at any particular time or for any particular duration.
+
+The website may be interrupted, delayed, restricted, unavailable, degraded, or terminated for operational, technical, commercial, legal, compliance, security, maintenance, or other reasons.
+
+Granville has no obligation to maintain any content or continue offering any product, feature, integration, capability, service, or functionality described on this website.
+
+## Forward-Looking Statements
+
+This website may contain references to anticipated products, services, features, functionality, integrations, partnerships, regulatory approvals, business plans, development plans, roadmaps, timelines, or future capabilities.
+
+Such statements are provided for informational purposes only and are subject to change without notice.
+
+Granville does not undertake any obligation to deliver, launch, maintain, obtain, or make available any product, service, feature, functionality, integration, partnership, regulatory approval, or future capability described on this website.
+
+## No Advice
+
+Nothing on this website constitutes legal advice, regulatory advice, compliance advice, accounting advice, audit advice, tax advice, investment advice, financial advice, treasury advice, or professional advice of any kind.
+
+Nothing on this website creates a fiduciary relationship, advisory relationship, agency relationship, partnership, joint venture, employment relationship, or client relationship.
+
+You should obtain independent professional advice before making decisions based on information available on this website.
+
+## Disclaimer of Warranties
+
+THE WEBSITE IS PROVIDED ON AN "AS IS", "AS AVAILABLE", AND "WITH ALL FAULTS" BASIS.
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, GRANVILLE DISCLAIMS ALL REPRESENTATIONS, WARRANTIES, CONDITIONS, GUARANTEES, AND UNDERTAKINGS OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE.
+
+WITHOUT LIMITING THE FOREGOING, GRANVILLE DOES NOT WARRANT THAT THE WEBSITE WILL BE AVAILABLE, ACCURATE, COMPLETE, CURRENT, RELIABLE, SECURE, ERROR-FREE, UNINTERRUPTED, SUITABLE FOR ANY PARTICULAR PURPOSE, OR FREE FROM DEFECTS, VULNERABILITIES, VIRUSES, OR OTHER HARMFUL COMPONENTS.
+
+GRANVILLE DOES NOT WARRANT THAT ANY PRODUCT, SERVICE, FEATURE, FUNCTIONALITY, INTEGRATION, PARTNERSHIP, COMMERCIAL ARRANGEMENT, REGULATORY APPROVAL, OR FUTURE CAPABILITY REFERENCED ON THIS WEBSITE WILL BE AVAILABLE OR ACHIEVED.
+
+YOUR USE OF THE WEBSITE IS ENTIRELY AT YOUR OWN RISK.
+
+## Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, GRANVILLE WILL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, PUNITIVE, OR AGGRAVATED DAMAGES.
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, GRANVILLE WILL NOT BE LIABLE FOR ANY LOSS OF PROFITS, REVENUE, BUSINESS, CUSTOMERS, OPPORTUNITIES, GOODWILL, REPUTATION, DATA, INFORMATION, OR EXPECTED SAVINGS ARISING OUT OF OR RELATING TO THE WEBSITE OR ITS CONTENT.
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, GRANVILLE'S TOTAL AGGREGATE LIABILITY ARISING OUT OF OR RELATING TO THE WEBSITE OR THESE WEBSITE TERMS WILL NOT EXCEED CAD $100.
+
+Nothing in these Website Terms excludes or limits liability that cannot lawfully be excluded or limited.
+
+## Indemnity
+
+You agree to indemnify and hold harmless Granville from and against any claim, demand, action, proceeding, investigation, liability, loss, damage, penalty, fine, cost, or expense, including reasonable legal fees, arising out of or relating to your use of the website, your breach of these Website Terms, your violation of applicable law, or your infringement of the rights of any person.
 
 ## Privacy
 
-Your use of the website is also subject to our [Privacy Policy](/privacy) and [Cookie Notice](/cookie-notice).
+Your use of the website is also subject to our [Privacy Policy](/privacy) and [Cookie Notice](/cookie-notice), each of which may be updated from time to time.
 
-## Changes to these Terms
+## Changes to These Website Terms
 
-We may update these Terms from time to time. The updated version will be posted on this page with a revised "Last updated" date. Your continued use of the website after an update becomes effective constitutes acceptance of the revised Terms.
+We may update these Website Terms at any time.
+
+The updated version will be posted on this page with a revised "Last Updated" date.
+
+Your continued use of the website after updated Website Terms become effective constitutes acceptance of the revised Website Terms.
+
+## Governing Law
+
+These Website Terms are governed by the laws of the Province of Ontario and the federal laws of Canada applicable therein.
+
+You irrevocably submit to the exclusive jurisdiction of the courts located in Toronto, Ontario in connection with any dispute arising out of or relating to these Website Terms or the website.
 
 ## Contact
 
-Questions about these Terms may be sent to:
-
-- Contact details published on the Contact page
+Questions regarding these Website Terms may be submitted using the contact information published on our [Contact page](/contact).
