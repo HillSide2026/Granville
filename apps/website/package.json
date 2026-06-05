@@ -1,5 +1,5 @@
 {
-  "name": "@granville/branded-domain-site",
+  "name": "@granville/website",
   "version": "1.0.0-beta.62",
   "description": "Granville branded domain Astro site adapted from AstroWind.",
   "type": "module",

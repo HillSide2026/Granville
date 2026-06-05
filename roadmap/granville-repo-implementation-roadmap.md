@@ -39,7 +39,7 @@ third_party/formance-stack
 
 As of May 22, 2026:
 
-- the public marketing and legal site is implemented under `apps/branded-domain/`
+- the public marketing and legal site is implemented under `apps/website/`
 - the customer-facing portal is implemented under `apps/portal/` as a Vite, React, TypeScript, TanStack Router, and shadcn/ui application
 - the portal (Track 1 complete 2026-05-30) includes: Dashboard, Budgets, Wallets (mpcium stub), Balances, Payments (outbound), Sales (inbound), FX (access-request state), Settings; operator features (Compliance, Approvals, Cards) removed from the customer portal — see [roadmap/portal-roadmap.md](portal-roadmap.md)
 - the mock EMI Version 1 flow is implemented through Granville-owned API, orchestration, routing, provider runtime, ledger writer, webhook processing, reconciliation, audit, admin operations, and reporting boundaries

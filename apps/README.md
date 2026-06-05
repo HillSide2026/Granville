@@ -11,7 +11,7 @@ frontend applications and the backend services that power them.
 |---|---|---|
 | `portal/` | End-customer self-serve portal (Budgets, Payments, Sales, FX, Wallets) | React · Vite · TanStack Router |
 | `ops-ui/` | Internal operator console (KYC, approvals, feature provisioning) | React · Vite · TanStack Router — stub |
-| `branded-domain/` | Public-facing marketing and legal site | — |
+| `website/` | Public-facing marketing and legal site | Astro · Tailwind CSS |
 
 ---
 

@@ -152,7 +152,7 @@ with no visual distinction. The fix is to split at the top level:
 web/              ← frontend apps
   portal/
   ops-ui/
-  branded-domain/
+  website/
 services/         ← backend services
   api/
   orchestrator/
@@ -167,7 +167,7 @@ libs/             ← shared (unchanged)
 
 | # | Item | Notes |
 |---|---|---|
-| 1 | Move `apps/portal`, `apps/ops-ui`, `apps/branded-domain` → `web/` | Update all internal import paths and tsconfig references |
+| 1 | Move `apps/portal`, `apps/ops-ui`, `apps/website` → `web/` | Update all internal import paths and tsconfig references |
 | 2 | Move backend services → `services/` | Update all internal import paths and tsconfig references |
 | 3 | Update pnpm workspace config | `pnpm-workspace.yaml` globs need updating |
 | 4 | Update Dockerfile and any CI/CD references | Ensure build paths resolve correctly |

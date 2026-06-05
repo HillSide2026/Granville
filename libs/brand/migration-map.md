@@ -4,7 +4,7 @@ This map turns Stage 1 brand decisions into implementation guidance for Stage 2.
 
 ## App Ownership
 
-- `apps/branded-domain/branded-domain-site`: public marketing and legal website.
+- `apps/website`: public marketing and legal website.
 - `apps/portal`: unauthenticated auth pages and authenticated Granville Payments Platform.
 
 ## Naming Map

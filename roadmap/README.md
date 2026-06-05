@@ -155,7 +155,7 @@ apps/
   reconciler/           Reconciliation engine
   ops-ui/               Internal operator console (React/Vite/Shadcn — stub)
   portal/               End-customer portal — Budgets, Payments, Sales, Wallets, Balances, FX (React/Vite/Shadcn)
-  branded-domain/       Public Granville Finance marketing site (Astro)
+  website/              Public Granville Finance marketing site (Astro)
 
 libs/
   brand/                Shared design system tokens and brand spec

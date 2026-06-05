@@ -113,7 +113,7 @@ granville/
 
 ## Current Application Surfaces
 
-- [apps/branded-domain/](/Users/matthewajlevinelaw/Repos/Granville/apps/branded-domain) is the public marketing and legal site.
+- [apps/website/](/Users/matthewajlevinelaw/Repos/Granville/apps/website) is the public marketing and legal site.
 - [apps/portal/](/Users/matthewajlevinelaw/Repos/Granville/apps/portal) is the standalone customer-facing authenticated portal shell.
 - [apps/api/](/Users/matthewajlevinelaw/Repos/Granville/apps/api) is the Granville customer-facing API boundary.
 - [apps/ops-ui/](/Users/matthewajlevinelaw/Repos/Granville/apps/ops-ui) is the internal operations console.
