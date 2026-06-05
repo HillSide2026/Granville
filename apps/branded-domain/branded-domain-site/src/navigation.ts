@@ -2,21 +2,8 @@ import { granville } from "./data/granville";
 import { getPermalink } from "./utils/permalinks";
 
 export const headerData = {
-  links: [
-    {
-      text: "Products",
-      href: getPermalink("/#platform"),
-    },
-    {
-      text: "Blog",
-      href: getPermalink("/blog"),
-    },
-    {
-      text: "Contact",
-      href: getPermalink("/contact"),
-    },
-  ],
-  actions: [{ text: "Request access", href: granville.requestAccessUrl }],
+  links: [],
+  actions: [{ text: "Request access", href: granville.requestAccessUrl, target: "_blank" }],
 };
 
 export const footerData = {

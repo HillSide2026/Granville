@@ -1,8 +1,6 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
-import Features2 from '~/components/widgets/Features2.astro';
-import CallToAction from '~/components/widgets/CallToAction.astro';
 
 import { granville } from '~/data/granville';
 
@@ -19,36 +17,212 @@ const metadata = {
     callToAction={{
       variant: 'primary',
       text: 'Request access',
-      href: granville.appSignUpUrl,
+      href: granville.requestAccessUrl,
       target: '_blank',
     }}
   />
 
-  <Features2
-    title="Where to send your inquiry"
-    items={[
-      {
-        title: 'General',
-        description: `For product questions and introductions: ${granville.generalEmail}.`,
-        icon: 'tabler:mail',
-      },
-      {
-        title: 'Sales and onboarding',
-        description: `For platform access, commercials, and onboarding conversations: ${granville.salesEmail}.`,
-        icon: 'tabler:briefcase',
-      },
-      {
-        title: 'Privacy and legal',
-        description: `For privacy, legal, or compliance matters: ${granville.privacyEmail} and ${granville.legalEmail}.`,
-        icon: 'tabler:shield-lock',
-      },
-    ]}
-  />
+  <section class="relative not-prose">
+    <div class="absolute inset-0 pointer-events-none -z-[1]" aria-hidden="true">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(184,198,214,0.05),transparent_40%)]"></div>
+    </div>
 
-  <CallToAction
-    tagline="Company"
-    title={granville.tradingName}
-    subtitle={`${granville.tradingName} is a trading name of ${granville.companyName}. Service availability may depend on jurisdiction, onboarding, and compliance review.`}
-    actions={[{ variant: 'primary', text: 'Request access', href: granville.appSignUpUrl, target: '_blank' }]}
-  />
+    <div class="relative mx-auto max-w-7xl px-4 md:px-6 py-12 md:py-16 lg:py-20">
+      <div class="mx-auto max-w-[720px]">
+        <div
+          class="rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(10,22,52,0.65)] p-8 md:p-10 backdrop-blur-sm"
+        >
+          <!-- Success state -->
+          <div id="contact-success" class="hidden py-12 text-center">
+            <p class="text-xl font-semibold text-page">Thanks — we'll be in touch shortly.</p>
+          </div>
+
+          <!-- Form -->
+          <div id="contact-form-wrap">
+            <h2 class="mb-2 text-2xl font-semibold tracking-tight text-page">Contact us</h2>
+            <p class="mb-8 text-base text-muted">
+              Tell us a bit about your organization and what you are looking to orchestrate.
+            </p>
+
+            <form id="contact-form" novalidate>
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div class="flex flex-col gap-1.5">
+                  <label for="cf-name" class="text-sm font-medium text-default">
+                    Full name <span class="text-secondary" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="cf-name"
+                    name="name"
+                    type="text"
+                    autocomplete="name"
+                    required
+                    placeholder="Jane Smith"
+                    class="cf-input"
+                  />
+                  <span class="cf-error hidden text-xs text-red-400" aria-live="polite">
+                    Please enter your full name.
+                  </span>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                  <label for="cf-email" class="text-sm font-medium text-default">
+                    Work email <span class="text-secondary" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="cf-email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                    placeholder="jane@company.com"
+                    class="cf-input"
+                  />
+                  <span class="cf-error hidden text-xs text-red-400" aria-live="polite">
+                    Please enter a valid email address.
+                  </span>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                  <label for="cf-company" class="text-sm font-medium text-default">
+                    Company <span class="text-secondary" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="cf-company"
+                    name="company"
+                    type="text"
+                    autocomplete="organization"
+                    required
+                    placeholder="Acme Corp"
+                    class="cf-input"
+                  />
+                  <span class="cf-error hidden text-xs text-red-400" aria-live="polite">
+                    Please enter your company name.
+                  </span>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                  <label for="cf-role" class="text-sm font-medium text-default">Role / title</label>
+                  <input
+                    id="cf-role"
+                    name="role"
+                    type="text"
+                    autocomplete="organization-title"
+                    placeholder="Chief Financial Officer"
+                    class="cf-input"
+                  />
+                </div>
+              </div>
+
+              <div class="mt-5 flex flex-col gap-1.5">
+                <label for="cf-inquiry" class="text-sm font-medium text-default">
+                  Inquiry type <span class="text-secondary" aria-hidden="true">*</span>
+                </label>
+                <select id="cf-inquiry" name="inquiry_type" required class="cf-input">
+                  <option value="">Select an inquiry type</option>
+                  <option value="platform_access">Platform access</option>
+                  <option value="partnership">Partnership</option>
+                  <option value="compliance_legal">Compliance / legal</option>
+                  <option value="general">General</option>
+                </select>
+                <span class="cf-error hidden text-xs text-red-400" aria-live="polite">
+                  Please select an inquiry type.
+                </span>
+              </div>
+
+              <div class="mt-5 flex flex-col gap-1.5">
+                <label for="cf-message" class="text-sm font-medium text-default">
+                  Message <span class="text-secondary" aria-hidden="true">*</span>
+                </label>
+                <textarea
+                  id="cf-message"
+                  name="message"
+                  rows="5"
+                  required
+                  placeholder="Tell us about your use case, payment volumes, or what you are looking to orchestrate..."
+                  class="cf-input resize-none"></textarea>
+                <span class="cf-error hidden text-xs text-red-400" aria-live="polite">
+                  Please enter a message.
+                </span>
+              </div>
+
+              <div class="mt-8">
+                <button type="submit" class="btn-primary px-8">Send inquiry</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </Layout>
+
+<style>
+  .cf-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: var(--aw-color-text-page);
+    outline: none;
+    transition:
+      border-color 150ms,
+      background-color 150ms,
+      box-shadow 150ms;
+  }
+  .cf-input::placeholder {
+    color: rgba(255, 255, 255, 0.28);
+  }
+  .cf-input:focus {
+    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+  .cf-input.cf-invalid {
+    border-color: rgba(248, 113, 113, 0.6);
+  }
+  select.cf-input option {
+    background: #07111f;
+    color: #f8fafc;
+  }
+</style>
+
+<script>
+  type ValidatableField = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const formWrap = document.getElementById('contact-form-wrap') as HTMLElement;
+  const successEl = document.getElementById('contact-success') as HTMLElement;
+
+  function validateField(field: ValidatableField): boolean {
+    const wrap = field.closest('.flex.flex-col');
+    const errorEl = wrap?.querySelector<HTMLElement>('.cf-error');
+    const valid = field.checkValidity();
+    field.classList.toggle('cf-invalid', !valid);
+    errorEl?.classList.toggle('hidden', valid);
+    return valid;
+  }
+
+  form.querySelectorAll<ValidatableField>('[required]').forEach((field) => {
+    field.addEventListener('blur', () => validateField(field));
+    field.addEventListener('input', () => {
+      if (field.classList.contains('cf-invalid')) validateField(field);
+    });
+    field.addEventListener('change', () => {
+      if (field.classList.contains('cf-invalid')) validateField(field);
+    });
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fields = [...form.querySelectorAll<ValidatableField>('[required]')];
+    const allValid = fields.map(validateField).every(Boolean);
+    if (!allValid) {
+      fields.find((f) => !f.checkValidity())?.focus();
+      return;
+    }
+    formWrap.classList.add('hidden');
+    successEl.classList.remove('hidden');
+  });
+</script>

@@ -105,8 +105,9 @@ export const homepage = {
       href: granville.requestAccessUrl,
     },
     secondaryAction: {
-      text: "Contact Us",
-      href: "/contact",
+      text: "Request Access",
+      href: granville.appSignUpUrl,
+      target: "_blank",
     },
   },
 } as const;

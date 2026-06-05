@@ -1,8 +1,8 @@
 export const granville = {
   siteName: "Granville Finance",
   siteUrl: "https://granville.finance",
-  appSignUpUrl: "https://app.granville.finance/sign-up",
-  requestAccessUrl: "/contact",
+  appSignUpUrl: "https://portal.granvillefinance.ca/sign-up",
+  requestAccessUrl: "https://portal.granvillefinance.ca/sign-up",
   companyName: "17409052 Canada Inc.",
   tradingName: "Granville Finance",
   generalEmail: "{{GENERAL_EMAIL}}",
