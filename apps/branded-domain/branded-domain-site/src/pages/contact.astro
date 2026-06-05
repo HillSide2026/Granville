@@ -16,9 +16,8 @@ const metadata = {
     subtitle="Use this page for sales, platform access, partnerships, compliance, privacy, or general product questions."
     callToAction={{
       variant: 'primary',
-      text: 'Request access',
-      href: granville.requestAccessUrl,
-      target: '_blank',
+      text: 'Contact us',
+      href: '#contact-form-wrap',
     }}
   />
 
@@ -81,51 +80,23 @@ const metadata = {
                     Please enter a valid email address.
                   </span>
                 </div>
-
-                <div class="flex flex-col gap-1.5">
-                  <label for="cf-company" class="text-sm font-medium text-default">
-                    Company <span class="text-secondary" aria-hidden="true">*</span>
-                  </label>
-                  <input
-                    id="cf-company"
-                    name="company"
-                    type="text"
-                    autocomplete="organization"
-                    required
-                    placeholder="Acme Corp"
-                    class="cf-input"
-                  />
-                  <span class="cf-error hidden text-xs text-red-400" aria-live="polite">
-                    Please enter your company name.
-                  </span>
-                </div>
-
-                <div class="flex flex-col gap-1.5">
-                  <label for="cf-role" class="text-sm font-medium text-default">Role / title</label>
-                  <input
-                    id="cf-role"
-                    name="role"
-                    type="text"
-                    autocomplete="organization-title"
-                    placeholder="Chief Financial Officer"
-                    class="cf-input"
-                  />
-                </div>
               </div>
 
               <div class="mt-5 flex flex-col gap-1.5">
-                <label for="cf-inquiry" class="text-sm font-medium text-default">
-                  Inquiry type <span class="text-secondary" aria-hidden="true">*</span>
+                <label for="cf-company" class="text-sm font-medium text-default">
+                  Company <span class="text-secondary" aria-hidden="true">*</span>
                 </label>
-                <select id="cf-inquiry" name="inquiry_type" required class="cf-input">
-                  <option value="">Select an inquiry type</option>
-                  <option value="platform_access">Platform access</option>
-                  <option value="partnership">Partnership</option>
-                  <option value="compliance_legal">Compliance / legal</option>
-                  <option value="general">General</option>
-                </select>
+                <input
+                  id="cf-company"
+                  name="company"
+                  type="text"
+                  autocomplete="organization"
+                  required
+                  placeholder="Acme Corp"
+                  class="cf-input"
+                />
                 <span class="cf-error hidden text-xs text-red-400" aria-live="polite">
-                  Please select an inquiry type.
+                  Please enter your company name.
                 </span>
               </div>
 
