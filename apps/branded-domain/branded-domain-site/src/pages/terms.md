@@ -23,21 +23,13 @@ In these Website Terms, "Granville", "we", "us", and "our" refer to that entity 
 
 ## Purpose of This Website
 
-This website is provided for general information, product descriptions, educational content, business communications, marketing, contact requests, and onboarding inquiries.
+This website is provided solely for general informational, educational, marketing, and business development purposes.
 
 This website is not a banking portal, brokerage portal, payment account, deposit account, wallet, custody platform, transaction execution platform, or regulated financial services interface unless expressly stated otherwise within an authenticated environment.
 
-Content on this website is intended to provide a general overview of Granville, its products, services, capabilities, partners, and business activities. Information may be incomplete, simplified, subject to change, or applicable only in certain jurisdictions or circumstances.
+Content on this website is intended to provide a general overview of Granville, its products, services, capabilities, partners, and business activities. Information on this website may be incomplete, simplified, summary-level, preliminary, or subject to change without notice. The website is not intended to provide comprehensive information about Granville, its products, services, partners, capabilities, eligibility requirements, commercial terms, or future plans.
 
-Nothing on this website constitutes or should be interpreted as an offer, solicitation, recommendation, endorsement, guarantee, commitment, promise, approval, or representation that any product, service, feature, functionality, partnership, integration, regulatory approval, or business relationship is available or will become available to you.
-
-## Regulatory Information
-
-Granville has submitted an application for registration as a money services business with the Financial Transactions and Reports Analysis Centre of Canada (FINTRAC). Granville has also submitted an application under the Retail Payment Activities Act with the Bank of Canada.
-
-Those applications remain subject to regulatory review and approval.
-
-Nothing on this website should be interpreted as a statement or representation that Granville is registered, licensed, authorized, approved, supervised, endorsed, or regulated by any governmental, regulatory, or supervisory authority except to the extent expressly stated by Granville in writing.
+Nothing on this website constitutes or should be interpreted as an offer, solicitation, recommendation, endorsement, guarantee, commitment, promise, approval, representation, or other assurance that any product, service, feature, functionality, integration, partnership, business relationship, or future capability is available or will become available to you.
 
 ## No Reliance
 
@@ -101,11 +93,11 @@ Granville has no obligation to maintain any content or continue offering any pro
 
 ## Forward-Looking Statements
 
-This website may contain references to anticipated products, services, features, functionality, integrations, partnerships, regulatory approvals, business plans, development plans, roadmaps, timelines, or future capabilities.
+This website may contain references to anticipated products, services, features, functionality, integrations, partnerships, business plans, development plans, roadmaps, timelines, or future capabilities.
 
 Such statements are provided for informational purposes only and are subject to change without notice.
 
-Granville does not undertake any obligation to deliver, launch, maintain, obtain, or make available any product, service, feature, functionality, integration, partnership, regulatory approval, or future capability described on this website.
+Granville does not undertake any obligation to deliver, launch, maintain, obtain, or make available any product, service, feature, functionality, integration, partnership, or future capability described on this website.
 
 ## No Advice
 
@@ -123,7 +115,7 @@ TO THE MAXIMUM EXTENT PERMITTED BY LAW, GRANVILLE DISCLAIMS ALL REPRESENTATIONS,
 
 WITHOUT LIMITING THE FOREGOING, GRANVILLE DOES NOT WARRANT THAT THE WEBSITE WILL BE AVAILABLE, ACCURATE, COMPLETE, CURRENT, RELIABLE, SECURE, ERROR-FREE, UNINTERRUPTED, SUITABLE FOR ANY PARTICULAR PURPOSE, OR FREE FROM DEFECTS, VULNERABILITIES, VIRUSES, OR OTHER HARMFUL COMPONENTS.
 
-GRANVILLE DOES NOT WARRANT THAT ANY PRODUCT, SERVICE, FEATURE, FUNCTIONALITY, INTEGRATION, PARTNERSHIP, COMMERCIAL ARRANGEMENT, REGULATORY APPROVAL, OR FUTURE CAPABILITY REFERENCED ON THIS WEBSITE WILL BE AVAILABLE OR ACHIEVED.
+GRANVILLE DOES NOT WARRANT THAT ANY PRODUCT, SERVICE, FEATURE, FUNCTIONALITY, INTEGRATION, PARTNERSHIP, COMMERCIAL ARRANGEMENT, OR FUTURE CAPABILITY REFERENCED ON THIS WEBSITE WILL BE AVAILABLE OR ACHIEVED.
 
 YOUR USE OF THE WEBSITE IS ENTIRELY AT YOUR OWN RISK.
 
@@ -153,11 +145,13 @@ The updated version will be posted on this page with a revised "Last Updated" da
 
 Your continued use of the website after updated Website Terms become effective constitutes acceptance of the revised Website Terms.
 
-## Governing Law
+## Governing Law and Dispute Resolution
 
-These Website Terms are governed by the laws of the Province of Ontario and the federal laws of Canada applicable therein.
+These Website Terms are governed by the laws of the Province of Ontario and the federal laws of Canada applicable therein, without regard to conflict of laws principles.
 
-You irrevocably submit to the exclusive jurisdiction of the courts located in Toronto, Ontario in connection with any dispute arising out of or relating to these Website Terms or the website.
+Any dispute, claim, controversy, or cause of action arising out of or relating to these Website Terms, the website, or your use of the website shall first be addressed through good faith discussions between the parties.
+
+If a dispute cannot be resolved through discussion, it shall be finally resolved by binding arbitration administered by the ADR Institute of Canada, Inc. in accordance with its applicable arbitration rules then in effect.
 
 ## Contact
 

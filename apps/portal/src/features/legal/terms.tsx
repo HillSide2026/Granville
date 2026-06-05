@@ -274,31 +274,43 @@ export function TermsOfUse() {
         acceptance of those updated Terms.
       </p>
 
-      <h2>Dispute Resolution</h2>
-      <p>
-        Any dispute, controversy, or claim arising out of or relating to these Terms, the Platform,
-        or any breach, termination, or invalidity thereof shall be finally resolved by binding
-        arbitration administered by the ADR Institute of Canada, Inc. under its applicable
-        arbitration rules. The arbitration shall be conducted by a single arbitrator. The seat of
-        the arbitration shall be Toronto, Ontario. The language of the arbitration shall be English.
-        The arbitrator's award shall be final and binding and may be entered as a judgment in any
-        court of competent jurisdiction.
-      </p>
-      <p>
-        You waive any right to commence, participate in, or recover relief through any class action,
-        collective proceeding, or representative action in connection with any dispute relating to
-        these Terms or the Platform.
-      </p>
-      <p>
-        Nothing in this section prevents either party from seeking urgent injunctive or other
-        equitable relief from a court of competent jurisdiction where necessary to prevent
-        irreparable harm pending the outcome of arbitration.
-      </p>
-
-      <h2>Governing Law</h2>
+      <h2>Governing Law and Dispute Resolution</h2>
       <p>
         These Terms are governed by the laws of the Province of Ontario and the federal laws of
-        Canada applicable therein, without regard to conflict of law principles.
+        Canada applicable therein, without regard to conflict of laws principles.
+      </p>
+      <p>
+        Any dispute, claim, controversy, or cause of action arising out of or relating to these
+        Terms, the Platform, or your use of the Platform shall first be addressed through good faith
+        discussions between the parties.
+      </p>
+      <p>
+        If a dispute cannot be resolved through discussion, it shall be finally resolved by binding
+        arbitration administered by the ADR Institute of Canada, Inc. in accordance with its
+        applicable arbitration rules then in effect.
+      </p>
+      <p>The arbitration shall be conducted by a single arbitrator.</p>
+      <p>The seat of arbitration shall be Toronto, Ontario, Canada.</p>
+      <p>The arbitration shall be conducted in the English language.</p>
+      <p>
+        The arbitrator shall have exclusive authority to resolve any dispute relating to the
+        interpretation, applicability, enforceability, formation, or validity of these Terms,
+        including any claim that all or any portion of these Terms is void or unenforceable.
+      </p>
+      <p>
+        To the fullest extent permitted by law, each party waives any right to commence or
+        participate in a class action, representative action, collective action, or similar
+        proceeding and agrees that disputes shall be resolved solely on an individual basis.
+      </p>
+      <p>
+        Nothing in this section prevents Granville from seeking temporary, preliminary,
+        interlocutory, or injunctive relief in any court of competent jurisdiction to protect its
+        intellectual property, confidential information, security interests, systems, networks, or
+        other proprietary rights.
+      </p>
+      <p>
+        Judgment upon any arbitration award may be entered and enforced in any court of competent
+        jurisdiction.
       </p>
 
       <h2>Contact</h2>
