@@ -274,15 +274,31 @@ export function TermsOfUse() {
         acceptance of those updated Terms.
       </p>
 
+      <h2>Dispute Resolution</h2>
+      <p>
+        Any dispute, controversy, or claim arising out of or relating to these Terms, the Platform,
+        or any breach, termination, or invalidity thereof shall be finally resolved by binding
+        arbitration administered by the ADR Institute of Canada, Inc. under its applicable
+        arbitration rules. The arbitration shall be conducted by a single arbitrator. The seat of
+        the arbitration shall be Toronto, Ontario. The language of the arbitration shall be English.
+        The arbitrator's award shall be final and binding and may be entered as a judgment in any
+        court of competent jurisdiction.
+      </p>
+      <p>
+        You waive any right to commence, participate in, or recover relief through any class action,
+        collective proceeding, or representative action in connection with any dispute relating to
+        these Terms or the Platform.
+      </p>
+      <p>
+        Nothing in this section prevents either party from seeking urgent injunctive or other
+        equitable relief from a court of competent jurisdiction where necessary to prevent
+        irreparable harm pending the outcome of arbitration.
+      </p>
+
       <h2>Governing Law</h2>
       <p>
         These Terms are governed by the laws of the Province of Ontario and the federal laws of
-        Canada applicable therein.
-      </p>
-      <p>
-        You irrevocably submit to the exclusive jurisdiction of the courts located in Toronto,
-        Ontario in connection with any dispute arising out of or relating to these Terms or the
-        Platform.
+        Canada applicable therein, without regard to conflict of law principles.
       </p>
 
       <h2>Contact</h2>
