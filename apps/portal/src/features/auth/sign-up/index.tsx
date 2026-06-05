@@ -20,22 +20,19 @@ export function SignUp() {
             </div>
           </div>
         </div>
-        <div className='mx-auto flex w-full max-w-sm flex-col justify-center space-y-2'>
-          <div className='flex flex-col space-y-2 text-start'>
-            <h2 className='text-lg font-semibold tracking-tight'>Create an account</h2>
-            <p className='text-sm text-muted-foreground'>
-              Enter your details below to register.{' '}
-              Already have an account?{' '}
-              <Link
-                to='/sign-in'
-                className='text-nowrap underline underline-offset-4 hover:text-primary'
-              >
-                Sign in
-              </Link>
+        <div className='mx-auto flex w-full max-w-sm flex-col justify-center'>
+          <div className='flex flex-col items-center text-center gap-2 pb-6 border-b border-border/50'>
+            <h2 className='text-base font-semibold tracking-tight leading-snug'>
+              Thank you for your interest in Granville Finance
+            </h2>
+            <p className='text-sm text-muted-foreground leading-relaxed'>
+              We are currently onboarding our first cohort of customers. Submit your information below and a member of our Client Success team will reach out to you shortly.
             </p>
           </div>
-          <SignUpForm />
-          <p className='px-8 text-center text-sm text-muted-foreground'>
+          <div className='pt-5'>
+            <SignUpForm />
+          </div>
+          <p className='mt-4 px-8 text-center text-sm text-muted-foreground'>
             By creating an account, you agree to our{' '}
             <a
               href='/terms'
@@ -51,6 +48,12 @@ export function SignUp() {
               Privacy Policy
             </a>
             .
+          </p>
+          <p className='mt-3 text-center text-sm text-muted-foreground'>
+            Already have an account?{' '}
+            <Link to='/sign-in' className='text-nowrap underline underline-offset-4 hover:text-primary'>
+              Sign in
+            </Link>
           </p>
         </div>
       </div>
