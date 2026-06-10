@@ -13,10 +13,10 @@ export const homepage = {
     },
   },
   hero: {
-    tagline: "Global Payments",
-    title: "One Platform. Global Money Movement.",
+    tagline: "Granville Finance",
+    title: "One Platform for Global Finance Teams",
     subtitle:
-      "Granville Finance provides financial infrastructure and payment technology to help businesses move, manage, and grow.",
+      "Granville Finance provides financial infrastructure and payment solutions to help businesses move, manage, and grow.",
     primaryAction: {
       text: "Request access",
       href: granville.requestAccessUrl,
@@ -29,19 +29,19 @@ export const homepage = {
   },
   products: {
     tagline: "Platform",
-    title: "Powerful Platform Built for Modern Money Movement.",
+    title: "A Unified Platform for Global Financial Operations.",
     subtitle: "",
     items: [
       {
         title: "Payment Platform",
         description:
-          "Coordinate domestic and international payment flows through a unified infrastructure layer designed for speed and clarity.",
+          "Access domestic and cross-border payment capabilities through a unified infrastructure platform built for efficiency, transparency, and scale.",
         icon: "arrow/arrow-transaction-left-right",
       },
       {
         title: "Treasury Functionality",
         description:
-          "Centralize account management, liquidity visibility, currency handling, and treasury operations across financial partners.",
+          "Centralize account visibility, liquidity oversight, and currency management, across your financial ecosystem.",
         icon: "banking/bank",
       },
       {
@@ -54,27 +54,27 @@ export const homepage = {
   },
   operatingModel: {
     tagline: "PAYMENTS",
-    title: "Fast Forward Global Money Movement.",
+    title: "Fast Forward Global Financial Operations.",
     subtitle:
-      "Granville Finance helps global corporates optimize payments, currencies, and financial workflows across markets without relying on fragmented banking infrastructure.",
-    contentTitle: "Built for Scale and Control",
+      "Granville Finance helps businesses simplify financial operations and international payments through a modern infrastructure platform.",
+    contentTitle: "Built for Growth and Control",
     contentBody:
-      "Modernize global operations with finance and treasury infrastructure built for scale, visibility, and control. Granville Finance helps teams streamline workflows and growth internationally through our unified financial platform.",
+      "Modernize financial operations with infrastructure designed to deliver greater visibility, operational efficiency, and scalability as your business expands globally.",
     items: [
       {
         title: "Optimize Operations",
         description:
-          "Consolidate payment rails, team processes, and external systems into a single, unified platform designed for scale, visibility, and control.",
+          "Consolidate financial systems and payment workflows within a single operating environment.",
       },
       {
         title: "Streamline Workflows",
         description:
-          "Unify currencies, approvals, reconciliation, and reporting into standardized workflows that reduce manual intervention and improve operational consistency across markets.",
+          "Standardize approvals, reconciliation, reporting, and treasury processes to improve efficiency and reduce operational complexity.",
       },
       {
-        title: "Improve Visibility",
+        title: "Real-Time Visibility",
         description:
-          "Gain real-time visibility into transaction flows, settlement status, reconciliation outcomes, and operational performance through centralized monitoring and reporting infrastructure.",
+          "Monitor settlements, balances, payments, and operational activity through centralized reporting and oversight tools.",
       },
     ],
   },
@@ -84,22 +84,22 @@ export const homepage = {
       {
         title: "Careers",
         description:
-          "Build the future of worldwide money movement. Grow with Granville Finance as we expand our financial infrastructure and payment technology platform.",
+          "Help build the next generation of financial infrastructure and global payment technology.",
         icon: "tabler:briefcase",
       },
       {
         title: "News",
         description:
-          "Follow product launches and company updates. A simple home for announcements, market notes, and platform milestones as Granville Finance grows.",
+          "Stay informed with company updates, product developments, industry insights, and platform milestones.",
         icon: "tabler:news",
       },
     ],
   },
   closing: {
     tagline: "CONTACT",
-    title: "Build modern global payment operations.",
+    title: "Transform Your Financial Operations.",
     subtitle:
-      "Speak with Granville Finance about how we can help your financial ops team move forward with confidence.",
+      "Learn how Granville Finance can help your organization simplify payments, improve visibility, and scale financial operations globally.",
     primaryAction: {
       text: "Request access",
       href: granville.requestAccessUrl,

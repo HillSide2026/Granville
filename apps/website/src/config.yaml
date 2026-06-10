@@ -11,7 +11,7 @@ metadata:
   title:
     default: Granville Finance
     template: 'Granville Finance'
-  description: 'Granville Finance provides financial infrastructure and payment technology to help businesses move, manage, and grow.'
+  description: 'Granville Finance provides financial infrastructure and payment solutions to help businesses move, manage, and grow.'
   robots:
     index: true
     follow: true
