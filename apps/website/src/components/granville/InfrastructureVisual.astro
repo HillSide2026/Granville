@@ -1,3 +1,7 @@
+---
+import globeNetwork from '~/assets/images/globe-network.png';
+---
+
 <div
   aria-hidden="true"
   class="infrastructure-visual relative isolate overflow-hidden rounded-[28px] border border-[rgba(184,198,214,0.1)] shadow-[0_24px_60px_rgba(2,8,18,0.52)]"
@@ -14,9 +18,18 @@
   <div class="absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#030d1a] to-transparent"></div>
   <div class="absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#030d1a] to-transparent"></div>
 
-  <!-- Network diagram -->
+  <!-- Globe graphic -->
+  <img
+    src={globeNetwork.src}
+    alt=""
+    loading="lazy"
+    decoding="async"
+    class="absolute inset-0 h-full w-full scale-[1.2] object-contain opacity-90 [filter:drop-shadow(0_18px_42px_rgba(18,183,255,0.16))]"
+  />
+
+  <!-- Legacy network diagram retained hidden while the globe graphic replaces it visually. -->
   <svg
-    class="absolute inset-0 h-full w-full"
+    class="hidden"
     viewBox="0 0 640 520"
     fill="none"
     preserveAspectRatio="xMidYMid meet"
