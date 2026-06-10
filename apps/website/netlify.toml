@@ -3,6 +3,14 @@
   command = "npm run build"
 [build.processing.html]
   pretty_urls = false
+[[redirects]]
+  from = "/sign-in"
+  to = "https://portal.granvillefinance.ca/sign-in"
+  status = 302
+[[redirects]]
+  from = "/sign-up"
+  to = "https://portal.granvillefinance.ca/sign-up"
+  status = 302
 [[headers]]
   for = "/_astro/*"
   [headers.values]
