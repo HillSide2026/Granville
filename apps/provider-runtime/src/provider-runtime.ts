@@ -5,15 +5,7 @@ import type {
 } from "../../../libs/persistence/src/in-memory-store.ts";
 import { ProviderAdapterRegistry } from "../../../libs/provider-adapters/adapter-registry.ts";
 import { AirwallexApiError } from "../../../libs/provider-adapters/airwallex/index.ts";
-
-const providerStatusToPaymentStatus = {
-  accepted: "provider_accepted",
-  processing: "processing",
-  completed: "completed",
-  failed: "failed",
-  returned: "returned",
-  cancelled: "cancelled",
-} as const;
+import { providerStatusToPaymentStatus } from "../../../libs/domain/src/provider-status.ts";
 
 export class ProviderRuntime {
   store: InMemoryGranvilleStore;

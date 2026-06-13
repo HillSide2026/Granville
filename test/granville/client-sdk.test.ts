@@ -6,14 +6,16 @@ import { createGranvilleServer, GranvilleHttpControllers } from "../../apps/api/
 import { GranvilleClient } from "../../pkg/client/granville/src/client.ts";
 import { GranvilleApiError } from "../../pkg/client/granville/src/errors.ts";
 
+const TEST_TOKENS = { adminToken: "test-admin", operatorToken: "test-operator" };
+
 async function withServer(
   fn: (client: GranvilleClient, controllers: GranvilleHttpControllers) => Promise<void>,
 ): Promise<void> {
-  const controllers = new GranvilleHttpControllers();
+  const controllers = new GranvilleHttpControllers(undefined, TEST_TOKENS);
   const server = createGranvilleServer(controllers);
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const port = (server.address() as { port: number }).port;
-  const client = new GranvilleClient({ baseUrl: `http://localhost:${port}`, token: "dev-admin" });
+  const client = new GranvilleClient({ baseUrl: `http://localhost:${port}`, token: "test-admin" });
   try {
     await fn(client, controllers);
   } finally {
@@ -106,7 +108,7 @@ test("unknown customer ID → GranvilleApiError(404, NOT_FOUND)", async () => {
 });
 
 test("unauthenticated request → GranvilleApiError(401, UNAUTHORIZED)", async () => {
-  const controllers = new GranvilleHttpControllers();
+  const controllers = new GranvilleHttpControllers(undefined, TEST_TOKENS);
   const server = createGranvilleServer(controllers);
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const port = (server.address() as { port: number }).port;
@@ -132,14 +134,14 @@ test("unauthenticated request → GranvilleApiError(401, UNAUTHORIZED)", async (
 });
 
 test("POST /webhooks/:provider bypasses Bearer auth and returns 202", async () => {
-  const controllers = new GranvilleHttpControllers();
+  const controllers = new GranvilleHttpControllers(undefined, TEST_TOKENS);
   const server = createGranvilleServer(controllers);
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const port = (server.address() as { port: number }).port;
   const baseUrl = `http://localhost:${port}`;
 
   // Use the SDK client (with auth) to create a payment and get a provider reference.
-  const authClient = new GranvilleClient({ baseUrl, token: "dev-admin" });
+  const authClient = new GranvilleClient({ baseUrl, token: "test-admin" });
   const customer = await authClient.createCustomer({ legalName: "Webhook Bypass Test" });
   const account = await authClient.createPaymentAccount({ customerId: customer.id });
   const payment = await authClient.createPayment({
@@ -209,7 +211,7 @@ function seedAirwallexBinding(
 }
 
 test("POST /webhooks/airwallex accepts valid HMAC signature without Bearer token", async () => {
-  const controllers = new GranvilleHttpControllers();
+  const controllers = new GranvilleHttpControllers(undefined, TEST_TOKENS);
   const server = createGranvilleServer(controllers);
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const port = (server.address() as { port: number }).port;
@@ -253,7 +255,7 @@ test("POST /webhooks/airwallex accepts valid HMAC signature without Bearer token
 });
 
 test("POST /webhooks/airwallex with bad signature stores event as ignored", async () => {
-  const controllers = new GranvilleHttpControllers();
+  const controllers = new GranvilleHttpControllers(undefined, TEST_TOKENS);
   const server = createGranvilleServer(controllers);
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const port = (server.address() as { port: number }).port;
@@ -288,13 +290,13 @@ test("POST /webhooks/airwallex with bad signature stores event as ignored", asyn
 });
 
 test("admin:read-only token cannot createCustomer → GranvilleApiError(403, FORBIDDEN)", async () => {
-  const controllers = new GranvilleHttpControllers();
+  const controllers = new GranvilleHttpControllers(undefined, TEST_TOKENS);
   const server = createGranvilleServer(controllers);
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const port = (server.address() as { port: number }).port;
   const operatorClient = new GranvilleClient({
     baseUrl: `http://localhost:${port}`,
-    token: "dev-operator",
+    token: "test-operator",
   });
   try {
     await assert.rejects(

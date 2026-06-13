@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { PaymentAccount } from "../../../libs/contracts/account.ts";
+import { HttpError } from "./errors.ts";
 import type { Customer } from "../../../libs/contracts/customer.ts";
 import type { LedgerPostingResult } from "../../../libs/contracts/ledger.ts";
 import type { PaymentAttempt, PaymentOrder } from "../../../libs/contracts/payment.ts";
@@ -31,7 +32,10 @@ import {
   type WebhookEvent,
 } from "../../../libs/persistence/src/in-memory-store.ts";
 import { verifyAirwallexWebhookSignature } from "../../../libs/provider-adapters/airwallex/index.ts";
-import { normalizeProviderWebhook } from "../../../libs/provider-adapters/webhook-normalizer.ts";
+import {
+  normalizeProviderWebhook,
+  parseWebhookBody,
+} from "../../../libs/provider-adapters/webhook-normalizer.ts";
 import {
   type CompliancePaymentRecord,
   type DateRangeFilter,
@@ -366,18 +370,20 @@ export class GranvilleApi {
   adminRetryWebhook(webhookId: string): { id: string; status: string } {
     const webhook = this.store.webhooks.get(webhookId);
     if (!webhook) {
-      throw new Error(`Unknown webhook_event: ${webhookId}`);
+      throw new HttpError(404, `Unknown webhook_event: ${webhookId}`, "NOT_FOUND");
     }
     if (!["failed", "ignored"].includes(webhook.processingStatus)) {
-      throw new Error(
+      throw new HttpError(
+        409,
         `Webhook ${webhookId} cannot be retried from status: ${webhook.processingStatus}`,
+        "CONFLICT",
       );
     }
     this.store.queueWebhookForProcessing(webhookId);
     this.store.audit("user", "admin.webhook.retry_requested", "webhook_event", webhookId, {});
     const updated = this.store.webhooks.get(webhookId);
     if (!updated) {
-      throw new Error(`Unknown webhook_event: ${webhookId}`);
+      throw new HttpError(404, `Unknown webhook_event: ${webhookId}`, "NOT_FOUND");
     }
     return { id: webhookId, status: updated.processingStatus };
   }
@@ -385,7 +391,7 @@ export class GranvilleApi {
   async adminRetryLedgerPosting(postingId: string): Promise<{ id: string; status: string }> {
     const posting = this.store.ledgerQueue.get(postingId);
     if (!posting) {
-      throw new Error(`Unknown ledger_posting: ${postingId}`);
+      throw new HttpError(404, `Unknown ledger_posting: ${postingId}`, "NOT_FOUND");
     }
     await this.ledgerWriter.replay(postingId);
     this.store.audit(
@@ -397,7 +403,7 @@ export class GranvilleApi {
     );
     const updated = this.store.ledgerQueue.get(postingId);
     if (!updated) {
-      throw new Error(`Unknown ledger_posting: ${postingId}`);
+      throw new HttpError(404, `Unknown ledger_posting: ${postingId}`, "NOT_FOUND");
     }
     return { id: postingId, status: updated.status };
   }
@@ -537,15 +543,6 @@ export class GranvilleApi {
   }
 }
 
-function parseWebhookBody(body: string): Record<string, unknown> {
-  try {
-    const parsed = JSON.parse(body);
-    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
-  } catch {
-    return {};
-  }
-}
-
 function webhookIdempotencyKey(
   providerCode: string,
   body: string,
@@ -566,3 +563,4 @@ function airwallexWebhookSecret(config: Record<string, unknown>): string | undef
 function stringField(value: unknown): string | undefined {
   return typeof value === "string" && value.length > 0 ? value : undefined;
 }
+

@@ -14,7 +14,19 @@ const reconcileIntervalMs = Number(process.env.GRANVILLE_RECONCILE_INTERVAL_MS ?
 // Set GRANVILLE_AGING_INTERVAL_MS=0 to disable.
 const agingIntervalMs = Number(process.env.GRANVILLE_AGING_INTERVAL_MS ?? 900_000); // 15 minutes
 
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    process.stderr.write(`Missing required environment variable: ${name}\n`);
+    process.exit(1);
+  }
+  return value;
+}
+
 async function main() {
+  const adminToken = requireEnv("GRANVILLE_ADMIN_TOKEN");
+  const operatorToken = requireEnv("GRANVILLE_OPERATOR_TOKEN");
+
   const databaseUrl = process.env.DATABASE_URL;
   const client = databaseUrl ? createPool(databaseUrl) : undefined;
   if (client && process.env.GRANVILLE_AUTO_MIGRATE === "1") {
@@ -22,7 +34,7 @@ async function main() {
   }
   const store = client ? await PostgresGranvilleStore.initialize(client) : undefined;
   const api = new GranvilleApi(store);
-  const server = createGranvilleServer(new GranvilleHttpControllers(api));
+  const server = createGranvilleServer(new GranvilleHttpControllers(api, { adminToken, operatorToken }));
 
   if (reconcileIntervalMs > 0) {
     setInterval(() => {

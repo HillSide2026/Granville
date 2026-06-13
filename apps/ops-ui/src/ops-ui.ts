@@ -1,8 +1,13 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 
 const API_URL = process.env.GRANVILLE_API_URL ?? "http://localhost:8080";
-const API_TOKEN = process.env.GRANVILLE_API_TOKEN ?? "dev-admin";
 const PORT = Number(process.env.OPS_UI_PORT ?? 8081);
+
+if (!process.env.GRANVILLE_API_TOKEN) {
+  process.stderr.write("Missing required environment variable: GRANVILLE_API_TOKEN\n");
+  process.exit(1);
+}
+const API_TOKEN = process.env.GRANVILLE_API_TOKEN;
 
 async function adminFetch(path: string): Promise<unknown> {
   const response = await fetch(`${API_URL}${path}`, {

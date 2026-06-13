@@ -1,15 +1,10 @@
 import { paymentCompletedPosting } from "../../../libs/ledger-postings/src/payment-postings.ts";
 import type { InMemoryGranvilleStore } from "../../../libs/persistence/src/in-memory-store.ts";
-import { normalizeProviderWebhook } from "../../../libs/provider-adapters/webhook-normalizer.ts";
-
-const providerStatusToPaymentStatus = {
-  accepted: "provider_accepted",
-  processing: "processing",
-  completed: "completed",
-  failed: "failed",
-  returned: "returned",
-  cancelled: "cancelled",
-} as const;
+import {
+  normalizeProviderWebhook,
+  parseWebhookBody,
+} from "../../../libs/provider-adapters/webhook-normalizer.ts";
+import { providerStatusToPaymentStatus } from "../../../libs/domain/src/provider-status.ts";
 
 export class WebhookProcessor {
   store: InMemoryGranvilleStore;
@@ -51,7 +46,7 @@ export class WebhookProcessor {
       throw new Error(`Unknown webhook_event: ${webhookId}`);
     }
 
-    const body = parseBody(webhook.body);
+    const body = parseWebhookBody(webhook.body);
     const normalized = normalizeProviderWebhook(webhook.providerCode, body);
 
     if (!normalized.providerReference && !normalized.providerTransactionId) {
@@ -152,13 +147,3 @@ export class WebhookProcessor {
   }
 }
 
-function parseBody(body: string): Record<string, unknown> {
-  try {
-    const parsed = JSON.parse(body);
-    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-      ? (parsed as Record<string, unknown>)
-      : {};
-  } catch {
-    return {};
-  }
-}

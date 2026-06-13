@@ -1,7 +1,11 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 
 import type { GranvilleErrorCode } from "../../../libs/contracts/errors.ts";
+import { paymentRails } from "../../../libs/contracts/routing.ts";
+import { HttpError } from "./errors.ts";
 import { GranvilleApi } from "./granville-api.ts";
+
+export { HttpError } from "./errors.ts";
 
 export interface Principal {
   id: string;
@@ -13,31 +17,20 @@ export interface HttpContext {
   idempotencyKey?: string;
 }
 
-export class HttpError extends Error {
-  statusCode: number;
-  code: GranvilleErrorCode;
-
-  constructor(statusCode: number, message: string, code?: GranvilleErrorCode) {
-    super(message);
-    this.statusCode = statusCode;
-    this.code = code ?? httpStatusToCode(statusCode);
-  }
-}
-
-function httpStatusToCode(status: number): GranvilleErrorCode {
-  if (status === 401) return "UNAUTHORIZED";
-  if (status === 403) return "FORBIDDEN";
-  if (status === 404) return "NOT_FOUND";
-  if (status === 409) return "CONFLICT";
-  if (status === 400) return "VALIDATION_ERROR";
-  return "INTERNAL_ERROR";
+export interface AuthTokens {
+  adminToken: string;
+  operatorToken: string;
 }
 
 export class GranvilleHttpControllers {
   api: GranvilleApi;
+  private adminToken: string;
+  private operatorToken: string;
 
-  constructor(api = new GranvilleApi()) {
+  constructor(api = new GranvilleApi(), tokens?: AuthTokens) {
     this.api = api;
+    this.adminToken = tokens?.adminToken ?? process.env.GRANVILLE_ADMIN_TOKEN ?? "";
+    this.operatorToken = tokens?.operatorToken ?? process.env.GRANVILLE_OPERATOR_TOKEN ?? "";
   }
 
   async handle(request: IncomingMessage, response: ServerResponse): Promise<void> {
@@ -91,7 +84,7 @@ export class GranvilleHttpControllers {
     if (method === "POST" && path === "/auth/login") {
       const token = String(body.token ?? "");
       if (!token) throw new HttpError(400, "token is required");
-      const principal = authenticate(`Bearer ${token}`);
+      const principal = this.authenticate(`Bearer ${token}`);
       const role = principalRole(principal);
       return { statusCode: 200, body: { accessToken: token, role, id: principal.id } };
     }
@@ -103,9 +96,10 @@ export class GranvilleHttpControllers {
     }
     if (method === "POST" && path === "/customers") {
       requireRole(context, "customer:write");
+      const legalName = requireString(body.legalName, "legalName");
       return {
         statusCode: 201,
-        body: this.api.postCustomer(asObject(body), context),
+        body: this.api.postCustomer({ ...asObject(body), legalName }, context),
       };
     }
     if (method === "GET" && parts[0] === "customers" && parts[1]) {
@@ -115,7 +109,7 @@ export class GranvilleHttpControllers {
     if (method === "PATCH" && parts[0] === "customers" && parts[1]) {
       requireRole(context, "customer:write");
       const customer = required(this.api.getCustomer(parts[1]));
-      const metadata = asObject(asObject(body).metadata);
+      const metadata = validateStringMap(asObject(asObject(body).metadata), "metadata");
       const updated = this.api.store.updateCustomer(customer.id, {
         metadata: { ...customer.metadata, ...metadata },
       });
@@ -139,7 +133,17 @@ export class GranvilleHttpControllers {
     }
     if (method === "POST" && path === "/payments") {
       requireRole(context, "payment:write");
-      return { statusCode: 201, body: this.api.postPayment(asObject(body), context) };
+      const customerId = requireString(body.customerId, "customerId");
+      const paymentAccountId = requireString(body.paymentAccountId, "paymentAccountId");
+      const amount = requireString(body.amount, "amount");
+      const asset = requireString(body.asset, "asset");
+      return {
+        statusCode: 201,
+        body: this.api.postPayment(
+          { ...asObject(body), customerId, paymentAccountId, amount, asset },
+          context,
+        ),
+      };
     }
     if (method === "GET" && path === "/payments") {
       requireRole(context, "payment:read");
@@ -460,14 +464,16 @@ export class GranvilleHttpControllers {
     }
     if (method === "POST" && path === "/admin/routing-rules") {
       requireRole(context, "admin:write");
+      const name = requireString(body.name, "name");
+      const outcome = validateRoutingRuleOutcome(asObject(body.outcome));
       return {
         statusCode: 201,
         body: this.api.createRoutingRule({
-          name: String(body.name ?? ""),
+          name,
           description: body.description ? String(body.description) : undefined,
           priority: body.priority !== undefined ? Number(body.priority) : undefined,
           conditions: asObject(body.conditions),
-          outcome: asObject(body.outcome),
+          outcome,
         }),
       };
     }
@@ -479,6 +485,10 @@ export class GranvilleHttpControllers {
       !parts[3]
     ) {
       requireRole(context, "admin:write");
+      const outcome =
+        body.outcome !== undefined
+          ? validateRoutingRuleOutcome(asObject(body.outcome))
+          : undefined;
       return {
         statusCode: 200,
         body: this.api.updateRoutingRule(parts[2], {
@@ -487,7 +497,7 @@ export class GranvilleHttpControllers {
           priority: body.priority !== undefined ? Number(body.priority) : undefined,
           active: body.active !== undefined ? Boolean(body.active) : undefined,
           conditions: body.conditions !== undefined ? asObject(body.conditions) : undefined,
-          outcome: body.outcome !== undefined ? asObject(body.outcome) : undefined,
+          outcome,
         }),
       };
     }
@@ -542,11 +552,41 @@ export class GranvilleHttpControllers {
   }
 
   context(request: IncomingMessage): HttpContext {
-    const principal = authenticate(request.headers.authorization);
+    const principal = this.authenticate(request.headers.authorization);
     return {
       principal,
       idempotencyKey: header(request, "idempotency-key"),
     };
+  }
+
+  private authenticate(authorization?: string): Principal {
+    if (!authorization?.startsWith("Bearer ")) {
+      throw new HttpError(401, "Missing bearer token");
+    }
+    const token = authorization.slice("Bearer ".length);
+    if (this.adminToken && token === this.adminToken) {
+      return {
+        id: "admin",
+        roles: [
+          "customer:read",
+          "customer:write",
+          "payment:read",
+          "payment:write",
+          "webhook:write",
+          "reconciliation:read",
+          "reconciliation:write",
+          "admin:read",
+          "admin:write",
+        ],
+      };
+    }
+    if (this.operatorToken && token === this.operatorToken) {
+      return {
+        id: "operator",
+        roles: ["customer:read", "payment:read", "reconciliation:read"],
+      };
+    }
+    throw new HttpError(403, "Unknown principal");
   }
 }
 
@@ -554,36 +594,6 @@ export function createGranvilleServer(controllers = new GranvilleHttpControllers
   return createServer((request, response) => {
     void controllers.handle(request, response);
   });
-}
-
-function authenticate(authorization?: string): Principal {
-  if (!authorization?.startsWith("Bearer ")) {
-    throw new HttpError(401, "Missing bearer token");
-  }
-  const token = authorization.slice("Bearer ".length);
-  if (token === "dev-admin") {
-    return {
-      id: "dev-admin",
-      roles: [
-        "customer:read",
-        "customer:write",
-        "payment:read",
-        "payment:write",
-        "webhook:write",
-        "reconciliation:read",
-        "reconciliation:write",
-        "admin:read",
-        "admin:write",
-      ],
-    };
-  }
-  if (token === "dev-operator") {
-    return {
-      id: "dev-operator",
-      roles: ["customer:read", "payment:read", "reconciliation:read"],
-    };
-  }
-  throw new HttpError(403, "Unknown principal");
 }
 
 function principalRole(principal: Principal): string {
@@ -597,6 +607,52 @@ function requireRole(context: HttpContext, role: string): void {
   if (!context.principal.roles.includes(role)) {
     throw new HttpError(403, `Missing role ${role}`);
   }
+}
+
+function requireString(value: unknown, field: string): string {
+  if (typeof value !== "string" || !value.trim()) {
+    throw new HttpError(400, `${field} is required`, "VALIDATION_ERROR");
+  }
+  return value;
+}
+
+function validateStringMap(
+  value: Record<string, unknown>,
+  field: string,
+): Record<string, string> {
+  for (const [key, val] of Object.entries(value)) {
+    if (typeof val !== "string") {
+      throw new HttpError(
+        400,
+        `${field}.${key} must be a string`,
+        "VALIDATION_ERROR",
+      );
+    }
+  }
+  return value as Record<string, string>;
+}
+
+function validateRoutingRuleOutcome(
+  outcome: Record<string, unknown>,
+): { providerBindingId?: string; rail?: string; executionMode?: "provider_runtime" } {
+  if (
+    outcome.rail !== undefined &&
+    !paymentRails.includes(outcome.rail as (typeof paymentRails)[number])
+  ) {
+    throw new HttpError(
+      400,
+      `outcome.rail must be one of: ${paymentRails.join(", ")}`,
+      "VALIDATION_ERROR",
+    );
+  }
+  if (outcome.executionMode !== undefined && outcome.executionMode !== "provider_runtime") {
+    throw new HttpError(
+      400,
+      "outcome.executionMode must be provider_runtime",
+      "VALIDATION_ERROR",
+    );
+  }
+  return outcome as { providerBindingId?: string; rail?: string; executionMode?: "provider_runtime" };
 }
 
 async function readRaw(request: IncomingMessage): Promise<string> {
@@ -653,3 +709,4 @@ function asStringMap(value: Record<string, unknown>): Record<string, string> {
       .map(([key, entryValue]) => [key, String(entryValue)]),
   );
 }
+

@@ -1,5 +1,16 @@
 import { normalizeAirwallexWebhook } from "./airwallex/index.ts";
 
+export function parseWebhookBody(body: string): Record<string, unknown> {
+  try {
+    const parsed = JSON.parse(body);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
 export interface NormalizedProviderWebhook {
   providerCode: string;
   providerReference?: string;

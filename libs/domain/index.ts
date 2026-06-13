@@ -5,4 +5,5 @@ export * from "./src/payment-attempt.ts";
 export * from "./src/payment-order.ts";
 export * from "./src/provider.ts";
 export * from "./src/provider-binding.ts";
+export * from "./src/provider-status.ts";
 export * from "./src/reconciliation-case.ts";

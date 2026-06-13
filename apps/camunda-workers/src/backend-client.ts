@@ -10,7 +10,11 @@ export class GranvilleBackendClient implements BackendClient {
       process.env.GRANVILLE_API_URL ??
       "http://localhost:8080"
     ).replace(/\/+$/, "");
-    this.token = input.token ?? process.env.GRANVILLE_API_TOKEN ?? "dev-admin";
+    const token = input.token ?? process.env.GRANVILLE_API_TOKEN;
+    if (!token) {
+      throw new Error("GRANVILLE_API_TOKEN must be set");
+    }
+    this.token = token;
   }
 
   post(
