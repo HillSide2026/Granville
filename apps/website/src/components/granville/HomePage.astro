@@ -7,6 +7,8 @@ import Content from '~/components/widgets/Content.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import InfrastructureVisual from '~/components/granville/InfrastructureVisual.astro';
+import DashboardPreview from '~/components/granville/DashboardPreview.astro';
+import TrustBand from '~/components/granville/TrustBand.astro';
 
 import { getPermalink } from '~/utils/permalinks';
 import { homepage as defaultHomepage } from '~/data/homepage';
@@ -54,10 +56,19 @@ const headerActions = [homepage.navigation.primaryAction];
       <Fragment slot="subtitle">{homepage.hero.subtitle}</Fragment>
 
       <Fragment slot="content">
-        <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm text-muted lg:justify-center">
-          {homepage.hero.highlights.map((item) => (
-            <span class="rounded-full border border-gray-500/60 px-4 py-2 dark:border-slate-700">{item}</span>
-          ))}
+        {homepage.hero.highlights.length > 0 && (
+          <div class="mt-8 flex flex-wrap justify-center gap-3 text-sm text-muted lg:justify-center">
+            {homepage.hero.highlights.map((item) => (
+              <span class="rounded-full border border-gray-500/60 px-4 py-2 dark:border-slate-700">{item}</span>
+            ))}
+          </div>
+        )}
+        <div class="relative mx-auto mt-10 max-w-4xl md:mt-14">
+          <div
+            class="pointer-events-none absolute -inset-x-10 -top-10 bottom-0 -z-10 opacity-70"
+            style="background: radial-gradient(ellipse at 50% 0%, rgba(200,173,127,0.12), transparent 60%), radial-gradient(ellipse at 50% 40%, rgba(56,189,248,0.08), transparent 55%);"
+          ></div>
+          <DashboardPreview />
         </div>
       </Fragment>
 
@@ -65,6 +76,8 @@ const headerActions = [homepage.navigation.primaryAction];
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(159,147,180,0.22),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(213,191,155,0.16),transparent_26%)]"></div>
       </Fragment>
     </Hero>
+
+    <TrustBand label={homepage.trust?.label} items={homepage.trust?.items} />
 
     <Features2
       id="platform"
@@ -101,7 +114,19 @@ const headerActions = [homepage.navigation.primaryAction];
     }}
   >
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(213,191,155,0.2),transparent_24%),radial-gradient(circle_at_top_right,rgba(184,198,214,0.3),transparent_32%),linear-gradient(180deg,rgba(234,240,245,0.98),rgba(245,243,239,0.99))]"></div>
+      <div
+        class="absolute inset-0"
+        style="background:
+          radial-gradient(circle at top left, rgba(200,173,127,0.1), transparent 26%),
+          radial-gradient(circle at top right, rgba(184,198,214,0.16), transparent 34%),
+          linear-gradient(180deg,
+            var(--granville-color-marketing-surface-0) 0%,
+            #16233a 5%,
+            var(--granville-color-marketing-light-band) 16%,
+            var(--granville-color-marketing-light-band-tint) 82%,
+            #23324c 96%,
+            var(--granville-color-marketing-surface-0) 100%);"
+      ></div>
     </Fragment>
 
     <Fragment slot="content">

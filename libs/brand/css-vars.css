@@ -37,6 +37,36 @@
   --granville-color-marketing-premium: var(--granville-color-gold-300);
   --granville-color-marketing-light-surface: var(--granville-color-slate-50);
 
+  /* ── Marketing surface elevation (dark) ───────────────────────── */
+  /* Layered dark surfaces give the marketing site depth instead of  */
+  /* one flat navy. Higher index = closer to the viewer (lighter).   */
+  --granville-color-marketing-surface-0: #060e1b;    /* page base            */
+  --granville-color-marketing-surface-1: #0a1424;    /* raised card          */
+  --granville-color-marketing-surface-2: #0f1c30;    /* nested / hover state */
+  --granville-color-marketing-surface-inset: #040a13;/* wells, chart plots   */
+  --granville-color-marketing-hairline: rgba(184, 198, 214, 0.1);
+  --granville-color-marketing-hairline-strong: rgba(184, 198, 214, 0.18);
+  --granville-color-marketing-inner-glow: rgba(255, 255, 255, 0.045);
+
+  /* Softened light band — a cool dove-grey, not near-white, so the  */
+  /* dark→light transition reads as intentional rather than jarring. */
+  --granville-color-marketing-light-band: #e6eaf0;
+  --granville-color-marketing-light-band-tint: #eef1f5;
+
+  /* ── Accent discipline ────────────────────────────────────────── */
+  /* Gold  = primary action & premium moments only.                  */
+  /* Blue  = live data, platform, and information.                   */
+  --granville-color-accent-gold: var(--granville-color-gold-400);
+  --granville-color-accent-gold-soft: rgba(200, 173, 127, 0.14);
+  --granville-color-accent-gold-line: rgba(200, 173, 127, 0.34);
+  --granville-color-accent-data: var(--granville-color-blue-400);
+  --granville-color-accent-data-soft: rgba(56, 189, 248, 0.14);
+  --granville-color-accent-data-line: rgba(56, 189, 248, 0.3);
+
+  /* ── Semantic value direction (money in / out) ────────────────── */
+  --granville-color-value-up: #34d399;
+  --granville-color-value-down: #eba38c;
+
   --granville-font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
   --granville-font-heading: Manrope, Inter, ui-sans-serif, system-ui, sans-serif;
   --granville-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;

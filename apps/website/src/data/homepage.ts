@@ -27,6 +27,15 @@ export const homepage = {
     },
     highlights: [],
   },
+  trust: {
+    label: "Financial infrastructure built for regulated environments",
+    items: [
+      "Domestic & cross-border payments",
+      "Multi-currency treasury",
+      "Bank-grade access controls",
+      "Real-time settlement visibility",
+    ],
+  },
   products: {
     tagline: "Platform",
     title: "A Unified Platform for Global Financial Operations.",
@@ -85,13 +94,13 @@ export const homepage = {
         title: "Careers",
         description:
           "Help build the next generation of financial infrastructure and global payment technology.",
-        icon: "tabler:briefcase",
+        icon: "user/group-user",
       },
       {
         title: "News",
         description:
           "Stay informed with company updates, product developments, industry insights, and platform milestones.",
-        icon: "tabler:news",
+        icon: "report/doc-page-paper-lined",
       },
     ],
   },

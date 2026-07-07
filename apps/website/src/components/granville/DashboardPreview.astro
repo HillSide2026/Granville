@@ -1,0 +1,182 @@
+---
+/**
+ * DashboardPreview — bespoke, static product mockup for the hero.
+ *
+ * Modeled on the real Granville portal dashboard (treasury overview:
+ * inflow/outflow KPIs, cash-flow chart, and payment activity with status
+ * badges + multi-currency), rendered in the marketing navy+gold system.
+ *
+ * Fully owned artwork — no borrowed screenshots or third-party logos.
+ * Decorative: marked aria-hidden with a visually-hidden caption for AT.
+ */
+
+const nav = [
+  { label: 'Overview', active: true },
+  { label: 'Payments', active: false },
+  { label: 'Balances', active: false },
+  { label: 'Beneficiaries', active: false },
+  { label: 'FX', active: false },
+];
+
+const kpis = [
+  { label: 'Total inflows', value: '2,450,320', asset: 'CAD', delta: '+12.4%', up: true },
+  { label: 'Outflows', value: '1,380,900', asset: 'CAD', delta: '−4.1%', up: false },
+  { label: 'Net position', value: '4,912,540', asset: 'CAD', delta: '+8.7%', up: true },
+];
+
+const activity = [
+  { name: 'Meridian Logistics', rail: 'SWIFT · USD', amount: '+128,400.00', asset: 'USD', dir: 'in', status: 'Completed' },
+  { name: 'Atlas Manufacturing', rail: 'SEPA · EUR', amount: '−64,150.00', asset: 'EUR', dir: 'out', status: 'Processing' },
+  { name: 'Northwind Trading', rail: 'Interac · CAD', amount: '+42,900.00', asset: 'CAD', dir: 'in', status: 'Completed' },
+];
+
+// Cash-flow chart geometry (12 points, viewBox 720×240, baseline y=210).
+const xs = [40, 98, 156, 215, 273, 331, 389, 447, 505, 563, 622, 680];
+const inflowY = [150, 138, 158, 120, 132, 96, 110, 82, 104, 70, 88, 64];
+const outflowY = [182, 176, 186, 170, 178, 164, 172, 158, 168, 150, 160, 148];
+const pts = (ys: number[]) => xs.map((x, i) => `${x},${ys[i]}`).join(' ');
+const area = (ys: number[]) => `M${pts(ys).replaceAll(' ', ' L')} L680,210 L40,210 Z`;
+---
+
+<div
+  aria-hidden="true"
+  class="dash-preview relative isolate w-full overflow-hidden rounded-[20px] border shadow-[0_40px_120px_rgba(2,8,18,0.6),0_8px_28px_rgba(2,8,18,0.4)]"
+  style="border-color: var(--granville-color-marketing-hairline-strong); background: linear-gradient(180deg, var(--granville-color-marketing-surface-1), var(--granville-color-marketing-surface-0));"
+>
+  <!-- top edge highlight -->
+  <div class="pointer-events-none absolute inset-x-0 top-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);"></div>
+
+  <!-- window chrome -->
+  <div class="flex items-center gap-3 border-b px-4 py-3" style="border-color: var(--granville-color-marketing-hairline);">
+    <div class="flex gap-1.5">
+      <span class="h-2.5 w-2.5 rounded-full" style="background: rgba(184,198,214,0.28);"></span>
+      <span class="h-2.5 w-2.5 rounded-full" style="background: rgba(184,198,214,0.18);"></span>
+      <span class="h-2.5 w-2.5 rounded-full" style="background: rgba(184,198,214,0.12);"></span>
+    </div>
+    <div
+      class="mx-auto flex items-center gap-2 rounded-md px-3 py-1 text-[11px] tracking-wide"
+      style="background: var(--granville-color-marketing-surface-inset); color: rgba(184,198,214,0.55);"
+    >
+      <span class="h-1.5 w-1.5 rounded-full" style="background: var(--granville-color-value-up);"></span>
+      app.granville.finance
+    </div>
+    <span class="h-6 w-6 rounded-full" style="background: linear-gradient(135deg, var(--granville-color-gold-400), var(--granville-color-gold-300)); opacity:0.85;"></span>
+  </div>
+
+  <div class="flex">
+    <!-- sidebar -->
+    <aside class="hidden w-40 shrink-0 border-r px-3 py-4 sm:block" style="border-color: var(--granville-color-marketing-hairline);">
+      <div class="mb-4 flex items-center gap-2 px-2">
+        <span class="grid h-6 w-6 place-items-center rounded-md text-[11px] font-bold" style="background: var(--granville-color-accent-gold-soft); color: var(--granville-color-gold-300);">G</span>
+        <span class="text-[12px] font-semibold" style="color: var(--granville-color-slate-100);">Granville</span>
+      </div>
+      <div class="space-y-0.5">
+        {nav.map((item) => (
+          <div
+            class="flex items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px]"
+            style={item.active
+              ? 'background: var(--granville-color-marketing-surface-2); color: var(--granville-color-slate-50);'
+              : 'color: rgba(148,163,184,0.75);'}
+          >
+            <span class="h-1.5 w-1.5 rounded-[2px]" style={item.active ? 'background: var(--granville-color-accent-gold);' : 'background: rgba(148,163,184,0.4);'}></span>
+            {item.label}
+          </div>
+        ))}
+      </div>
+    </aside>
+
+    <!-- main -->
+    <div class="min-w-0 flex-1 p-4 sm:p-5">
+      <!-- header row -->
+      <div class="mb-4 flex items-center justify-between gap-3">
+        <div>
+          <div class="text-[13px] font-semibold" style="color: var(--granville-color-slate-50);">Treasury overview</div>
+          <div class="text-[10.5px]" style="color: rgba(148,163,184,0.7);">Last 30 days · 4 currencies</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="rounded-md border px-2 py-1 text-[10.5px]" style="border-color: var(--granville-color-marketing-hairline); color: rgba(184,198,214,0.7);">30D</span>
+          <span class="rounded-md px-2.5 py-1 text-[10.5px] font-semibold" style="background: var(--granville-color-accent-gold); color: #1b2233;">New payment</span>
+        </div>
+      </div>
+
+      <!-- KPI row -->
+      <div class="grid grid-cols-3 gap-2.5">
+        {kpis.map((k) => (
+          <div class="rounded-xl border p-3" style="border-color: var(--granville-color-marketing-hairline); background: var(--granville-color-marketing-surface-2);">
+            <div class="text-[10px] uppercase tracking-wider" style="color: rgba(148,163,184,0.75);">{k.label}</div>
+            <div class="mt-1.5 flex items-baseline gap-1">
+              <span class="text-[15px] font-bold tracking-tight sm:text-[17px]" style="color: var(--granville-color-slate-50);">{k.value}</span>
+              <span class="text-[10px]" style="color: rgba(148,163,184,0.6);">{k.asset}</span>
+            </div>
+            <div class="mt-1 text-[10.5px] font-medium" style={`color: ${k.up ? 'var(--granville-color-value-up)' : 'var(--granville-color-value-down)'};`}>
+              {k.up ? '↑' : '↓'} {k.delta.replace(/^[+−-]/, '')} <span style="color: rgba(148,163,184,0.55);">vs prior</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- chart card -->
+      <div class="mt-3 rounded-xl border p-3" style="border-color: var(--granville-color-marketing-hairline); background: var(--granville-color-marketing-surface-inset);">
+        <div class="mb-2 flex items-center justify-between">
+          <div class="text-[11px] font-semibold" style="color: var(--granville-color-slate-100);">Cash flow</div>
+          <div class="flex items-center gap-3 text-[9.5px]" style="color: rgba(148,163,184,0.75);">
+            <span class="flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full" style="background: var(--granville-color-accent-gold);"></span>Inflows</span>
+            <span class="flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full" style="background: var(--granville-color-accent-data);"></span>Outflows</span>
+          </div>
+        </div>
+        <svg viewBox="0 0 720 220" class="h-24 w-full sm:h-28" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="dp-in" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#c8ad7f" stop-opacity="0.34" />
+              <stop offset="1" stop-color="#c8ad7f" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="dp-out" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#38bdf8" stop-opacity="0.22" />
+              <stop offset="1" stop-color="#38bdf8" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <!-- gridlines -->
+          {[52, 105, 158].map((y) => (
+            <line x1="40" y1={y} x2="680" y2={y} stroke="rgba(184,198,214,0.08)" stroke-width="1" />
+          ))}
+          <path d={area(outflowY)} fill="url(#dp-out)" />
+          <polyline points={pts(outflowY)} fill="none" stroke="#38bdf8" stroke-width="2" stroke-opacity="0.85" stroke-linecap="round" stroke-linejoin="round" />
+          <path d={area(inflowY)} fill="url(#dp-in)" />
+          <polyline points={pts(inflowY)} fill="none" stroke="#c8ad7f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="680" cy="64" r="3.5" fill="#c8ad7f" />
+          <circle cx="680" cy="64" r="6" fill="#c8ad7f" fill-opacity="0.2" />
+        </svg>
+      </div>
+
+      <!-- activity -->
+      <div class="mt-3 hidden sm:block">
+        <div class="mb-2 text-[10px] uppercase tracking-wider" style="color: rgba(148,163,184,0.7);">Recent activity</div>
+        <div class="space-y-1.5">
+          {activity.map((a) => (
+            <div class="flex items-center gap-3 rounded-lg border px-3 py-2" style="border-color: var(--granville-color-marketing-hairline); background: var(--granville-color-marketing-surface-1);">
+              <span
+                class="grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px]"
+                style={a.dir === 'in'
+                  ? 'background: rgba(52,211,153,0.12); color: var(--granville-color-value-up);'
+                  : 'background: rgba(235,163,140,0.12); color: var(--granville-color-value-down);'}
+              >{a.dir === 'in' ? '↓' : '↑'}</span>
+              <div class="min-w-0 flex-1">
+                <div class="truncate text-[11.5px] font-medium" style="color: var(--granville-color-slate-50);">{a.name}</div>
+                <div class="text-[10px]" style="color: rgba(148,163,184,0.65);">{a.rail}</div>
+              </div>
+              <div class="text-[11.5px] font-semibold tabular-nums" style={`color: ${a.dir === 'in' ? 'var(--granville-color-value-up)' : 'var(--granville-color-slate-100)'};`}>{a.amount}</div>
+              <span
+                class="rounded-full px-2 py-0.5 text-[9.5px] font-medium"
+                style={a.status === 'Completed'
+                  ? 'background: rgba(52,211,153,0.12); color: var(--granville-color-value-up);'
+                  : 'background: var(--granville-color-accent-data-soft); color: var(--granville-color-accent-data);'}
+              >{a.status}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <span class="sr-only">Illustrative Granville treasury dashboard showing inflows, outflows, net position, a cash-flow chart, and recent multi-currency payment activity.</span>
+</div>

@@ -27,6 +27,15 @@ export const homepageFr = {
     },
     highlights: [] as string[],
   },
+  trust: {
+    label: "Infrastructure financière conçue pour les environnements réglementés",
+    items: [
+      "Paiements domestiques et transfrontaliers",
+      "Trésorerie multidevise",
+      "Contrôles d'accès de niveau bancaire",
+      "Visibilité des règlements en temps réel",
+    ],
+  },
   products: {
     tagline: "Plateforme",
     title: "Une Plateforme Puissante pour les Flux Financiers Modernes.",
@@ -85,13 +94,13 @@ export const homepageFr = {
         title: "Carrières",
         description:
           "Construisez l'avenir des mouvements financiers mondiaux. Évoluez avec Granville Finance à mesure que nous développons notre infrastructure financière et notre plateforme technologique de paiement.",
-        icon: "tabler:briefcase",
+        icon: "user/group-user",
       },
       {
         title: "Actualités",
         description:
           "Suivez les lancements de produits et les mises à jour de l'entreprise. Un espace centralisé pour les annonces, les notes de marché et les jalons de la plateforme au fil de la croissance de Granville Finance.",
-        icon: "tabler:news",
+        icon: "report/doc-page-paper-lined",
       },
     ],
   },
