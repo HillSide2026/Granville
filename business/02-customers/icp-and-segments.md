@@ -30,8 +30,9 @@ focused motion — market to four, *sell* to one.
 
 - **Sharp, recurring, unavoidable pain.** Foreign contractor payouts happen every pay cycle —
   the reconciliation and FX mess repeats monthly and grows with headcount.
-- **Granville's exact shape.** Recurring cross-border payouts + multi-currency + immutable
-  booking of every payment is precisely "merged money and books." The [product portal](../00-overview/product-primer.md)
+- **Granville's exact shape.** A recurring, multi-currency payout run that a finance person
+  cues up and a principal approves — then a record of every payment — is exactly the
+  cue-up→approve→pay→record workflow. The [product portal](../00-overview/product-primer.md)
   already speaks Payments / Wallets / Balances / FX.
 - **Reachable from the founder's network.** Toronto agency/startup ecosystem; warm intros.
 - **Canada-first fits the regulatory path** — cleanest route for Granville to provide the

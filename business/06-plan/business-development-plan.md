@@ -9,8 +9,9 @@ maps to a product gate in [`../../roadmap/`](../../roadmap/) — BD and product 
 
 ## The through-line
 
-**Get one operating business moving real money on Granville, with the books tying out, then
-make that repeatable.** Everything is sequenced toward, and then out from, first go-live.
+**Get one operating business running a real payment run on Granville — finance cues it up,
+principal approves, money goes out — then make that repeatable.** Everything is sequenced
+toward, and then out from, first go-live.
 
 ## Phase gating (BD phase ↔ product gate)
 

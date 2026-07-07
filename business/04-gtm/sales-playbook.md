@@ -31,18 +31,16 @@ disqualify if:
 
 ## Discovery questions (the good ones)
 
-- "Walk me through what happens between money leaving your account and it showing up correctly
-  in your books."
-- "How long does month-end close take, and how often does it tie out on the first pass?"
-- "How many tools touch your money and your books? Do they agree?"
+- "Who actually sends your contractor/team payments each month, and how?"
+- "Could you hand that off to your ops person *without* giving them the bank login?"
+- "How many tools does a single payment run touch before everyone's paid?"
 - "Is there money you *want* to move but can't do compliantly today?"
-- "What happens in your next audit / investor update when someone asks for the numbers?"
+- "When someone asks you exactly what you paid whom last month, how easily can you show it?"
 
 **Wedge-specific (agencies paying foreign contractors):**
 - "How many foreign contractors do you pay, in how many currencies, and how often?"
 - "What do you use to pay them today — Wise, PayPal, Deel, a bank?"
-- "After they're paid, how do those payouts, the FX, and the fees get into your books — and
-  how long does that take each month?"
+- "Who lines up the run, and who approves it? How much of that is still you plus a spreadsheet?"
 
 Listen for the exact words they use for the pain — feed them back into
 [messaging](../03-positioning/positioning-and-messaging.md).
@@ -50,17 +48,19 @@ Listen for the exact words they use for the pain — feed them back into
 ## The pitch (follow the narrative)
 
 Run the [sales-narrative.md](../03-positioning/sales-narrative.md) arc: change → stakes →
-promised land → proof → ask. Then the **demo spine** — land the "the payment *is* the ledger
-entry" moment.
+promised land → proof → ask. Then the **demo spine** — land the **cue-up → approve → sent**
+moment. (Do not claim the record is the customer's books.)
 
 ## Handling the big objections
 
 Full table in [sales-narrative.md](../03-positioning/sales-narrative.md#objection-handling-draft).
-The three that decide deals:
-1. **Trust with our money** → staged rollout + references + regulatory clarity.
-2. **We already have accounting software** → their ledger is only as true as the last manual
-   reconciliation; ours is fed by real movement.
-3. **What can you do *today*** → be precise and honest; mark roadmap `[ASPIRATIONAL]`; never
+The ones that decide deals:
+1. **Trust with our money** → staged rollout + references + regulatory clarity; you approve every run.
+2. **We already use Wise/Deel/PayPal** → they send money; they don't give you the cue-up/approve
+   workflow, one place for FX + balances, or one clean record — and you're still pushing each payment.
+3. **We already have QuickBooks/Xero** → different job; Granville is not your accounting system
+   and doesn't replace it. Never promise a sync (not built, not GTM).
+4. **What can you do *today*** → be precise and honest; mark roadmap `[ASPIRATIONAL]`; never
    overstate regulated scope.
 
 ## The design-partner offer (current stage)

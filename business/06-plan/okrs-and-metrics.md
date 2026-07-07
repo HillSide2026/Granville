@@ -32,7 +32,7 @@ on cost; the codebase AW1–AW3 milestones are deprecated from the GTM path).
 These predict the north star before it happens:
 
 - **Fit conversations held** (founder discovery calls).
-- **Pain confirmed rate** — % of conversations where merged-truth pain is real and urgent.
+- **Pain confirmed rate** — % of conversations where cross-border payout pain is real and urgent.
 - **Design partners scoped** — flows ready to switch on at go-live.
 - **Regulatory blockers open** — count trending to zero.
 

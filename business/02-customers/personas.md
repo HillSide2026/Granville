@@ -7,43 +7,37 @@ can block the deal. Draft archetypes — refine with real customer conversations
 
 ---
 
-> **Beachhead persona:** in an agency paying foreign contractors, the Finance Owner is usually
-> the **founder/CEO or an ops/finance lead** who personally runs the monthly payout run and
-> then reconciles it. That person is who we sell to first.
+> **The product has two actors.** Sell to both: the **principal** who approves and pays, and the
+> **finance person** who cues up the payments. In a beachhead agency these may be two people —
+> or, in a small shop, the same founder wearing both hats.
 
-## Primary: the Finance Owner
+## Actor 1 — the Principal / Approver (economic buyer)
 
-In the wedge, the agency founder/CEO or ops/finance lead who owns "the contractors got paid
-*and* the books are right." (In larger businesses, a Finance Director/Controller.)
+The agency founder/CEO/owner with the authority (and the bank login) to send money. Today they
+are the bottleneck: every payment goes through them personally.
 
-- **Cares about:** contractors paid correctly and on time, payouts + FX + fees that reconcile
-  themselves, fast close, cash visibility, not hiring a finance team, not becoming a
-  payments/compliance expert.
-- **Pain today:** running the monthly foreign-contractor payout across Wise/PayPal/Deel + a
-  bank, then hand-reconciling it into QuickBooks/Xero; manual, late close; anxiety before any
-  investor ask.
-- **What wins them:** "your payments and your books become one system, and Granville carries
-  the regulated part." Show a real flow where a payment posts to the ledger live.
+- **Cares about:** paying the team on time, keeping control of money going out, *not* being the
+  bottleneck, not hiring a finance function, not becoming a payments/compliance expert, cost.
+- **Pain today:** personally pushing the monthly contractor run across Wise/PayPal/Deel + a
+  bank; can't safely delegate it without handing over the bank login.
+- **What wins them:** "your finance person lines up the run; you approve it in one click; it
+  goes out compliantly and every payment is on the record." Delegation *without* losing control.
 - **What loses them:** anything that sounds like a fintech build, a new compliance obligation,
-  or a risky money-handling switch without references.
+  a risky money-handling switch without references, or a claim we'll be their accounting system.
 
-## Economic buyer: Founder / CEO / CFO
+## Actor 2 — the Finance person / Maker (champion + daily user)
 
-Signs the contract; weighs cost vs. the labour and risk of the status quo stack.
+The ops/finance lead (in-house or offshore bookkeeper) who prepares the payments — who gets
+paid, how much, in what currency — and today reconciles it all by hand.
 
-- **Cares about:** total cost (tools + people + risk), time-to-value, trust/credibility.
-- **Pitch:** consolidation ROI — fewer tools, less reconciliation labour, no licensing/
-  integration project, clean books for investors/auditors.
-- **Objection:** "why trust a young platform with our money?" → references, clear regulatory
-  posture, boundaries, staged rollout.
-
-## Operational user: Finance / Ops staff
-
-Lives in the portal daily — payments, balances, FX, budgets, reconciliation.
-
-- **Cares about:** does it actually save time, is it reliable, does it reduce manual work.
-- **Pitch:** no more spreadsheet reconciliation; approvals and payouts in one place.
-- **Note:** the wedge is here — daily pain relief drives internal advocacy.
+- **Cares about:** does it save real time, is it reliable, fewer spreadsheets, getting the run
+  right, being able to prepare without needing the principal's credentials.
+- **Pain today:** assembling the payout run across tools + a spreadsheet, chasing FX and fees,
+  then hand-reconciling what actually went out.
+- **Pitch:** cue up the whole run in one place; hand it to the principal to approve; every
+  payment recorded and reconciled automatically. **The wedge lives here** — daily relief drives
+  internal advocacy.
+- **Note:** this is the "global finance team can cue up payments the user needs to make" actor.
 
 ## Blocker / influencer: their accountant or external advisor
 
@@ -59,9 +53,8 @@ External bookkeeper/accountant or (for trust-money firms) compliance advisor.
 
 | Persona | One line that lands |
 |---|---|
-| Finance Owner | "Your payments and your books stop disagreeing — permanently." |
-| CEO/CFO (buyer) | "Consolidate the stack, kill the reconciliation labour, keep clean books — no fintech build." |
-| Finance/Ops user | "The reconciliation just… doesn't need doing anymore." |
+| Principal / Approver | "Your finance person lines up the run; you approve in one click; it's sent — and you never handed over the bank login." |
+| Finance person / Maker | "Cue up the whole payment run in one place, hand it up for approval, and every payment is recorded for you." |
 | Accountant/advisor | "An immutable ledger fed by real settled movement — your audit trail is already done." |
 
 ## To validate with real interviews

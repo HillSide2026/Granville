@@ -54,7 +54,7 @@ clients) and a potential **blocker** (they may fear displacement). Strategy:
 
 1. **Don't create new single points of failure.** Especially on rails and regulated services —
    provider abstraction exists partly to reduce this; use it.
-2. **Partner for reach and trust, not to outsource the core.** The merged-truth product and the
+2. **Partner for reach and trust, not to outsource the core.** The pay-your-team workflow and the
    regulated posture are ours.
 3. **Every partnership needs an owner and a next step.** Track using
    [../_templates/partnership-brief-template.md](../_templates/partnership-brief-template.md).

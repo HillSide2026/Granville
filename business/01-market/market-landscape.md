@@ -9,40 +9,42 @@ figures as **placeholders to be validated** — replace with sourced numbers bef
 
 ## The category
 
-Granville sells to **operating businesses** and gives them one platform where **accounting,
-finance, and payments are merged**. Granville itself provides the regulated financial
-services underneath, so the customer moves money and keeps compliant books without holding
-licences or integrating rails.
+Granville sells to **operating businesses** and gives them one platform to **pay a global team
+across countries and currencies** — where a finance person **cues up** the payments and
+transfers and the principal **approves and sends** them. Granville provides the regulated
+financial services underneath, so the customer moves money compliantly without holding licences
+or integrating rails.
 
-That places Granville at the intersection of three categories that are usually bought
-separately:
+That places Granville at the intersection of categories usually bought separately:
 
 | Category the buyer knows | Example players | What Granville does differently |
 |---|---|---|
-| Business banking / spend | Mercury, Brex, Ramp, Revolut Business | We are money **and the ledger of record** in one system, not a bank account + export |
-| Cross-border payments / FX | Wise Business, Airwallex, Currencycloud, Payoneer | We move money **and post it to the books live**; the rail is abstracted, not the product |
-| Accounting / bookkeeping | QuickBooks, Xero, NetSuite | Our ledger is fed by real money movement, not manual entry / bank-feed reconciliation |
-| Embedded finance / BaaS | Unit, Solaris, Griffin, Column | We deliver the *outcome* (regulated services + merged books) to the business, not toolkits to a builder |
+| Contractor payout / global payroll | Deel, Remote, Wise, PayPal, Payoneer | They send money; we add the cue-up→approve workflow, FX+balances in one place, and a record of every payment |
+| Business banking / spend | Mercury, Brex, Ramp, Revolut Business | Not built to prepare + approve cross-border contractor runs; we are |
+| Cross-border payments / FX | Wise Business, Airwallex, Currencycloud, Payoneer | We abstract the rail and wrap it in the workflow + records; the rail isn't the product |
+| Accounting / bookkeeping | QuickBooks, Xero, NetSuite | **Different job — we don't compete.** We pay the team and record payments; they keep the books. We don't sync to them (yet) |
+| Embedded finance / BaaS | Unit, Solaris, Griffin, Column | We deliver a finished outcome to the business, not toolkits to a fintech builder |
 
-**The wedge:** every alternative forces the business to keep money in one tool and the books
-in another and reconcile the gap forever. Granville removes the gap by making the payment and
-the ledger entry the same event.
+**The wedge:** paying a global team is split across a bank, a payout tool, an FX provider, and a
+spreadsheet — and the founder personally pushes each payment. Granville collapses that into one
+cue-up→approve→pay→record workflow.
 
 ## Why now (tailwinds)
 
-- **The accounting/payments split is universal pain.** Every operating business runs a bank
-  or payments tool that does not agree with its accounting system; close is manual and late.
-- **Embedded/regulated finance is now deliverable** — ledger-as-truth infrastructure
-  (Formance, Modern Treasury, TigerBeetle) makes "money + books as one system" buildable.
+- **Distributed teams are normal.** Even small businesses now pay contractors across several
+  countries and currencies every month — a recurring, growing operational pain.
+- **The founder-bottleneck is real.** Paying the team can't be safely delegated on a bank login;
+  businesses want to hand off *preparing* payments while keeping *approval* control.
+- **Regulated finance is now deliverable** — ledger + rails infrastructure (Formance, provider
+  abstraction) makes it possible to provide compliant movement as a product.
 - **Businesses want outcomes, not fintech projects.** They will pay to *not* obtain licences,
-  integrate EMIs, or staff a payments/compliance team.
-- **Cross-border and multi-currency operations** are increasingly normal for even small
-  businesses, and the FX + accounting reconciliation burden scales badly.
+  integrate rails, or staff a payments/compliance team.
 
 ## Headwinds / risks
 
-- **Category confusion** — "is it a bank? an accounting tool?" We must lead with the merged-truth
-  outcome, not the plumbing. See [positioning](../03-positioning/positioning-and-messaging.md).
+- **Category confusion** — "is it a bank? a payroll tool? an accounting tool?" Lead with the
+  pay-your-team workflow, not the plumbing, and be explicit about what we're *not* (a bank, an
+  accounting system, employment payroll). See [positioning](../03-positioning/positioning-and-messaging.md).
 - **Trust to hold/route money** — a young platform providing regulated services must earn
   confidence; references and clear boundaries matter more than features early.
 - **Incumbent inertia** — businesses tolerate the spreadsheet/bank/accounting stack because
@@ -69,7 +71,7 @@ the ledger entry the same event.
 ecommerce** — all cross-border money movers that need their books to tie out. **Strategically**,
 BD focuses the sales motion on one wedge: **Canada-based agencies paying foreign "payroll"**
 (recurring cross-border contractor payouts) — the sharpest, most recurring version of the
-merged-truth pain and the closest fit to the product today. Land the wedge, then expand across
+cross-border payout pain and the closest fit to the product today. Land the wedge, then expand across
 the other three. Full definition: [ICP](../02-customers/icp-and-segments.md).
 
 > Scope line: **contractor payouts, not formal employment payroll** — the latter carries
@@ -91,5 +93,5 @@ Broader geographies (UK/EU/US) are later waves once the model is proven. See
 
 - [ ] Business counts by target segment and region (stats agencies, industry bodies)
 - [ ] Spend benchmarks for the tools Granville consolidates (banking, FX, accounting, recon)
-- [ ] 3–5 operating-business interviews to validate the merged-truth pain and willingness to pay
+- [ ] 3–5 operating-business interviews to validate the cross-border payout pain and willingness to pay
 - [ ] Partner/ecosystem docs (Rapyd, Formance) for distribution
