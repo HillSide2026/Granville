@@ -186,3 +186,4 @@ roadmap/                This directory
 |---|---|
 | [granville-repo-implementation-roadmap.md](granville-repo-implementation-roadmap.md) | Detailed phase-by-phase build plan and architectural rules |
 | [development-milestones-review.md](development-milestones-review.md) | Milestone structure rationale and recommended scope adjustments |
+| [backlog-airwallex-to-rapyd.md](backlog-airwallex-to-rapyd.md) | **Backlog:** strip Airwallex integration, pivot first payment rail to Rapyd |
