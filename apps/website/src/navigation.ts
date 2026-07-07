@@ -2,7 +2,11 @@ import { granville } from "./data/granville";
 import { getPermalink } from "./utils/permalinks";
 
 export const headerData = {
-  links: [],
+  links: [
+    { text: "Platform", href: getPermalink("/#platform") },
+    { text: "Payments", href: getPermalink("/#payments") },
+    { text: "Contact", href: getPermalink("/contact") },
+  ],
   actions: [{ text: "Request access", href: granville.requestAccessUrl, target: "_blank" }],
 };
 
@@ -12,10 +16,10 @@ export const footerData = {
       title: "Navigation",
       links: [
         { text: "Platform", href: getPermalink("/#platform") },
-        { text: "Payments", href: getPermalink("/#payments") },
+        { text: "Industries", href: getPermalink("/#payments") },
         { text: "Company", href: getPermalink("/#company") },
         { text: "Careers", href: getPermalink("/#company") },
-        { text: "Blog", href: getPermalink("/blog") },
+        { text: "Whitepaper", href: getPermalink("/blog") },
         { text: "Contact", href: getPermalink("/contact") },
       ],
     },
