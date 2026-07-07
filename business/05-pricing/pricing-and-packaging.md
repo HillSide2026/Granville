@@ -18,7 +18,7 @@ Likely a hybrid of:
 
 | Component | Rationale |
 |---|---|
-| **Platform subscription** | Predictable base for access to the merged money+books system |
+| **Platform subscription** | Predictable base for access to the pay-your-team platform |
 | **Usage on money moved** | Scales with value delivered (per-payment, volume tiers, or bps) |
 | **FX spread / margin** | Standard for multi-currency movement (where model permits) |
 | **Onboarding / implementation** | For larger customers migrating real flows |
@@ -42,7 +42,7 @@ What does the price scale on? Options, with trade-offs:
 | Tier | For | Includes | Price (PLACEHOLDER) |
 |---|---|---|---|
 | **Design Partner** | First few customers | Founder support, one live flow, reference rights, favourable terms | Discounted / co-build |
-| **Core** | Small operating businesses | Merged money+books, one rail, portal, reconciliation | $ base + usage — TBD |
+| **Core** | Small operating businesses | Pay the team (cue-up/approve), one rail, portal, FX, payment records | $ base + usage — TBD |
 | **Growth** | Higher volume / multi-currency | + FX, more volume, priority support | $$ base + usage — TBD |
 | **Scale** | Larger / complex | + advanced controls, onboarding, SLAs | Custom — TBD |
 

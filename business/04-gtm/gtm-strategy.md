@@ -16,7 +16,7 @@ relationships that produce reference customers and a repeatable story.
 Sequence:
 
 1. **Land design partners** — 3–5 operating businesses in one beachhead segment who feel the
-   merged-truth pain acutely and will co-build.
+   cross-border payout pain acutely and will co-build.
 2. **Prove the moment** — get one real money flow live, posting to the ledger, tying out.
 3. **Turn proof into narrative** — references, a case study, a repeatable demo.
 4. **Then** scale a repeatable motion (content, partnerships, light outbound).

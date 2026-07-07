@@ -6,51 +6,59 @@ The story arc used in a pitch, a deck, or a first call. Positioning is the *word
 *journey* you walk a buyer through. Structured on the classic change → stakes → promised-land →
 proof spine.
 
+> Do not use the banned phrases (see [positioning](positioning-and-messaging.md)). Granville is
+> not the customer's accounting system.
+
 ---
 
 ## 1. The change in the world (why now)
 
-Businesses now move money everywhere — multiple currencies, corridors, providers. But the
-tools didn't keep up: money lives in a bank and an FX app, the books live in an accounting
-package, and a human spends days making them agree. As money movement grows, that gap grows
-with it.
+Teams went global. A Toronto agency now has a designer in Manila, a developer in Lagos, and a
+writer in Buenos Aires. But paying them is stuck in the old world: a business bank, Wise or
+PayPal or Deel, maybe a spreadsheet to track who got what — and the founder personally pushing
+payments every month. As the team grows, the monthly payment run gets slower, riskier, and
+more personal.
 
 ## 2. The stakes (what it costs to stay put)
 
-Every business running the stitched stack pays a tax it rarely measures:
-- **Time** — manual reconciliation and a slow, painful month-end close.
-- **Risk** — books that don't tie out; audit findings; investor questions you can't answer fast.
-- **Ceiling** — you can't move money you're not licensed for, so growth stalls or you get
-  dragged into a fintech/compliance project you never wanted to run.
+Every business paying a distributed team the old way pays a tax it rarely measures:
+- **Founder time** — the person who should be running the business is personally sending payments.
+- **No delegation without risk** — hand the bank login to an ops person and you've lost control;
+  keep it yourself and you're the bottleneck.
+- **FX + fees leaking** across a patchwork of tools nobody fully tracks.
+- **No clean record** — when you need to see exactly what you paid whom, it's scattered across
+  four tools and a spreadsheet.
 
-The longer you wait, the more money you move through a system that can't prove itself.
+The bigger the team, the worse each of these gets.
 
 ## 3. The promised land (what good looks like)
 
-One platform. A payment goes out and, in the same instant, it's booked in an immutable ledger.
-Balances, FX, budgets, payouts — all in one place. Close is not an event; the books are always
-current and always tie out. And the regulated part — the licences, the rails, the audit-grade
-records — is handled by the platform, not by you.
+One platform for paying your global team. Your **finance person cues up the payment run** — who
+gets paid, how much, in which currency. **You review and approve it in one place, and it goes
+out** — compliantly, across currencies, without you touching a bank portal. Every payment is
+recorded, reconciled, and on the record, so you can always see exactly what moved. Balances,
+FX, and budgets sit right there too.
 
-**You run your business. Granville runs the money and the books.**
+**Your finance team lines it up. You approve. Granville sends the money.**
 
 ## 4. Why Granville can deliver it (proof, not adjectives)
 
-- The payment *is* the ledger entry — immutable double-entry, balances derived from journal
-  entries only. (Not a CSV export bolted onto a bank.)
-- Regulated services provided by the platform — EMI-led, provider-abstracted (stay
-  provider-agnostic externally; intended primary channel Rapyd is a pending partnership).
-- Reconciliation and audit trail are native primitives, already running in the product.
-- Built by a payments/fintech lawyer — the regulated part is understood, not hand-waved.
+- **Cue-up + approve is built in** — finance prepares, the principal releases. Delegation with
+  control. `[verify approval-workflow status in ../../roadmap/]`
+- **Regulated services are provided by the platform** — compliant movement, provider-abstracted
+  rails (primary channel Rapyd, partnership in negotiation). The business doesn't need licences.
+- **Every payment is recorded and reconciled** against the rail, with an audit trail — a record
+  you can trust (not an accounting integration; a reliable record of what Granville sent).
+- **Built by a payments/fintech lawyer** — the regulated part is understood, not hand-waved.
 
 (Verify each against [product-primer.md](../00-overview/product-primer.md) and `../../roadmap/`.)
 
 ## 5. The ask (what happens next)
 
 Stage-appropriate — we are early, so the ask is a **design-partnership**, not a mass rollout:
-- "Let's take one real money flow you run today and put it on Granville, and watch it post to
-  the ledger live."
-- Land small, prove the merged truth, expand usage.
+- "Let's take your next monthly contractor run, have your ops person cue it up in Granville, and
+  you approve and send it — once, together."
+- Land the first real payment run, prove the workflow, expand usage.
 
 ---
 
@@ -58,18 +66,20 @@ Stage-appropriate — we are early, so the ask is a **design-partnership**, not 
 
 | Objection | Response |
 |---|---|
-| "Why trust a young platform with our money?" | Staged rollout, references, clear regulatory posture and boundaries; the ledger is immutable and auditable from day one. |
-| "We already have QuickBooks/Xero." | Their ledger is only as true as the last manual reconciliation. Ours is fed by real settled movement — complement or replace, your call. |
-| "Isn't this just Wise/Airwallex?" | Those are rails; we sit *on top of* them and book every movement into your accounts automatically. We're the system, not the pipe. |
-| "Are you a bank?" | No — and you don't need to be regulated to use us. We provide the regulated services; you consume them. |
-| "What can you actually do today?" | Be precise: first rail live, ledger + reconciliation running. Mark roadmap items `[ASPIRATIONAL]`. Never oversell regulated scope. |
+| "Why trust a young platform with our money?" | Staged rollout, references, clear regulatory posture and boundaries; every payment is recorded and reconciled, and you approve each run. |
+| "We already use Wise / Deel / PayPal for this." | Those send the money. They don't give you the *cue-up-and-approve workflow*, the FX + balances in one place, or one clean record of every payment. And you're still the one pushing each payment. |
+| "We already have QuickBooks/Xero." | Different job. Granville pays your team and keeps a record of those payments; it is **not** your accounting system and doesn't replace it. (Accounting-provider integration is future roadmap, not today — don't promise it.) |
+| "Can't my finance person just use our bank?" | Then they either have your bank login (no control) or you're the bottleneck. Granville separates *preparing* a payment from *approving* it. |
+| "What can you actually do today?" | Be precise: cross-border payouts + FX + record of every payment; primary rail (Rapyd) is a pending partnership. Mark roadmap `[ASPIRATIONAL]`; never overstate regulated scope. |
 
 ## Demo spine (what to show, in order)
 
-1. Initiate a real payment in the portal.
-2. Show it settle on the rail.
-3. Show the **same event** appear as an immutable ledger posting — books already tie out.
-4. Show reconciliation/audit trail confirming it.
-5. Show balances/FX/budgets in the same place.
+1. **Finance view:** an ops user cues up a payment run — several contractors, several currencies.
+2. **Approval:** the principal reviews the queued run and approves/releases it in one place.
+3. **Movement:** the payments go out across currencies (compliant, provider-abstracted).
+4. **The record:** every payment appears recorded and reconciled against the rail — you can see
+   exactly what moved.
+5. **The finance surface:** balances, FX, budgets in the same platform.
 
-The "same event becomes the ledger entry" moment is the whole pitch. Land it.
+The **cue-up → approve → sent** moment is the whole pitch. Land it. (Do **not** claim the ledger
+is the customer's books.)

@@ -9,17 +9,19 @@ this page.
 
 ## What we sell
 
-**Granville is a unified financial operating platform for operating businesses — one system
-where accounting, finance, and payments are the same thing.** Granville *provides the
-regulated services* a business would otherwise have to license, integrate, and audit for
-itself: regulated money movement, a ledger-based accounting record of truth, balances,
-reconciliation, FX, budgets, and payouts.
+**Granville is the platform an operating business uses to pay its global team across countries
+and currencies — where the finance team cues up the payments and transfers, and the principal
+approves and sends them.** Granville *provides the regulated services* underneath: compliant
+cross-border movement, FX, balances, and an auditable record of every payment — so the business
+doesn't hold licences, integrate rails, or build a payments/compliance function.
 
-The customer runs their business on it; Granville supplies the regulated financial rails and
-the immutable books underneath. It is EMI-led for Stage 1 and bank-ready for Stage 2.
+The heart of the product is a **prepare → approve → pay → record** workflow: a busy founder can
+pay 20 contractors in 8 currencies without doing it personally and without losing control. It is
+EMI-led for Stage 1 and bank-ready for Stage 2.
 
-Granville is **not** something the customer has to be regulated to use. The regulated
-complexity lives inside the platform, not on the customer's balance sheet.
+Granville is **not** something the customer has to be regulated to use, and it is **not** their
+accounting system — it does not sync to QuickBooks/Xero. The regulated complexity lives inside
+the platform, not on the customer's balance sheet.
 
 ## Who we sell to
 
@@ -37,22 +39,25 @@ services; the buyer consumes them. (Note: contractor payouts, **not** formal emp
 
 ## Why we win
 
-1. **Accounting, finance, and payments are merged — not reconciled after the fact.** Every
-   payment writes to an immutable double-entry ledger (Formance) as it happens. The books are
-   the system of record, not a monthly export that never ties out.
-2. **Regulated services included.** The customer gets compliant money movement without
-   obtaining licences, integrating EMIs/banks, or passing audits themselves — that burden is
+1. **Cue up, then approve — built in.** The finance team prepares the payment run; the principal
+   reviews and releases it. Delegation *and* control in one workflow — the thing a bank login or
+   a spreadsheet can't give you.
+2. **Regulated services included.** The customer gets compliant cross-border movement and FX
+   without obtaining licences, integrating rails, or passing audits themselves — that burden is
    absorbed by the platform.
-3. **Provider abstraction underneath.** One surface across EMI/bank rails — coverage, routing,
-   and failover the customer never has to build. (Intended primary channel: Rapyd, via a
-   revenue-share partnership *in negotiation* — keep external messaging provider-agnostic until
-   signed. See [partnerships](../04-gtm/partnerships.md).)
+3. **Every payment on the record.** Each payment is recorded and reconciled against the rail,
+   with an audit trail, so you can see and trust exactly what moved. (A reliable record of
+   Granville payments — *not* the customer's accounting system.)
+
+Underneath: provider abstraction across EMI/bank rails — primary channel Rapyd, via a
+revenue-share partnership *in negotiation*; keep external messaging provider-agnostic until
+signed. See [partnerships](../04-gtm/partnerships.md).
 
 ## How we go to market
 
 Founder-led, credibility-first. The founder is a payments/fintech lawyer — the reason
 Granville *can* provide regulated services safely and explain them plainly. Land businesses
-that feel the accounting/payments split as daily pain; prove the merged-truth value on a real
+that feel the cross-border payout pain daily; prove the cue-up/approve value on a real
 flow; expand usage. (See [GTM](../04-gtm/gtm-strategy.md).)
 
 ## How we make money
@@ -66,15 +71,15 @@ larger customers. (See [pricing](../05-pricing/pricing-and-packaging.md).)
 |---|---|---|
 | **Now** | First operating business live, moving real money on the primary payments channel | Go-live (rail TBD by Rapyd negotiation) |
 | **Next** | Repeatable design-partner motion (3–5 operating businesses) | Granville MVP (portal, ops, reporting) |
-| **Later** | Broader, hardened platform sold on "one truth for money + books" | Version 1 hardening |
+| **Later** | Broader, hardened platform; expand across the four public segments | Version 1 hardening |
 
 (Full plan: [business-development-plan.md](../06-plan/business-development-plan.md).)
 
 ## The one number that matters right now
 
-**First operating business moving real money in production, with the ledger tying out.**
-Everything before that is preparation; everything after it is a repeatable story. Maps directly
-to the product's go-live exit criterion — now on the Rapyd rail (Airwallex dropped on cost).
+**First operating business running a real payment run through Granville — finance cues it up,
+principal approves, money goes out.** Everything before that is preparation; everything after it
+is a repeatable story. Depends on the go-live rail — now Rapyd (Airwallex dropped on cost).
 
 ---
 
@@ -85,8 +90,8 @@ to the product's go-live exit criterion — now on the Rapyd rail (Airwallex dro
 
 ### Open strategic questions
 
-- [ ] Lead with "one truth for money + books" (finance-ops pain) or "cross-border payouts made
-      simple" (the payout pain)? (Positioning fork — for this segment the payout angle is the hook.)
+- [ ] Within the payout story, lead with the **cue-up/approve workflow** (delegation + control)
+      or with **compliant cross-border movement** (the rails pain)? (Both true; test the hook.)
 - [ ] How much regulated surface does Granville carry itself vs. via partners, and what does
       that imply for licensing and liability?
 - [ ] Exact scope line: how do we serve "foreign payroll" as **contractor payouts** without
