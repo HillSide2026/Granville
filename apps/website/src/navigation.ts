@@ -19,7 +19,7 @@ export const footerData = {
         { text: "Industries", href: getPermalink("/industries") },
         { text: "Company", href: getPermalink("/#company") },
         { text: "Careers", href: getPermalink("/#company") },
-        { text: "Whitepaper", href: "#" },
+        { text: "Whitepaper", href: getPermalink("/whitepaper") },
         { text: "Contact", href: getPermalink("/contact") },
       ],
     },
