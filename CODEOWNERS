@@ -1,1 +1,7 @@
 * @formancehq/backend
+
+# Business development knowledge hub is business-owned, not engineering.
+# The empty owner list removes the default (@formancehq/backend) so BD changes
+# are not auto-assigned to the backend team. Add your GitHub handle to require
+# your own review, e.g. `/business/ @your-handle`.
+/business/
