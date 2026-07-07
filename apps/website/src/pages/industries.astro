@@ -1,0 +1,46 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+
+const metadata = {
+  title: 'Industries',
+};
+
+const industries = [
+  {
+    title: 'Agencies',
+    description:
+      'Creative, media, and marketing agencies paying freelancers and vendors across borders. Run every client&rsquo;s payouts and expenses through one system — so the books tie out and margins stay clear.',
+    icon: 'user/group-user-two',
+  },
+  {
+    title: 'Influencers',
+    description:
+      'Creators and their teams earning and paying across platforms and currencies. Collect income and pay collaborators in one place, with every transaction posted to a clean, auditable ledger.',
+    icon: 'reaction/star',
+  },
+  {
+    title: 'Marketplaces',
+    description:
+      'Platforms paying out sellers, vendors, or partners at scale. Orchestrate mass payouts that post themselves to your ledger — auditable from the first transaction.',
+    icon: 'share/share',
+  },
+  {
+    title: 'Ecommerce',
+    description:
+      'Online sellers moving money across currencies, gateways, and marketplaces. Consolidate settlements and payouts into one ledger, so reconciliation stops eating your month-end.',
+    icon: 'scan/shopping-ecommerce-receipt',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Industries"
+    title="Built for the businesses that move money"
+    subtitle="Granville is designed for operating businesses where payments have outgrown the tools — multi-currency, high-volume, and accountable to the last entry. These are the sectors we serve."
+  />
+
+  <Features2 columns={2} items={industries} classes={{ container: 'pt-0 md:pt-2 lg:pt-4 pb-16 md:pb-20 lg:pb-24' }} />
+</Layout>

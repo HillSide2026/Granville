@@ -16,10 +16,10 @@ export const footerData = {
       title: "Navigation",
       links: [
         { text: "Platform", href: getPermalink("/#platform") },
-        { text: "Industries", href: getPermalink("/#payments") },
+        { text: "Industries", href: getPermalink("/industries") },
         { text: "Company", href: getPermalink("/#company") },
         { text: "Careers", href: getPermalink("/#company") },
-        { text: "Whitepaper", href: getPermalink("/blog") },
+        { text: "Whitepaper", href: "#" },
         { text: "Contact", href: getPermalink("/contact") },
       ],
     },

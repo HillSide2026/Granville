@@ -1,0 +1,73 @@
+---
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  meta?: string[];
+}
+
+const {
+  eyebrow = 'Granville Finance · Whitepaper',
+  title = 'The Architecture of Global Money Movement',
+  meta = ['2026 Edition', '24 pages'],
+} = Astro.props as Props;
+---
+
+<div
+  aria-hidden="true"
+  class="whitepaper-cover relative isolate overflow-hidden rounded-[28px] border border-[rgba(184,198,214,0.1)] shadow-[0_24px_60px_rgba(2,8,18,0.52)]"
+>
+  <!-- Background -->
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(216,185,130,0.06),transparent_52%),linear-gradient(152deg,#030d1a_0%,#071225_54%,#0b1931_100%)]"></div>
+
+  <!-- Dot grid -->
+  <div class="absolute inset-0 opacity-[0.1] [background-image:radial-gradient(circle,rgba(184,198,214,0.5)_1px,transparent_1px)] [background-size:34px_34px]"></div>
+
+  <!-- Document page -->
+  <div class="relative flex h-full flex-col justify-between p-7 md:p-9">
+    <!-- Header row -->
+    <div class="flex items-center justify-between">
+      <span class="text-[0.62rem] font-semibold uppercase tracking-[0.28em] text-[#d8b982]">{eyebrow}</span>
+      <span class="rounded-md border border-[rgba(216,185,130,0.32)] px-2 py-1 text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-[#d8b982]">PDF</span>
+    </div>
+
+    <!-- Title block -->
+    <div class="mt-8">
+      <div class="mb-5 h-px w-16 bg-[linear-gradient(90deg,rgba(216,185,130,0.8),transparent)]"></div>
+      <h3 class="max-w-[16ch] text-[1.55rem] font-bold leading-tight tracking-tight text-slate-100 md:text-[1.85rem]">
+        {title}
+      </h3>
+
+      <!-- Abstract skeleton lines -->
+      <div class="mt-6 space-y-2.5">
+        <div class="h-1.5 w-[86%] rounded-full bg-[rgba(184,198,214,0.16)]"></div>
+        <div class="h-1.5 w-[94%] rounded-full bg-[rgba(184,198,214,0.13)]"></div>
+        <div class="h-1.5 w-[72%] rounded-full bg-[rgba(184,198,214,0.1)]"></div>
+      </div>
+    </div>
+
+    <!-- Footer meta -->
+    <div class="mt-8 flex items-center justify-between border-t border-[rgba(184,198,214,0.1)] pt-4">
+      <span class="text-sm font-semibold tracking-tight text-slate-200">Granville</span>
+      <div class="flex items-center gap-3 text-[0.68rem] uppercase tracking-[0.14em] text-[rgba(184,198,214,0.55)]">
+        {meta.map((item) => <span>{item}</span>)}
+      </div>
+    </div>
+  </div>
+
+  <!-- Edge fades -->
+  <div class="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[#030d1a] to-transparent"></div>
+  <div class="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#030d1a] to-transparent"></div>
+</div>
+
+<style>
+  .whitepaper-cover {
+    aspect-ratio: 0.86 / 1;
+    min-height: 360px;
+  }
+
+  @media (max-width: 640px) {
+    .whitepaper-cover {
+      min-height: 320px;
+    }
+  }
+</style>

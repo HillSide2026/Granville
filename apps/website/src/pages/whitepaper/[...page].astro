@@ -5,8 +5,13 @@ import Layout from '~/layouts/PageLayout.astro';
 import BlogList from '~/components/blog/List.astro';
 import Headline from '~/components/blog/Headline.astro';
 import Pagination from '~/components/blog/Pagination.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import Content from '~/components/widgets/Content.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import WhitepaperCover from '~/components/granville/WhitepaperCover.astro';
 
 import { blogListRobots, blogPostsPerPage, fetchPosts, isBlogEnabled, isBlogListRouteEnabled } from '~/utils/blog';
+import { whitepaperPage } from '~/data/whitepaper';
 
 export const getStaticPaths = (async ({ paginate }) => {
   if (!isBlogEnabled || !isBlogListRouteEnabled) return [];
@@ -17,17 +22,144 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { page } = Astro.props as Props;
 const currentPage = page.currentPage;
+const isFirstPage = currentPage === 1;
 
 const metadata = {
-  title: `Blog${currentPage > 1 ? ` — Page ${currentPage}` : ''}`,
+  title: `Whitepaper${currentPage > 1 ? ` — Page ${currentPage}` : ''}`,
   robots: blogListRobots,
+};
+
+const contentClasses = {
+  container: 'pt-20 md:pt-24 lg:pt-28',
+  contentCol: 'md:basis-3/5',
+  imageCol: 'md:basis-2/5',
+  headline: {
+    title: 'text-4xl md:text-5xl font-bold tracking-tighter mb-4 font-heading text-slate-900 dark:text-slate-900',
+    subtitle: 'max-w-3xl mx-auto sm:text-center text-xl text-slate-600 dark:text-slate-600',
+  },
+  content: 'text-lg text-slate-600 dark:text-slate-600',
+  itemTitle: 'text-xl font-semibold leading-snug text-slate-900 dark:text-slate-900 ml-2 rtl:ml-0 rtl:mr-2',
+  itemDescription: 'text-slate-600 dark:text-slate-600 ml-2 rtl:ml-0 rtl:mr-2',
 };
 ---
 
 <Layout metadata={metadata}>
+  {
+    isFirstPage && (
+      <Fragment>
+        {/* Overview — platform-style feature grid */}
+        <div class="relative" style="background: linear-gradient(165deg, #050b14 0%, #081120 55%, #0a1422 100%);">
+          <Features2
+            id="whitepaper-overview"
+            tagline={whitepaperPage.overview.tagline}
+            title={whitepaperPage.overview.title}
+            subtitle={whitepaperPage.overview.subtitle}
+            items={whitepaperPage.overview.items}
+            classes={{ container: 'pt-12 md:pt-16 lg:pt-20' }}
+          >
+            <Fragment slot="bg">
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_0%,rgba(159,147,180,0.06),transparent_40%)]" />
+            </Fragment>
+          </Features2>
+        </div>
+
+        {/* Chapter 01 — payments-style content block with whitepaper cover */}
+        <Content
+          id="whitepaper-chapter-1"
+          tagline={whitepaperPage.theme1.tagline}
+          title={whitepaperPage.theme1.title}
+          subtitle={whitepaperPage.theme1.subtitle}
+          isReversed
+          items={whitepaperPage.theme1.items}
+          classes={contentClasses}
+        >
+          <Fragment slot="bg">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(213,191,155,0.2),transparent_24%),radial-gradient(circle_at_top_right,rgba(184,198,214,0.3),transparent_32%),linear-gradient(180deg,rgba(234,240,245,0.98),rgba(245,243,239,0.99))]" />
+          </Fragment>
+
+          <Fragment slot="content">
+            <h3 class="mb-4 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-900 sm:text-3xl">
+              {whitepaperPage.theme1.contentTitle}
+            </h3>
+            <p class="text-slate-600 dark:text-slate-600">{whitepaperPage.theme1.contentBody}</p>
+          </Fragment>
+
+          <Fragment slot="image">
+            <div class="py-2 md:py-4">
+              <WhitepaperCover
+                eyebrow={whitepaperPage.theme1.cover.eyebrow}
+                title={whitepaperPage.theme1.cover.title}
+                meta={whitepaperPage.theme1.cover.meta}
+              />
+            </div>
+          </Fragment>
+        </Content>
+
+        {/* Chapter 02 — payments-style content block (alternating side) with whitepaper cover */}
+        <Content
+          id="whitepaper-chapter-2"
+          tagline={whitepaperPage.theme2.tagline}
+          title={whitepaperPage.theme2.title}
+          subtitle={whitepaperPage.theme2.subtitle}
+          items={whitepaperPage.theme2.items}
+          classes={contentClasses}
+        >
+          <Fragment slot="bg">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(213,191,155,0.2),transparent_24%),radial-gradient(circle_at_top_left,rgba(184,198,214,0.3),transparent_32%),linear-gradient(180deg,rgba(245,243,239,0.99),rgba(234,240,245,0.98))]" />
+          </Fragment>
+
+          <Fragment slot="content">
+            <h3 class="mb-4 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-900 sm:text-3xl">
+              {whitepaperPage.theme2.contentTitle}
+            </h3>
+            <p class="text-slate-600 dark:text-slate-600">{whitepaperPage.theme2.contentBody}</p>
+          </Fragment>
+
+          <Fragment slot="image">
+            <div class="py-2 md:py-4">
+              <WhitepaperCover
+                eyebrow={whitepaperPage.theme2.cover.eyebrow}
+                title={whitepaperPage.theme2.cover.title}
+                meta={whitepaperPage.theme2.cover.meta}
+              />
+            </div>
+          </Fragment>
+        </Content>
+
+        {/* Takeaways — company-style card block */}
+        <FAQs
+          id="whitepaper-takeaways"
+          title={whitepaperPage.takeaways.title}
+          columns={2}
+          items={whitepaperPage.takeaways.items}
+          classes={{
+            container: 'pt-16 md:pt-20 lg:pt-24 pb-2 md:pb-4',
+            headline: {
+              container: 'mx-auto max-w-5xl text-center md:mb-10',
+              title: 'text-4xl font-bold tracking-tighter text-page md:text-5xl',
+            },
+            items: 'max-w-5xl gap-6 md:gap-7',
+            itemWrapper:
+              'h-full items-start gap-4 rounded-[26px] border border-[rgba(184,198,214,0.08)] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0.012))] px-6 py-7 shadow-[0_18px_40px_rgba(0,0,0,0.14)] transition duration-200 ease-out hover:border-[rgba(184,198,214,0.14)] hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.016))] hover:shadow-[0_24px_54px_rgba(0,0,0,0.18)]',
+            iconWrapper:
+              'mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[rgba(184,198,214,0.08)] bg-[rgba(255,255,255,0.03)]',
+            icon: 'mr-0 mt-0 h-5 w-5 text-secondary',
+            body: 'flex-1',
+            itemTitle: 'text-2xl font-semibold leading-tight tracking-tight text-page md:text-[1.72rem]',
+            itemDescription: 'max-w-md text-slate-400',
+          }}
+        >
+          <Fragment slot="bg">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(184,198,214,0.06),transparent_20%),linear-gradient(180deg,rgba(4,9,16,0),rgba(4,9,16,0.68)_18%,rgba(4,9,16,0.96)_100%)]" />
+          </Fragment>
+        </FAQs>
+      </Fragment>
+    )
+  }
+
   <section class="px-6 sm:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
     <Headline>
-      {currentPage > 1 ? `Blog — Page ${currentPage}` : 'Blog'}
+      {currentPage > 1 ? `Whitepaper — Page ${currentPage}` : 'Latest'}
     </Headline>
     <BlogList posts={page.data} />
     <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
