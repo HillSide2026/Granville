@@ -1,30 +1,34 @@
 import { granville } from "./granville";
 
-// Placeholder whitepaper copy — refine once the final paper content is set.
+// Whitepaper copy — reframed around the wedge: paying a global contract
+// workforce (contractors, agencies, crews) for companies that work with them
+// instead of standing up an EOR. "Financial operations" is the mechanism, not
+// the topic. Claim-safe: no invented benchmarks; no employment/EOR-avoidance
+// framing. Refine once the final paper content is set.
 export const whitepaperPage = {
   // Platform-style intro grid (Features2)
   overview: {
     tagline: "Whitepaper",
-    title: "Inside the Granville Whitepaper.",
+    title: "Paying a Global Contract Workforce.",
     subtitle:
-      "A practical look at how modern financial infrastructure improves the way global teams monitor, manage, and move money.",
+      "For companies that build with contractors, agencies, and crews across borders instead of an employer of record — how to pay them on time, in their currency, with every payment recorded.",
     items: [
       {
-        title: "The Research",
+        title: "Why Companies Go Contract-First",
         description:
-          "A structured analysis of where legacy payment and treasury operations break down as businesses scale across borders.",
+          "Teams increasingly build with contractors, agencies, and rotational crews across borders rather than standing up entities in every market.",
         icon: "report/document-text-search",
       },
       {
-        title: "The Findings",
+        title: "Where Payment Breaks",
         description:
-          "Data-backed benchmarks on settlement speed, operational overhead, and the true cost of fragmented financial systems.",
+          "The hidden cost of paying that workforce through a bank, a payout tool, an FX provider, and a spreadsheet — with the founder pushing every run by hand.",
         icon: "analytics/chart-column-research",
       },
       {
-        title: "The Global View",
+        title: "One Workflow, Every Payment Recorded",
         description:
-          "How unified infrastructure reshapes cross-border money movement, currency management, and multi-entity oversight.",
+          "How a single cue-up → approve → pay → record flow replaces the stack and keeps the books current across currencies and corridors.",
         icon: "location/earth-globe",
       },
     ],
@@ -33,66 +37,66 @@ export const whitepaperPage = {
   // First payments-style Content block
   theme1: {
     tagline: "Chapter 01",
-    title: "Why Financial Operations Break at Scale.",
+    title: "Why Paying a Global Team Breaks Down.",
     subtitle:
-      "The whitepaper opens by mapping the hidden complexity that accumulates as payment volumes, currencies, and entities multiply.",
-    contentTitle: "The Cost of Fragmentation",
+      "The whitepaper opens by mapping the complexity that accumulates as a company pays more people, in more countries and currencies — without an entity or EOR in each market.",
+    contentTitle: "The Cost of a Stitched-Together Stack",
     contentBody:
-      "Disconnected banking relationships, manual reconciliation, and siloed treasury tooling quietly compound into operational drag. This section quantifies that drag and where it originates.",
+      "A bank for domestic, a payout tool for abroad, an FX provider for rates, and a spreadsheet for who-got-paid. The gaps between them get reconciled by hand — usually by the founder. This section maps where that drag comes from.",
     items: [
       {
-        title: "Limited Visibility",
+        title: "The Founder Is the Rail",
         description:
-          "Without a single source of truth, finance teams react to problems instead of anticipating them.",
+          "Every payment run waits on the principal to log in and push it manually — operating the payments instead of approving them.",
       },
       {
-        title: "Manual Reconciliation",
+        title: "No Single Record",
         description:
-          "Settlement mismatches and spreadsheet-driven workflows scale linearly with growth, not with automation.",
+          "Who was paid, when, and in what currency lives across tools; month-end becomes a reconstruction rather than a read.",
       },
       {
-        title: "Fragmented Rails",
+        title: "FX and Fees Leak",
         description:
-          "Each new banking partner and payment corridor adds integration, reconciliation, and oversight burden.",
+          "Each corridor and tool takes a cut, and the true cost of moving money stays invisible until someone adds it all up.",
       },
     ],
     cover: {
       eyebrow: "Granville · Chapter 01",
-      title: "Why Financial Operations Break at Scale",
-      meta: ["Section 1", "Benchmarks"],
+      title: "Why Paying a Global Team Breaks Down",
+      meta: ["Section 1", "The Problem"],
     },
   },
 
   // Second payments-style Content block
   theme2: {
     tagline: "Chapter 02",
-    title: "A Unified Model for Global Money Movement.",
+    title: "One Workflow for the Whole Team.",
     subtitle:
-      "The second half presents an infrastructure model designed to consolidate payments, treasury, and controls into one operating environment.",
-    contentTitle: "Infrastructure as a Foundation",
+      "The second half presents an operating model that collapses the stack into a single cue-up → approve → pay → record flow — payment and bookkeeping as one event.",
+    contentTitle: "Payment and Record, the Same Event",
     contentBody:
-      "By treating payments, liquidity, and oversight as a single system rather than stitched-together tools, businesses gain the visibility and control needed to scale globally.",
+      "When paying someone and recording it are one action, the founder approves instead of operating, and the books are always current. Treasury, FX, and controls become the mechanism underneath — not four tools to reconcile.",
     items: [
       {
-        title: "One Operating Environment",
+        title: "Cue Up, Approve, Send",
         description:
-          "Consolidate payment workflows, treasury oversight, and controls behind a single infrastructure layer.",
+          "Finance prepares the run, the principal approves, and money moves — a clean separation of duties on every payment.",
       },
       {
-        title: "Standardized Controls",
+        title: "Every Payment on One Ledger",
         description:
-          "Approvals, monitoring, and reporting are applied consistently across every corridor and currency.",
+          "Each payout posts itself to an auditable record across currencies and corridors, so the books never fall behind the money.",
       },
       {
-        title: "Built to Scale",
+        title: "Balances and FX in One Place",
         description:
-          "New markets and entities extend the same model instead of multiplying operational complexity.",
+          "Hold, convert, and pay without hopping between a bank, a payout tool, and an FX provider for a single run.",
       },
     ],
     cover: {
       eyebrow: "Granville · Chapter 02",
-      title: "A Unified Model for Global Money Movement",
-      meta: ["Section 2", "Framework"],
+      title: "One Workflow for the Whole Team",
+      meta: ["Section 2", "The Model"],
     },
   },
 
@@ -103,13 +107,13 @@ export const whitepaperPage = {
       {
         title: "Who It's For",
         description:
-          "Finance, treasury, and operations leaders building or scaling global money movement across multiple markets.",
+          "Founders and finance leads at companies paying a global contract workforce — agencies, marketplaces, and operators working with contractors and crews across borders.",
         icon: "report/documents-notes-pages",
       },
       {
         title: "Get the Paper",
         description:
-          "Download the full whitepaper for the complete research, benchmarks, and infrastructure framework.",
+          "Download the full whitepaper for the complete argument, the operating model, and how Granville implements it.",
         icon: "download/download",
       },
     ],
