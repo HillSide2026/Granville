@@ -67,8 +67,10 @@ flow; expand usage. (See [GTM](../04-gtm/gtm-strategy.md).)
 
 ## How we make money
 
-Platform subscription + usage on money moved (per-payment / volume / FX), with onboarding for
-larger customers. (See [pricing](../05-pricing/pricing-and-packaging.md).)
+**Free base → revenue-share engine → future premium tier(s).** The software is given away free;
+we earn a share of the payment/FX economics on money moved through the platform (the Rapyd
+rev-share deal); paid premium tiers come later. The entire model hinges on the **unsigned** Rapyd
+economics. (See [pricing](../05-pricing/pricing-and-packaging.md).)
 
 ## The plan, in three moves
 

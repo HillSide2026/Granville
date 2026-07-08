@@ -41,6 +41,9 @@ Legend: ✅ can say · ⚠️ only with the stated condition · ❌ do not say.
 | "We are an EMI / regulated / a bank" | ❌ / ⚠️ | Not a bank (never). "EMI-led" is *intent*; confirm the actual licensing/agent model with counsel before any regulated claim. |
 | "FX / multi-currency balances / budgets in one platform" | ⚠️ | Portal surfaces these — **verify each is functional** in the build you're demoing before promising it. |
 | Specific numbers (uptime, volume, savings, customer count) | ❌ | No metrics until we have real ones. Zero live customers today — don't imply otherwise. |
+| "The software is free" | ⚠️ | True as the *plan* (free base, monetize on rev-share). Don't promise "free forever" until the economics are confirmed; free may become free-up-to-a-limit. |
+| "Premium / paid tiers" | ❌ (today) | No premium tier exists. It's future. Don't present or price it. |
+| Rev-share %, take rate, pricing | ❌ | Rapyd rev-share is unsigned; no numbers exist to quote. |
 
 ## How to phrase the honest version
 

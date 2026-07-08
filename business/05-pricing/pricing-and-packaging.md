@@ -2,79 +2,79 @@
 
 > Owner: _TBD_ · Status: `DRAFT` · Last reviewed: 2026-07-07
 
-How Granville charges. All numbers below are **hypotheses to test**, not committed prices.
-Pricing a platform that provides regulated services and holds/moves money has real
-constraints — validate with counsel and with real willingness-to-pay conversations.
+How Granville makes money. Governed by [claims-guardrails.md](../00-overview/claims-guardrails.md):
+don't publish prices, rev-share numbers, or "free forever" promises until the economics are
+confirmed. **The whole model below hinges on the unsigned Rapyd revenue-share deal.**
 
 ---
 
-## Business model
+## The model
 
-Granville replaces a **stack** (business bank/payments + FX + accounting + reconciliation
-labour). The pricing frame is therefore **consolidation value**: cost less than the sum of the
-tools + the people-hours it removes, while capturing a fair share of that saving.
+**Free base → revenue-share engine → future premium tier(s).**
 
-Likely a hybrid of:
+1. **The software is free.** The core product — pay your global team, cue up + approve, FX,
+   balances, payment records — is given away. No subscription to onboard. Free removes the
+   friction that would otherwise slow adoption of a young platform that touches money.
+2. **We make money on revenue sharing.** Granville earns a share of the economics on money
+   moved through the platform (payment / FX revenue), via the **Rapyd revenue-share
+   partnership**. Revenue scales with **volume moved**, not with software seats. This is what
+   recovers cost and — hopefully — turns a profit.
+3. **Premium paid tier(s) come later.** Advanced capability sold on top of the free base, once
+   there's a live product and real demand. **Future, not now** — do not present paid tiers as
+   available today.
 
-| Component | Rationale |
-|---|---|
-| **Platform subscription** | Predictable base for access to the pay-your-team platform |
-| **Usage on money moved** | Scales with value delivered (per-payment, volume tiers, or bps) |
-| **FX spread / margin** | Standard for multi-currency movement (where model permits) |
-| **Onboarding / implementation** | For larger customers migrating real flows |
+## The engine: revenue sharing
 
-## Value metric — the key decision
+- **Where it comes from:** a share of the payment/FX margin generated when a customer moves
+  money on Granville's rail. The customer isn't billed a Granville fee; Granville participates
+  in the transaction economics.
+- **What it depends on:** the **Rapyd rev-share terms — currently in negotiation, unsigned.**
+  Until those terms exist, we cannot model unit economics, cannot know break-even, and cannot
+  state margins. This makes the Rapyd deal the **single most load-bearing item in the whole
+  business model** — see [partnerships](../04-gtm/partnerships.md#strategic-dependencies-to-manage).
+- **What has to be true to profit:** (rev-share earned per unit of volume) × (volume across
+  customers) must exceed cost-to-serve (rail + infra + compliance + support). Free acquisition
+  only works if volume-based rev-share clears that bar.
 
-What does the price scale on? Options, with trade-offs:
+## The free base
 
-| Value metric | Pros | Cons |
-|---|---|---|
-| **Money moved (volume / bps)** | Aligns price to value; familiar in payments | Can get expensive fast; may cap adoption |
-| **Per payment / transaction** | Simple, predictable | Weak link to value if payment sizes vary widely |
-| **Seats / platform tier** | Predictable revenue; SaaS-like | Under-captures high-volume value |
-| **Hybrid (base + usage)** | Balances predictability and alignment | More complex to explain |
+- **What's free:** the core pay-your-team product. Be precise with customers about what is
+  actually live today vs. roadmap ([claims-guardrails](../00-overview/claims-guardrails.md)).
+- **Why free:** kills onboarding friction, accelerates the volume that the rev-share monetizes,
+  and lowers the trust barrier for a new platform.
+- **The tension to watch:** "free" plus real cost-to-serve means **every free customer costs
+  money until their volume produces enough rev-share to cover them.** Free is an acquisition
+  bet on volume — not a give-away with no downside.
 
-> Recommendation to test: **base subscription + usage on money moved**, with FX margin where
-> permitted. Keep the first design-partner deals simple and generous.
+## Future premium tier(s) — placeholder, do not build out yet
 
-## Packaging hypothesis (tiers to test)
+Reserved for advanced capability layered on the free base (candidates only, unvalidated:
+advanced controls/approvals, deeper reporting, higher limits, priority support, SLAs). **Not a
+current offer.** Do not detail, price, or promise premium tiers until there's a live product and
+evidence of demand — that would be fantasizing about the future.
 
-| Tier | For | Includes | Price (PLACEHOLDER) |
-|---|---|---|---|
-| **Design Partner** | First few customers | Founder support, one live flow, reference rights, favourable terms | Discounted / co-build |
-| **Core** | Small operating businesses | Pay the team (cue-up/approve), one rail, portal, FX, payment records | $ base + usage — TBD |
-| **Growth** | Higher volume / multi-currency | + FX, more volume, priority support | $$ base + usage — TBD |
-| **Scale** | Larger / complex | + advanced controls, onboarding, SLAs | Custom — TBD |
+## Current stage — design partners
 
-## Design-partner pricing (current stage — the one that matters now)
+The base is free anyway, so early deals aren't about price. They're about:
+- Getting real **volume** onto the platform (to prove the rev-share engine works).
+- Proof, feedback, and reference rights.
+- **Validating the rev-share economics** against real transactions once a rail is live.
 
-For the first 3–5 customers, price is a means to **proof and references**, not revenue:
-- Favourable/discounted terms.
-- In exchange: real usage, deep feedback, and reference rights (named logo or case study).
-- Keep it simple — a flat pilot fee or waived-base + usage is easier than a bespoke model.
-- Put terms in a short design-partner agreement (keep signed docs out of git — see hub README).
+Keep any early terms in a short design-partner agreement (signed docs out of git — see hub README).
 
-## Pricing guardrails / open questions
+## Open questions / inputs needed
 
-- [ ] **Regulatory constraints** on how Granville can charge for regulated services / hold funds
-      / take FX margin — confirm with counsel before publishing any price.
-- [ ] **Cost-to-serve** — rail costs (primary channel Rapyd, pending rev-share terms),
-      Formance, compliance, support — must sit below price. **The Rapyd revenue-share deal is a
-      primary input to unit economics** — model it as soon as terms firm up
-      ([partnerships](../04-gtm/partnerships.md#strategic-dependencies-to-manage)).
-- [ ] **Anchoring** — do we price against the tools we replace (bank+FX+accounting) or against
-      the labour we remove? (Second anchor is usually bigger.)
-- [ ] **Do we publish prices** or stay "contact us" while founder-led? (Likely the latter early.)
+- [ ] **Rapyd rev-share terms** — the number that decides whether this model works at all. Blocks
+      everything below.
+- [ ] **Cost-to-serve model** (rail + infra + compliance + support) → break-even volume per customer.
+- [ ] **Regulatory constraints** on participating in payment/FX economics — confirm with counsel
+      before relying on any rev-share mechanic ([regulatory-context](../01-market/regulatory-context.md)).
+- [ ] **When** does a premium tier make sense, and what would actually be worth paying for?
+- [ ] Is "free base" genuinely free forever, or free-up-to-a-limit? (Decide once economics are known.)
 
-## What NOT to do
+## What NOT to do / say
 
-- Don't publish prices before the regulatory model and unit economics are confirmed.
-- Don't over-discount forever — design-partner pricing needs an explicit end date.
-- Don't compete on being cheapest; compete on removing the whole stack and the labour.
-
-## Inputs needed to finalize
-
-- [ ] Rail + infra + compliance cost-to-serve model → unit economics
-- [ ] 3–5 willingness-to-pay conversations with real ICP buyers
-- [ ] Counsel sign-off on permissible charging models
-- [ ] Competitor price points for the tools we replace (for anchoring)
+- Don't quote rev-share percentages, prices, or "free forever" before the economics are confirmed.
+- Don't present premium tiers as available — they don't exist.
+- Don't assume free = costless; model the volume needed to cover cost-to-serve.
+- Don't build the software's value story on a subscription — there isn't one.
