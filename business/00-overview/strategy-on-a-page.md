@@ -5,6 +5,11 @@
 The whole business thesis in one screen. Everything else in this hub is detail hanging off
 this page.
 
+> **Operating stance:** we sell whatever people are willing to buy. The segment and sequencing
+> below are where we're *aiming*, not a constraint — treat them as a working focus, not a
+> promise about the future. What is **not** flexible: the
+> [claim guardrails](claims-guardrails.md). We flex the target; we never flex the truth.
+
 ---
 
 ## What we sell

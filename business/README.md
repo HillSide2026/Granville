@@ -13,11 +13,18 @@ need to touch application source. The boundary is the point.
 
 ---
 
+## ⚠️ Read first: claim guardrails
+
+**[00-overview/claims-guardrails.md](00-overview/claims-guardrails.md) is the most important
+doc here.** It governs what we can and cannot say — grounded in what the product actually does
+today, not what it might do later. If a claim isn't backed by a shipped capability, we don't
+make it. Everything else in this hub is subordinate to that rule.
+
 ## How to navigate
 
 | Folder | What lives here | Start with |
 |---|---|---|
-| [00-overview/](00-overview/) | The strategy in one page; a BD-facing product primer | [strategy-on-a-page.md](00-overview/strategy-on-a-page.md) |
+| [00-overview/](00-overview/) | **Claim guardrails (read first)**; strategy in one page; product primer | [claims-guardrails.md](00-overview/claims-guardrails.md) |
 | [01-market/](01-market/) | Market landscape, competitors, regulatory context | [market-landscape.md](01-market/market-landscape.md) |
 | [02-customers/](02-customers/) | Ideal customer profile, segments, personas | [icp-and-segments.md](02-customers/icp-and-segments.md) |
 | [03-positioning/](03-positioning/) | Value proposition, messaging, the sales narrative | [positioning-and-messaging.md](03-positioning/positioning-and-messaging.md) |

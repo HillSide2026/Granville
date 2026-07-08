@@ -6,10 +6,12 @@ The words. How Granville describes itself so an operating business instantly und
 it is and why it's different. Keep this tight — every other asset (website, deck, emails)
 inherits from here.
 
-> **Banned phrases** (do not use — untrue and/or clumsy): "merged books", "merged accounting",
-> "your money and your books as one system", "one truth for money and books", "the payment is
-> the ledger entry", "replaces your accounting". Granville is **not** the customer's accounting
-> system and does **not** integrate with QuickBooks/Xero. Say what's true (below).
+> **Governed by [claims-guardrails.md](../00-overview/claims-guardrails.md) — read it first.**
+> Banned phrases (untrue and/or clumsy): "merged books", "merged accounting", "your money and
+> your books as one system", "one truth for money and books", "the payment is the ledger entry",
+> "real-time accounting records", "replaces your accounting". Granville is **not** the customer's
+> accounting system and does **not** integrate with QuickBooks/Xero. This list is a subset of the
+> guardrails table — that table is the authority.
 
 ---
 
@@ -44,6 +46,9 @@ contractors in 8 currencies without doing it personally, and without losing cont
    fintech build.
 2. **Cue up, then approve — built in.** Your finance team prepares the payment run; the person
    with authority reviews and releases it. Delegation *and* control, in one workflow.
+   ⚠️ **`[VERIFY BEFORE CLAIMING]`** — institutional maker/checker is parked on the roadmap
+   (enforcement + endpoints exist; roles + maker/checker not confirmed). Confirm the actual
+   approval flow works before pitching it. See [claims-guardrails](../00-overview/claims-guardrails.md).
 3. **Every payment on the record.** Each payment is automatically recorded, reconciled against
    the rail (so you know it actually landed), and audit-ready. You can see and trust exactly
    what moved. → *Not* your accounting system — a reliable record of what Granville sent.
