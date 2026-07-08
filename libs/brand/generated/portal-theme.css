@@ -1,0 +1,143 @@
+/* GENERATED from libs/brand/brand-foundations.ts by scripts/generate-theme.ts.
+   Do not edit by hand — run `npm run brand:generate` at the repo root. */
+
+:root {
+  /* Semantic core — product light */
+  --granville-semantic-bg: var(--granville-color-surface-public);
+  --granville-semantic-bg-deep: var(--granville-color-navy-900);
+  --granville-semantic-surface: #ffffff;
+  --granville-semantic-surface-raised: #ffffff;
+  --granville-semantic-surface-muted: var(--granville-color-slate-100);
+  --granville-semantic-text: var(--granville-color-navy-900);
+  --granville-semantic-text-muted: var(--granville-color-slate-500);
+  --granville-semantic-text-on-primary: var(--granville-color-slate-50);
+  --granville-semantic-primary: var(--granville-color-navy-900);
+  --granville-semantic-primary-hover: var(--granville-color-navy-800);
+  --granville-semantic-accent: var(--granville-color-blue-400);
+  --granville-semantic-border: var(--granville-color-slate-300);
+  --granville-semantic-border-strong: var(--granville-color-slate-300);
+  --granville-semantic-ring: var(--granville-color-gold-400);
+  --granville-semantic-danger: var(--granville-color-danger);
+  --granville-semantic-success: var(--granville-color-success);
+  --granville-semantic-warning: var(--granville-color-warning);
+
+  /* Sidebar (dark treatment in both modes) */
+  --sidebar: var(--granville-color-navy-900);
+  --sidebar-foreground: var(--granville-color-slate-50);
+  --sidebar-primary: var(--granville-color-gold-300);
+  --sidebar-primary-foreground: var(--granville-color-navy-950);
+  --sidebar-accent: var(--granville-color-navy-800);
+  --sidebar-accent-foreground: var(--granville-color-slate-50);
+  --sidebar-border: var(--granville-color-border-subtle);
+  --sidebar-ring: var(--granville-color-gold-300);
+
+  /* Payment status — light */
+  --portal-status-created-bg: #eef2f7;
+  --portal-status-created-text: #334155;
+  --portal-status-created-border: #cbd5e1;
+  --portal-status-review-bg: #fdf2da;
+  --portal-status-review-text: #9a5b12;
+  --portal-status-review-border: #f0c878;
+  --portal-status-submitted-bg: #e8f4fb;
+  --portal-status-submitted-text: #0b5f8f;
+  --portal-status-submitted-border: #9ad3ef;
+  --portal-status-processing-bg: #e9f2ff;
+  --portal-status-processing-text: #2757c6;
+  --portal-status-processing-border: #a8c7ff;
+  --portal-status-completed-bg: #e8f7ee;
+  --portal-status-completed-text: #167447;
+  --portal-status-completed-border: #9fd8b7;
+  --portal-status-failed-bg: #fee2e2;
+  --portal-status-failed-text: #b91c1c;
+  --portal-status-failed-border: #fca5a5;
+  --portal-status-returned-bg: #fff1e8;
+  --portal-status-returned-text: #b45309;
+  --portal-status-returned-border: #fdba74;
+  --portal-status-cancelled-bg: #f1f5f9;
+  --portal-status-cancelled-text: #64748b;
+  --portal-status-cancelled-border: #cbd5e1;
+
+  /* Charts — light */
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+
+  /* Shadcn adapter (points at the semantic layer; follows it into .dark) */
+  --background: var(--granville-semantic-bg);
+  --foreground: var(--granville-semantic-text);
+  --card: var(--granville-semantic-surface);
+  --card-foreground: var(--granville-semantic-text);
+  --popover: var(--granville-semantic-surface-raised);
+  --popover-foreground: var(--granville-semantic-text);
+  --primary: var(--granville-semantic-primary);
+  --primary-foreground: var(--granville-semantic-text-on-primary);
+  --secondary: var(--granville-semantic-surface-muted);
+  --secondary-foreground: var(--granville-semantic-text);
+  --muted: var(--granville-semantic-surface-muted);
+  --muted-foreground: var(--granville-semantic-text-muted);
+  --accent: var(--granville-semantic-surface-muted);
+  --accent-foreground: var(--granville-semantic-text);
+  --destructive: var(--granville-semantic-danger);
+  --border: var(--granville-semantic-border);
+  --input: var(--granville-semantic-border-strong);
+  --ring: var(--granville-semantic-ring);
+}
+
+.dark {
+  /* Semantic core — product dark */
+  --granville-semantic-bg: var(--granville-color-product-background);
+  --granville-semantic-bg-deep: var(--granville-color-product-background-deep);
+  --granville-semantic-surface: var(--granville-color-product-card);
+  --granville-semantic-surface-raised: oklch(0.208 0.042 265.755);
+  --granville-semantic-surface-muted: oklch(0.279 0.041 260.031);
+  --granville-semantic-text: var(--granville-color-product-text);
+  --granville-semantic-text-muted: var(--granville-color-product-text-muted);
+  --granville-semantic-text-on-primary: var(--granville-color-product-background-deep);
+  --granville-semantic-primary: var(--granville-color-product-primary-action);
+  --granville-semantic-primary-hover: var(--granville-color-gold-400);
+  --granville-semantic-accent: var(--granville-color-product-info-accent);
+  --granville-semantic-border: var(--granville-color-border-subtle);
+  --granville-semantic-border-strong: var(--granville-color-border-strong);
+  --granville-semantic-ring: oklch(0.551 0.027 264.364);
+  --granville-semantic-danger: var(--granville-color-danger);
+  --granville-semantic-success: var(--granville-color-success);
+  --granville-semantic-warning: var(--granville-color-warning);
+
+  /* Sidebar override */
+  --sidebar: var(--granville-color-product-background-deep);
+
+  /* Payment status — dark */
+  --portal-status-created-bg: rgba(148, 163, 184, 0.14);
+  --portal-status-created-text: #cbd5e1;
+  --portal-status-created-border: rgba(148, 163, 184, 0.28);
+  --portal-status-review-bg: rgba(213, 191, 155, 0.16);
+  --portal-status-review-text: #d5bf9b;
+  --portal-status-review-border: rgba(213, 191, 155, 0.34);
+  --portal-status-submitted-bg: rgba(56, 189, 248, 0.13);
+  --portal-status-submitted-text: #7dd3fc;
+  --portal-status-submitted-border: rgba(56, 189, 248, 0.3);
+  --portal-status-processing-bg: rgba(96, 165, 250, 0.14);
+  --portal-status-processing-text: #93c5fd;
+  --portal-status-processing-border: rgba(96, 165, 250, 0.32);
+  --portal-status-completed-bg: rgba(22, 163, 74, 0.16);
+  --portal-status-completed-text: #86efac;
+  --portal-status-completed-border: rgba(22, 163, 74, 0.34);
+  --portal-status-failed-bg: rgba(220, 38, 38, 0.18);
+  --portal-status-failed-text: #fca5a5;
+  --portal-status-failed-border: rgba(220, 38, 38, 0.36);
+  --portal-status-returned-bg: rgba(217, 119, 6, 0.18);
+  --portal-status-returned-text: #fdba74;
+  --portal-status-returned-border: rgba(217, 119, 6, 0.36);
+  --portal-status-cancelled-bg: rgba(148, 163, 184, 0.12);
+  --portal-status-cancelled-text: #94a3b8;
+  --portal-status-cancelled-border: rgba(148, 163, 184, 0.26);
+
+  /* Charts — dark */
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+}

@@ -48,6 +48,14 @@
   --granville-color-marketing-hairline-strong: rgba(184, 198, 214, 0.18);
   --granville-color-marketing-inner-glow: rgba(255, 255, 255, 0.045);
 
+  /* Homepage section rhythm — each stacked section steps one shade      */
+  /* lighter than the hero so the page reads as an intentional descent   */
+  /* rather than a flat black. Contrast is carried by typography.        */
+  --granville-color-marketing-section-trust: #0f1726;
+  --granville-color-marketing-section-platform: #13203a;
+  --granville-color-marketing-section-payments: #16263f;
+  --granville-color-marketing-section-company: #1a2c48;
+
   /* Softened light band — a cool dove-grey, not near-white, so the  */
   /* dark→light transition reads as intentional rather than jarring. */
   --granville-color-marketing-light-band: #e6eaf0;

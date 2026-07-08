@@ -88,7 +88,15 @@ const headerActions = [homepage.navigation.primaryAction];
       classes={{ container: 'pt-12 md:pt-16 lg:pt-20' }}
     >
       <Fragment slot="bg">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_0%,rgba(159,147,180,0.06),transparent_40%)]"></div>
+        <div
+          class="absolute inset-0"
+          style="background:
+            radial-gradient(ellipse at 28% 8%, rgba(159,147,180,0.08), transparent 44%),
+            linear-gradient(180deg,
+              var(--granville-color-marketing-section-trust) 0%,
+              var(--granville-color-marketing-section-platform) 16%,
+              var(--granville-color-marketing-section-platform) 100%);"
+        ></div>
       </Fragment>
     </Features2>
   </div>
@@ -105,35 +113,33 @@ const headerActions = [homepage.navigation.primaryAction];
       contentCol: 'md:basis-3/5',
       imageCol: 'md:basis-2/5',
       headline: {
-        title: 'text-4xl md:text-5xl font-bold tracking-tighter mb-4 font-heading text-slate-900 dark:text-slate-900',
-        subtitle: 'max-w-3xl mx-auto sm:text-center text-xl text-slate-600 dark:text-slate-600',
+        title: 'text-4xl md:text-5xl font-bold tracking-tighter mb-4 font-heading text-slate-50 dark:text-slate-50',
+        subtitle: 'max-w-3xl mx-auto sm:text-center text-xl text-slate-300 dark:text-slate-300',
       },
-      content: 'text-lg text-slate-600 dark:text-slate-600',
-      itemTitle: 'text-xl font-semibold leading-snug text-slate-900 dark:text-slate-900 ml-2 rtl:ml-0 rtl:mr-2',
-      itemDescription: 'text-slate-600 dark:text-slate-600 ml-2 rtl:ml-0 rtl:mr-2',
+      content: 'text-lg text-slate-300 dark:text-slate-300',
+      itemTitle: 'text-xl font-semibold leading-snug text-slate-50 dark:text-slate-50 ml-2 rtl:ml-0 rtl:mr-2',
+      itemDescription: 'text-slate-400 dark:text-slate-400 ml-2 rtl:ml-0 rtl:mr-2',
     }}
   >
     <Fragment slot="bg">
       <div
         class="absolute inset-0"
         style="background:
-          radial-gradient(circle at top left, rgba(200,173,127,0.1), transparent 26%),
-          radial-gradient(circle at top right, rgba(184,198,214,0.16), transparent 34%),
+          radial-gradient(ellipse at 24% 22%, rgba(200,173,127,0.06), transparent 44%),
+          radial-gradient(ellipse at 80% 20%, rgba(56,189,248,0.05), transparent 46%),
           linear-gradient(180deg,
-            var(--granville-color-marketing-surface-0) 0%,
-            #16233a 5%,
-            var(--granville-color-marketing-light-band) 16%,
-            var(--granville-color-marketing-light-band-tint) 82%,
-            #23324c 96%,
-            var(--granville-color-marketing-surface-0) 100%);"
+            var(--granville-color-marketing-section-platform) 0%,
+            var(--granville-color-marketing-section-payments) 12%,
+            var(--granville-color-marketing-section-payments) 80%,
+            #0e1a2c 100%);"
       ></div>
     </Fragment>
 
     <Fragment slot="content">
-      <h3 class="mb-4 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-900 sm:text-3xl">
+      <h3 class="mb-4 text-2xl font-bold tracking-tight text-slate-50 dark:text-slate-50 sm:text-3xl">
         {homepage.operatingModel.contentTitle}
       </h3>
-      <p class="text-slate-600 dark:text-slate-600">{homepage.operatingModel.contentBody}</p>
+      <p class="text-slate-300 dark:text-slate-300">{homepage.operatingModel.contentBody}</p>
     </Fragment>
 
     <Fragment slot="image">
@@ -166,7 +172,16 @@ const headerActions = [homepage.navigation.primaryAction];
     }}
   >
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(184,198,214,0.06),transparent_20%),linear-gradient(180deg,rgba(4,9,16,0),rgba(4,9,16,0.68)_18%,rgba(4,9,16,0.96)_100%)]"></div>
+      <div
+        class="absolute inset-0"
+        style="background:
+          radial-gradient(ellipse at 50% 0%, rgba(184,198,214,0.08), transparent 34%),
+          linear-gradient(180deg,
+            #0e1a2c 0%,
+            var(--granville-color-marketing-section-company) 34%,
+            var(--granville-color-marketing-section-company) 60%,
+            var(--granville-color-marketing-surface-0) 100%);"
+      ></div>
     </Fragment>
   </FAQs>
 

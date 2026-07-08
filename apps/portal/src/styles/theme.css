@@ -1,39 +1,13 @@
+/* Brand colors, semantic roles, sidebar, status, and chart tokens are
+   generated from libs/brand/brand-foundations.ts. Do not redefine them
+   here — run `npm run brand:generate` at the repo root to update. */
+@import '../../../../libs/brand/generated/portal-theme.css';
+
 :root {
   /* 8px base — matches --granville-radius-portal-card */
   --radius: 0.5rem;
-  --background: var(--granville-color-surface-public);
-  --foreground: var(--granville-color-navy-900);
-  --card: #ffffff;
-  --card-foreground: var(--granville-color-navy-900);
-  --popover: #ffffff;
-  --popover-foreground: var(--granville-color-navy-900);
-  --primary: var(--granville-color-navy-900);
-  --primary-foreground: var(--granville-color-slate-50);
-  --secondary: var(--granville-color-slate-100);
-  --secondary-foreground: var(--granville-color-navy-900);
-  --muted: var(--granville-color-slate-100);
-  --muted-foreground: var(--granville-color-slate-500);
-  --accent: var(--granville-color-slate-100);
-  --accent-foreground: var(--granville-color-navy-900);
-  --destructive: var(--granville-color-danger);
-  --border: var(--granville-color-slate-300);
-  --input: var(--granville-color-slate-300);
-  --ring: var(--granville-color-gold-400);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
 
-  --sidebar: var(--granville-color-navy-900);
-  --sidebar-foreground: var(--granville-color-slate-50);
-  --sidebar-primary: var(--granville-color-gold-300);
-  --sidebar-primary-foreground: var(--granville-color-navy-950);
-  --sidebar-accent: var(--granville-color-navy-800);
-  --sidebar-accent-foreground: var(--granville-color-slate-50);
-  --sidebar-border: var(--granville-color-border-subtle);
-  --sidebar-ring: var(--granville-color-gold-300);
-
+  /* Portal layout tokens (not brand color; safe to tune per app) */
   --portal-page-padding-x: var(--granville-space-6);
   --portal-page-padding-y: var(--granville-space-8);
   --portal-page-header-gap: var(--granville-space-6);
@@ -42,83 +16,6 @@
   --portal-card-padding-compact: var(--granville-space-5);
   --portal-table-row-height: 72px;
   --portal-list-row-height: 68px;
-
-  --portal-status-created-bg: #eef2f7;
-  --portal-status-created-text: #334155;
-  --portal-status-created-border: #cbd5e1;
-  --portal-status-review-bg: #fdf2da;
-  --portal-status-review-text: #9a5b12;
-  --portal-status-review-border: #f0c878;
-  --portal-status-submitted-bg: #e8f4fb;
-  --portal-status-submitted-text: #0b5f8f;
-  --portal-status-submitted-border: #9ad3ef;
-  --portal-status-processing-bg: #e9f2ff;
-  --portal-status-processing-text: #2757c6;
-  --portal-status-processing-border: #a8c7ff;
-  --portal-status-completed-bg: #e8f7ee;
-  --portal-status-completed-text: #167447;
-  --portal-status-completed-border: #9fd8b7;
-  --portal-status-failed-bg: #fee2e2;
-  --portal-status-failed-text: #b91c1c;
-  --portal-status-failed-border: #fca5a5;
-  --portal-status-returned-bg: #fff1e8;
-  --portal-status-returned-text: #b45309;
-  --portal-status-returned-border: #fdba74;
-  --portal-status-cancelled-bg: #f1f5f9;
-  --portal-status-cancelled-text: #64748b;
-  --portal-status-cancelled-border: #cbd5e1;
-}
-
-.dark {
-  --background: var(--granville-color-product-background);
-  --foreground: var(--granville-color-product-text);
-  --card: var(--granville-color-product-card);
-  --card-foreground: var(--granville-color-product-text);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: var(--granville-color-product-text);
-  --primary: var(--granville-color-product-primary-action);
-  --primary-foreground: var(--granville-color-product-background-deep);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: var(--granville-color-product-text);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: var(--granville-color-product-text-muted);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: var(--granville-color-product-text);
-  --destructive: var(--granville-color-danger);
-  --border: var(--granville-color-border-subtle);
-  --input: var(--granville-color-border-strong);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: var(--granville-color-product-background-deep);
-
-  --portal-status-created-bg: rgba(148, 163, 184, 0.14);
-  --portal-status-created-text: #cbd5e1;
-  --portal-status-created-border: rgba(148, 163, 184, 0.28);
-  --portal-status-review-bg: rgba(213, 191, 155, 0.16);
-  --portal-status-review-text: #d5bf9b;
-  --portal-status-review-border: rgba(213, 191, 155, 0.34);
-  --portal-status-submitted-bg: rgba(56, 189, 248, 0.13);
-  --portal-status-submitted-text: #7dd3fc;
-  --portal-status-submitted-border: rgba(56, 189, 248, 0.3);
-  --portal-status-processing-bg: rgba(96, 165, 250, 0.14);
-  --portal-status-processing-text: #93c5fd;
-  --portal-status-processing-border: rgba(96, 165, 250, 0.32);
-  --portal-status-completed-bg: rgba(22, 163, 74, 0.16);
-  --portal-status-completed-text: #86efac;
-  --portal-status-completed-border: rgba(22, 163, 74, 0.34);
-  --portal-status-failed-bg: rgba(220, 38, 38, 0.18);
-  --portal-status-failed-text: #fca5a5;
-  --portal-status-failed-border: rgba(220, 38, 38, 0.36);
-  --portal-status-returned-bg: rgba(217, 119, 6, 0.18);
-  --portal-status-returned-text: #fdba74;
-  --portal-status-returned-border: rgba(217, 119, 6, 0.36);
-  --portal-status-cancelled-bg: rgba(148, 163, 184, 0.12);
-  --portal-status-cancelled-text: #94a3b8;
-  --portal-status-cancelled-border: rgba(148, 163, 184, 0.26);
 }
 
 @theme inline {

@@ -1,0 +1,38 @@
+/* GENERATED from libs/brand/brand-foundations.ts by scripts/generate-theme.ts.
+   Do not edit by hand — run `npm run brand:generate` at the repo root. */
+
+:root,
+.dark {
+  /* Semantic core — marketing theme */
+  --granville-semantic-bg: var(--granville-color-navy-900);
+  --granville-semantic-bg-deep: var(--granville-color-navy-950);
+  --granville-semantic-surface: var(--granville-color-navy-800);
+  --granville-semantic-surface-raised: var(--granville-color-navy-800);
+  --granville-semantic-surface-muted: var(--granville-color-navy-800);
+  --granville-semantic-text: var(--granville-color-slate-50);
+  --granville-semantic-text-muted: color-mix(in srgb, var(--granville-color-slate-300) 72%, transparent);
+  --granville-semantic-text-on-primary: var(--granville-color-navy-900);
+  --granville-semantic-primary: var(--granville-color-gold-400);
+  --granville-semantic-primary-hover: var(--granville-color-gold-300);
+  --granville-semantic-accent: var(--granville-color-blue-400);
+  --granville-semantic-border: var(--granville-color-border-subtle);
+  --granville-semantic-border-strong: var(--granville-color-border-strong);
+  --granville-semantic-ring: var(--granville-color-gold-400);
+  --granville-semantic-danger: var(--granville-color-danger);
+  --granville-semantic-success: var(--granville-color-success);
+  --granville-semantic-warning: var(--granville-color-warning);
+
+  /* AstroWind adapter */
+  --aw-font-sans: var(--granville-font-sans);
+  --aw-font-serif: Georgia;
+  --aw-font-heading: var(--granville-font-heading);
+  --aw-color-primary: var(--granville-semantic-primary);
+  --aw-color-secondary: var(--granville-semantic-primary-hover);
+  --aw-color-accent: var(--granville-semantic-accent);
+  --aw-color-text-heading: var(--granville-semantic-text);
+  --aw-color-text-default: var(--granville-semantic-text);
+  --aw-color-text-page: var(--granville-semantic-text);
+  --aw-color-text-muted: var(--granville-semantic-text-muted);
+  --aw-color-bg-page: var(--granville-semantic-bg);
+  --aw-color-bg-page-dark: var(--granville-semantic-bg-deep);
+}

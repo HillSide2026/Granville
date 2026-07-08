@@ -108,6 +108,198 @@ export const granvilleBrand = {
     ],
   },
 
+  // ── Semantic contract (single source of meaning) ─────────────────
+  // One canonical set of semantic roles, resolved per theme. Each app's
+  // native token vocabulary (AstroWind `--aw-*`, Shadcn `--*`) is mapped
+  // onto these roles by the generated theme adapters, so "primary",
+  // "surface", "text" mean the same thing in marketing and product.
+  //
+  // Value convention (consumed by scripts/generate-theme.ts):
+  //   - a bare token key (e.g. "brand-navy-900", "product-card") resolves
+  //     to `var(--granville-color-<key without brand- prefix>)`.
+  //   - anything starting with #, rgb, rgba, oklch, hsl, color-mix, or var(
+  //     is emitted verbatim.
+  semantics: {
+    // Canonical role set shared across every surface.
+    coreRoles: [
+      "bg",
+      "bg-deep",
+      "surface",
+      "surface-raised",
+      "surface-muted",
+      "text",
+      "text-muted",
+      "text-on-primary",
+      "primary",
+      "primary-hover",
+      "accent",
+      "border",
+      "border-strong",
+      "ring",
+      "danger",
+      "success",
+      "warning",
+    ],
+
+    // Core role resolutions per theme.
+    core: {
+      marketing: {
+        bg: "brand-navy-900",
+        "bg-deep": "brand-navy-950",
+        surface: "brand-navy-800",
+        "surface-raised": "brand-navy-800",
+        "surface-muted": "brand-navy-800",
+        text: "brand-slate-50",
+        "text-muted": "color-mix(in srgb, var(--granville-color-slate-300) 72%, transparent)",
+        "text-on-primary": "brand-navy-900",
+        primary: "brand-gold-400",
+        "primary-hover": "brand-gold-300",
+        accent: "brand-blue-400",
+        border: "brand-border-subtle",
+        "border-strong": "brand-border-strong",
+        ring: "brand-gold-400",
+        danger: "brand-danger",
+        success: "brand-success",
+        warning: "brand-warning",
+      },
+      productLight: {
+        bg: "brand-surface-public",
+        "bg-deep": "brand-navy-900",
+        surface: "#ffffff",
+        "surface-raised": "#ffffff",
+        "surface-muted": "brand-slate-100",
+        text: "brand-navy-900",
+        "text-muted": "brand-slate-500",
+        "text-on-primary": "brand-slate-50",
+        primary: "brand-navy-900",
+        "primary-hover": "brand-navy-800",
+        accent: "brand-blue-400",
+        border: "brand-slate-300",
+        "border-strong": "brand-slate-300",
+        ring: "brand-gold-400",
+        danger: "brand-danger",
+        success: "brand-success",
+        warning: "brand-warning",
+      },
+      productDark: {
+        bg: "product-background",
+        "bg-deep": "product-background-deep",
+        surface: "product-card",
+        "surface-raised": "oklch(0.208 0.042 265.755)",
+        "surface-muted": "oklch(0.279 0.041 260.031)",
+        text: "product-text",
+        "text-muted": "product-text-muted",
+        "text-on-primary": "product-background-deep",
+        primary: "product-primary-action",
+        "primary-hover": "brand-gold-400",
+        accent: "product-info-accent",
+        border: "brand-border-subtle",
+        "border-strong": "brand-border-strong",
+        ring: "oklch(0.551 0.027 264.364)",
+        danger: "brand-danger",
+        success: "brand-success",
+        warning: "brand-warning",
+      },
+    },
+
+    // Sidebar treatment (product only). Intentionally dark in both light
+    // and dark modes; dark mode only deepens the base field.
+    sidebar: {
+      base: {
+        sidebar: "brand-navy-900",
+        "sidebar-foreground": "brand-slate-50",
+        "sidebar-primary": "brand-gold-300",
+        "sidebar-primary-foreground": "brand-navy-950",
+        "sidebar-accent": "brand-navy-800",
+        "sidebar-accent-foreground": "brand-slate-50",
+        "sidebar-border": "brand-border-subtle",
+        "sidebar-ring": "brand-gold-300",
+      },
+      darkOverrides: {
+        sidebar: "product-background-deep",
+      },
+    },
+
+    // Payment-lifecycle status system (product only).
+    status: {
+      light: {
+        created: { bg: "#eef2f7", text: "#334155", border: "#cbd5e1" },
+        review: { bg: "#fdf2da", text: "#9a5b12", border: "#f0c878" },
+        submitted: { bg: "#e8f4fb", text: "#0b5f8f", border: "#9ad3ef" },
+        processing: { bg: "#e9f2ff", text: "#2757c6", border: "#a8c7ff" },
+        completed: { bg: "#e8f7ee", text: "#167447", border: "#9fd8b7" },
+        failed: { bg: "#fee2e2", text: "#b91c1c", border: "#fca5a5" },
+        returned: { bg: "#fff1e8", text: "#b45309", border: "#fdba74" },
+        cancelled: { bg: "#f1f5f9", text: "#64748b", border: "#cbd5e1" },
+      },
+      dark: {
+        created: { bg: "rgba(148, 163, 184, 0.14)", text: "#cbd5e1", border: "rgba(148, 163, 184, 0.28)" },
+        review: { bg: "rgba(213, 191, 155, 0.16)", text: "#d5bf9b", border: "rgba(213, 191, 155, 0.34)" },
+        submitted: { bg: "rgba(56, 189, 248, 0.13)", text: "#7dd3fc", border: "rgba(56, 189, 248, 0.3)" },
+        processing: { bg: "rgba(96, 165, 250, 0.14)", text: "#93c5fd", border: "rgba(96, 165, 250, 0.32)" },
+        completed: { bg: "rgba(22, 163, 74, 0.16)", text: "#86efac", border: "rgba(22, 163, 74, 0.34)" },
+        failed: { bg: "rgba(220, 38, 38, 0.18)", text: "#fca5a5", border: "rgba(220, 38, 38, 0.36)" },
+        returned: { bg: "rgba(217, 119, 6, 0.18)", text: "#fdba74", border: "rgba(217, 119, 6, 0.36)" },
+        cancelled: { bg: "rgba(148, 163, 184, 0.12)", text: "#94a3b8", border: "rgba(148, 163, 184, 0.26)" },
+      },
+    },
+
+    // Chart series palette (product only).
+    chart: {
+      light: [
+        "oklch(0.646 0.222 41.116)",
+        "oklch(0.6 0.118 184.704)",
+        "oklch(0.398 0.07 227.392)",
+        "oklch(0.828 0.189 84.429)",
+        "oklch(0.769 0.188 70.08)",
+      ],
+      dark: [
+        "oklch(0.488 0.243 264.376)",
+        "oklch(0.696 0.17 162.48)",
+        "oklch(0.769 0.188 70.08)",
+        "oklch(0.627 0.265 303.9)",
+        "oklch(0.645 0.246 16.439)",
+      ],
+    },
+
+    // Native-token adapters: each app's vocabulary → a core role name.
+    adapters: {
+      // AstroWind marketing site.
+      astrowind: {
+        "--aw-color-primary": "primary",
+        "--aw-color-secondary": "primary-hover",
+        "--aw-color-accent": "accent",
+        "--aw-color-text-heading": "text",
+        "--aw-color-text-default": "text",
+        "--aw-color-text-page": "text",
+        "--aw-color-text-muted": "text-muted",
+        "--aw-color-bg-page": "bg",
+        "--aw-color-bg-page-dark": "bg-deep",
+      },
+      // Shadcn portal.
+      shadcn: {
+        "--background": "bg",
+        "--foreground": "text",
+        "--card": "surface",
+        "--card-foreground": "text",
+        "--popover": "surface-raised",
+        "--popover-foreground": "text",
+        "--primary": "primary",
+        "--primary-foreground": "text-on-primary",
+        "--secondary": "surface-muted",
+        "--secondary-foreground": "text",
+        "--muted": "surface-muted",
+        "--muted-foreground": "text-muted",
+        "--accent": "surface-muted",
+        "--accent-foreground": "text",
+        "--destructive": "danger",
+        "--border": "border",
+        "--input": "border-strong",
+        "--ring": "ring",
+      },
+    },
+  },
+
   typography: {
     fontFamily: {
       sans: "Inter, ui-sans-serif, system-ui, sans-serif",
