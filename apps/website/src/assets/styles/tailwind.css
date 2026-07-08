@@ -1,4 +1,7 @@
 @import '../../../../../libs/brand/css-vars.css';
+/* AstroWind `--aw-*` tokens generated from the brand semantic contract.
+   Do not hand-edit — run `npm run brand:generate` at the repo root. */
+@import '../../../../../libs/brand/generated/website-theme.css';
 @import 'tailwindcss';
 
 @plugin "@tailwindcss/typography";
