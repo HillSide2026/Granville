@@ -28,7 +28,7 @@ export const homepageFr = {
     highlights: [] as string[],
   },
   trust: {
-    label: "Infrastructure financière conçue pour les environnements réglementés",
+    label: "Infrastructure financière pour des fondateurs prospères à l'international",
     items: [
       "Paiements domestiques et transfrontaliers",
       "Trésorerie multidevise",

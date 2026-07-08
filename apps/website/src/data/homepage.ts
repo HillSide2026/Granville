@@ -28,7 +28,7 @@ export const homepage = {
     highlights: [],
   },
   trust: {
-    label: "Financial infrastructure built for regulated environments",
+    label: "Financial Infrastructure for Successful, Global Founders",
     items: [
       "Domestic & cross-border payments",
       "Multi-currency treasury",
