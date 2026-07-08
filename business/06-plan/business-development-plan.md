@@ -83,6 +83,25 @@ toward, and then out from, first go-live.
 
 - [ ] Second segment/geography or second provider (gated on product multi-provider work).
 
+## Notes & ideas to validate
+
+- **Adjacent player — Kadmos ([kadmos.io](https://www.kadmos.io/)).** A digital salary-payment
+  platform for cross-border wage payments to migrant workers — beachhead in **seafarers /
+  shipping**, delivered as an employer payroll app + employee mobile app + global debit card +
+  cross-border remittance, FCA-regulated (UK e-money). **Not a direct competitor** (different
+  rail, different buyer, worker-account model rather than "one platform for the operating
+  business"), but they prove out an adjacent thesis worth learning from: *win one concrete worker
+  vertical, then expand outward.* Track as a reference model, not a threat; cross-ref
+  [competitive-analysis](../01-market/competitive-analysis.md).
+
+- **Vertical-wedge idea for the MVP.** Instead of the horizontal "agencies paying foreign
+  payroll" wedge, consider tailoring the first MVP to **one concrete worker vertical in Canada** —
+  e.g. **oil-field / energy-sector workers** (rotational crews, often foreign or interprovincial,
+  paid across currencies). A narrow vertical sharpens the pain, the compliance surface, and the
+  demo — the way Kadmos used seafarers. **To validate, not decided:** test against the current
+  beachhead ([ICP](../02-customers/icp-and-segments.md)) in the Phase 0 buyer interviews before
+  committing.
+
 ## Dependencies & risks (BD-owned watchlist)
 
 | Risk | Impact | Mitigation |
