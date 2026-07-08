@@ -179,3 +179,13 @@ libs/             ← shared (unchanged)
 - All tests pass after the move
 - No broken import paths
 - Documentation reflects the new structure
+
+---
+
+## UI Backlog
+
+Small, non-blocking UI fixes not yet scheduled into a track.
+
+| # | Item | File | Notes |
+|---|---|---|---|
+| 1 | Payment-run approval — mobile table | `apps/portal/src/features/approvals/` | "The full run" table overflows and requires horizontal scroll on narrow (~390px) viewports. The evidence cards above it reflow fine; the wide data table does not collapse. Fix: stack to card-rows (or drop the local-currency column) on mobile. The phone-approval path is the adoption unlock for the cue-up→approve wedge, so this is the priority item once the screen is scheduled. |
