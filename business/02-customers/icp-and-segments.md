@@ -8,8 +8,8 @@ financial services Granville provides — not a licensed money mover.
 **Two layers — keep them straight:**
 
 - **Public surface (what the market sees):** Granville addresses **four segments — agencies,
-  influencers, marketplaces, ecommerce.** All four move money cross-border and need their books
-  to tie out. This is the website/marketing framing.
+  influencers, marketplaces, ecommerce.** All four move money across borders and need a clean
+  record of every payment. This is the website/marketing framing.
 - **Strategic wedge (where BD actually spends effort):** **Canada-based agencies paying foreign
   "payroll"** — recurring cross-border payouts to overseas contractors/team. This is the
   beachhead we land first, then expand across the other three public segments.
@@ -54,7 +54,7 @@ focused motion — market to four, *sell* to one.
 | **Team shape** | Distributed / remote-first agency or startup | Fully local team on domestic payroll |
 | **Books pain** | Reconciling payouts + FX + fees is manual and late | Trivial finances; accountant handles it invisibly |
 | **Size** | ~5–50 foreign contractors; enough volume to hurt | 1 contractor, or enterprise with a treasury team |
-| **Appetite** | Wants the payout+books problem *gone* | Wants a toolkit to build their own solution |
+| **Appetite** | Wants the payout problem *gone* | Wants a toolkit to build their own solution |
 | **Trust** | Will run real payouts through a young platform w/ references | Needs a decade-old incumbent |
 
 ## Trigger events (when a fit becomes a buyer)
@@ -88,7 +88,7 @@ rest are the expansion path — served publicly, but **not** where BD spends its
 | 1 | **Agencies** (beachhead) | Pay foreign contractors monthly; FX + reconciliation mess | Foreign "payroll" — recurring cross-border payouts |
 | 2 | Influencers / creators | Cross-border brand payments in + payouts; messy books | Getting paid & paying collaborators across currencies |
 | 3 | Marketplaces | Pay out many parties, account for each cleanly | Mass payouts that self-post to the ledger |
-| 4 | Ecommerce | Multi-currency sales, supplier payouts, FX | Money in/out + books in one system |
+| 4 | Ecommerce | Multi-currency sales, supplier payouts, FX | Paying suppliers across currencies + a record of every payment |
 
 > Do **not** chase segments 2–4 in the sales motion until the agency wedge has produced live
 > references. Marketing can speak to all four; BD lands one.

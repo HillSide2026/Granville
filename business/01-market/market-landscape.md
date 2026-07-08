@@ -68,7 +68,7 @@ cue-up→approve→pay→record workflow.
 ## Segments: market to four, sell to one
 
 **Publicly**, Granville addresses four segments — **agencies, influencers, marketplaces,
-ecommerce** — all cross-border money movers that need their books to tie out. **Strategically**,
+ecommerce** — all move money across borders and need a clean record of every payment. **Strategically**,
 BD focuses the sales motion on one wedge: **Canada-based agencies paying foreign "payroll"**
 (recurring cross-border contractor payouts) — the sharpest, most recurring version of the
 cross-border payout pain and the closest fit to the product today. Land the wedge, then expand across

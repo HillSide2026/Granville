@@ -37,14 +37,14 @@ Do not skip to step 4. The whole company de-risks at step 2 (first go-live).
 | **Founder network & warm intros** | Toronto legal/fintech network; direct credibility | **Now** |
 | **Ecosystem proximity** | Rapyd (pending rev-share partnership) + Formance ecosystems as source of fit + trust | **Now** |
 | **Referral from advisors/accountants** | Accountants see the reconciliation pain firsthand | Next |
-| **Thought leadership / content** | Founder's regulatory voice → "how businesses can move money compliantly and keep clean books" | Next |
+| **Thought leadership / content** | Founder's regulatory voice → "how to pay a global team compliantly across currencies" | Next |
 | **Targeted outbound** | Only after ICP + case study exist | Later |
 | **Partnerships / channel** | See [partnerships.md](partnerships.md) | Later |
 
 ## Beachhead focus (DECIDED) — market to four, sell to one
 
 - **Public surface:** marketing speaks to **four segments — agencies, influencers,
-  marketplaces, ecommerce** (all cross-border money movers needing books that tie out).
+  marketplaces, ecommerce** (all move money across borders and need a clean record of it).
 - **Sales motion:** BD spends its effort on **one wedge — Canada-based agencies paying foreign
   "payroll"** (recurring cross-border contractor payouts). Sharpest pain, best product fit,
   warmest network, cleanest regulated-services path (Canada-first).
