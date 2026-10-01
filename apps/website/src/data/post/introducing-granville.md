@@ -30,7 +30,7 @@ We built Granville to solve that. Granville is a payments workflow and treasury 
 
 ## Who it is for
 
-Granville is designed for fintechs, MSBs, and platform businesses that need institutional-grade payment infrastructure without building it themselves. If you are processing international transfers, managing FX exposure, or preparing for EMI licensing, Granville gives you the foundation.
+Granville is designed for founders and small businesses that move money across borders, from early-stage companies to businesses with up to $10M in revenue, in e-commerce, SaaS, marketplaces, agencies, and professional services. If you are paying suppliers abroad, collecting revenue in more than one currency, or managing FX exposure, and you need more control than a single provider account gives you, Granville gives you the approvals, visibility, and reconciliation to run it properly.
 
 ## What is next
 
