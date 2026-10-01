@@ -2,7 +2,7 @@
 
 ## Objective
 
-Version 1 follows Granville MVP. Airwallex MVP proves the first payment rail, and Granville MVP turns that proof into a usable product/platform. Version 1 hardens Granville into deterministic, replay-safe, and operationally auditable payment orchestration across multiple EMI providers with reconciliation-native financial controls.
+Version 1 follows Granville MVP. Airwallex MVP proves the first payment rail, and Granville MVP turns that proof into a usable product/platform. Version 1 hardens Granville into deterministic, replay-safe, and operationally auditable payments workflow and treasury control across EMI providers with reconciliation-native financial controls.
 
 ---
 
@@ -11,7 +11,7 @@ Version 1 follows Granville MVP. Airwallex MVP proves the first payment rail, an
 By the end of Version 1, Granville demonstrates:
 
 - Immutable double-entry financial records
-- Provider-agnostic payment orchestration
+- Provider-agnostic payment execution
 - Deterministic payment lifecycle management
 - Automated reconciliation workflows
 - Replay-safe transaction processing

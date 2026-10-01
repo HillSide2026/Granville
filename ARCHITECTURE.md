@@ -38,7 +38,7 @@ Granville is a full-stack payments platform. The repo contains both layers:
 
 ## Core Principle
 
-Granville is an orchestration-first platform built around clean boundaries:
+Granville is a payments workflow and treasury control platform built around clean boundaries:
 
 - Granville owns lifecycle state and business decisions
 - Formance Ledger owns accounting truth

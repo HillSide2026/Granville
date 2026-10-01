@@ -124,3 +124,20 @@ Reason:
 
 - Granville must preserve provider portability and keep provider-native status, request, and identifier semantics out of its canonical contracts
 - a wrapper over Formance Payments is useful infrastructure, but should not become the customer-facing orchestration model
+
+## ADR-011
+
+Status: accepted
+
+Decision:
+
+- Granville is positioned as a payments workflow and treasury control platform. It is not positioned as payment orchestration.
+- The product is defined by four jobs: approving payments (maker-checker, exceptions), seeing cash (budgets, balances), keeping the books right (reconciliation, ledger), and paying or getting paid (payments, sales, FX).
+- Multi-provider routing and failover remain internal platform capabilities and are not product positioning.
+- Internal component names (`apps/orchestrator`, `GranvilleOrchestrator`) are unchanged; they name the payment lifecycle component, not the product.
+
+Reason:
+
+- the built system is mostly approvals, exception handling, reconciliation, and treasury surfaces (Camunda workflows, portal budgets/balances/payments), while routing runs against one real provider and mock adapters
+- "orchestration" described the smallest part of the product and left its scope unclear
+

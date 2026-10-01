@@ -119,7 +119,7 @@ export function TransferCreateDrawer({ open, onOpenChange }: Props) {
               <section className='space-y-4 rounded-lg border bg-muted/25 p-4'>
                 <div>
                   <h3 className='text-sm font-semibold'>Payment details</h3>
-                  <p className='mt-1 text-xs text-muted-foreground'>Granville orchestrates the order; custody and execution remain with regulated partners.</p>
+                  <p className='mt-1 text-xs text-muted-foreground'>Granville manages the order and its approvals; custody and execution remain with regulated partners.</p>
                 </div>
                 <div className='grid grid-cols-2 gap-3'>
                   <FormField control={form.control} name='amount' render={({ field }) => (

@@ -1,7 +1,7 @@
 ---
 publishDate: 2025-09-01T00:00:00Z
 title: Introducing Granville Finance
-excerpt: We are building financial infrastructure for businesses that move money globally — a provider-portable platform that makes payments reliable, auditable, and ready to scale.
+excerpt: We are building payments workflow and treasury control for businesses that move money globally — approvals, cash visibility, and reconciliation in one place.
 category: Company
 tags:
   - Payments
@@ -14,17 +14,19 @@ author: Granville Finance
 
 Moving money reliably is harder than it looks. Businesses that operate across borders face a fragmented landscape of payment providers, each with their own API, settlement cycle, reconciliation format, and failure mode. Switching providers — or running more than one — requires rebuilding from scratch.
 
-We built Granville to solve that. Granville is a payment orchestration platform that sits between your product and your providers. It handles routing, reconciliation, ledger integrity, and operational visibility so you can focus on your customers.
+We built Granville to solve that. Granville is a payments workflow and treasury control platform. It gives your team one place to approve payments, see cash across currencies, and know that the books match, while execution and custody stay with regulated partners.
 
 ## What Granville does
 
-**Provider-portable routing.** Connect multiple payment rails — EMI accounts, bank transfers, FX — and route each payment to the best available provider. Rules can be based on currency, amount, country, or provider health. Failover is automatic.
+**Approvals and controls.** Every outbound payment goes through an approval workflow with maker-checker, so the person who creates a payment is never the one who approves it. Teammates only see the features you grant them.
+
+**Exceptions that get resolved.** Failed, stuck, or mismatched payments land in a queue with evidence attached, and can be assigned, escalated, retried, amended, or cancelled.
+
+**Treasury visibility.** Budgets and balances across currencies, with outbound payments, inbound sales, and FX in one view.
+
+**Built-in reconciliation.** Provider statements are matched against the ledger automatically. Mismatches, missing transactions, amount discrepancies, and stale pending payments surface as typed exceptions, not raw data.
 
 **Immutable double-entry ledger.** Every payment, settlement, and reconciliation event is recorded as a deterministic, replay-safe ledger posting. Formance Ledger provides the underlying guarantees. Your audit trail is always complete.
-
-**Built-in reconciliation.** Transaction-level reconciliation runs continuously. Mismatches, missing provider transactions, amount discrepancies, and stale pending payments are surfaced as typed exceptions with evidence, not raw data.
-
-**Ops console.** Approve payments, retry failed webhooks, replay dead-lettered ledger postings, and manage provider health from a purpose-built operator interface.
 
 ## Who it is for
 
