@@ -42,7 +42,7 @@ Airwallex MVP proves the first external payment rail end to end. See [mvp-airwal
 
 ## Granville MVP — Product/Platform Milestone
 
-Granville MVP wraps the proven first provider in the minimum complete Granville platform: persistence, orchestration, portal/operator workflows, reporting, durable events, and staging readiness.
+Granville MVP wraps the proven first provider in the minimum complete Granville platform: persistence, payment workflow, portal/operator workflows, reporting, durable events, and staging readiness.
 
 | Track | Doc |
 |---|---|
@@ -148,7 +148,7 @@ After registering a public webhook endpoint:
 ```
 apps/
   api/                  Granville API service (HTTP controllers + GranvilleApi)
-  orchestrator/         Payment orchestration and state machines
+  orchestrator/         Payment lifecycle and state machines
   provider-runtime/     Async provider execution worker
   ledger-writer/        Async Formance ledger posting
   webhook-ingest/       Durable webhook ingestion

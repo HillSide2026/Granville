@@ -4,7 +4,7 @@ Purpose:
 
 - Expose Granville's external API
 - Own request authentication, tenant scoping, idempotency keys, and command validation
-- Translate client requests into orchestration commands
+- Translate client requests into payment workflow commands
 
 Must not own:
 
@@ -42,4 +42,4 @@ Milestone 1 implementation:
 - `src/granville-api.ts` provides a dependency-light API facade over the orchestrator, provider runtime, ledger writer, reconciler, and audit trail.
 - `src/http.ts` provides HTTP-shaped controllers with bearer auth stubs, RBAC checks, and `Idempotency-Key` propagation.
 - `openapi.yaml` captures the first customer/account/payment/webhook/reconciliation/admin surface.
-- Controllers must continue to call orchestration services rather than providers or Formance directly.
+- Controllers must continue to call workflow services rather than providers or Formance directly.

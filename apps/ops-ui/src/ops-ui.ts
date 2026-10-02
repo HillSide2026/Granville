@@ -215,7 +215,7 @@ async function handleApprovals(): Promise<string> {
       <div class="stat"><div class="stat-label">Total Payment Orders</div><div class="stat-value">${rows.length}</div></div>
     </div>
     <p style="font-size:13px;color:#666;margin-top:-8px;margin-bottom:16px">
-      Operator approvals authorize Granville orchestration to submit a payment order to a regulated partner for execution. They do not indicate that Granville holds customer funds.
+      Operator approvals authorize Granville to submit a payment order to a regulated partner for execution. They do not indicate that Granville holds customer funds.
     </p>`;
 
   if (pending.length === 0) {

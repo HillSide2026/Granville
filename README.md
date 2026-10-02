@@ -1,15 +1,23 @@
 # Granville
 
-Granville is a payments orchestration platform built on top of Formance infrastructure primitives.
+Granville is a payments workflow and treasury control platform for businesses that move money across borders, built on top of Formance infrastructure primitives.
+
+It answers four questions for a finance team:
+
+- **What needs my decision?** Payment approvals with maker-checker, and an exceptions queue for payments that failed or need review.
+- **Where is our cash?** Budgets and balances across currencies.
+- **Do the books match?** Statement ingestion, automated reconciliation, and an immutable double-entry ledger.
+- **How do I pay or get paid?** Outbound payments to beneficiaries, inbound sales, and FX.
 
 Granville is:
 
-- an MSB orchestration layer
-- a payment monitoring plane
-- a provider abstraction layer
-- ledger-centric for accounting truth
+- a payments workflow layer (approvals, exceptions, escalation)
+- a treasury control surface (budgets, balances, cash position)
+- reconciliation-native and ledger-centric for accounting truth
+- provider-agnostic underneath, with execution delegated to regulated partners
 - EMI-led for Stage 1
-- bank-ready for Stage 2
+
+Multi-provider routing and failover are internal capabilities of the platform, not the product. Granville is not positioned as payment orchestration.
 
 Granville is not:
 
@@ -18,6 +26,7 @@ Granville is not:
 - a core banking system
 - a lending platform
 - a card issuing processor
+- a payment orchestration product
 
 ## Platform Roles
 
@@ -25,7 +34,8 @@ Granville is not:
 
 Granville owns:
 
-- orchestration
+- payment workflow and approvals
+- treasury controls (budgets, balances)
 - routing
 - provider adapters
 - webhook durability
@@ -67,7 +77,7 @@ Payments may be used for:
 - provider polling
 - connector task execution
 
-It must not become Granville's canonical orchestration domain.
+It must not become Granville's canonical payment workflow domain.
 
 ### EMI Adapter Role
 
@@ -78,7 +88,7 @@ That boundary can be implemented in two ways:
 - a Granville wrapper over Formance Payments connectors
 - a native Granville EMI adapter for provider-specific or direct integrations
 
-The orchestration layer must not depend on provider-native models or Formance `connectorID`.
+The payment workflow layer must not depend on provider-native models or Formance `connectorID`.
 
 ## Repository Layout
 
